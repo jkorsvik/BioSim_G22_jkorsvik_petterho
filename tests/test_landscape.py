@@ -8,24 +8,36 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 class TestCell:
-    assert False
+    def test_init(self):
+        assert False
 
 
 class TestOcean:
-    assert False
+    def test_init(self):
+        assert False
 
 
 class TestMountain:
-    assert False
+    def test_init(self):
+        assert False
 
 
 class TestDesert:
-    assert False
+    def test_init(self):
+        assert False
 
 
 class TestSavanna:
-    assert False
+    def test_init(self):
+        assert False
+
+    def test_grow(self):
+        assert False
 
 
 class TestJungle:
-    assert False
+    def test_init(self):
+        assert False
+
+    def test_feed(self):
+        assert False

@@ -20,6 +20,9 @@ class Animal:
     def death(self):
         raise NotImplementedError
 
+    def feed(self):
+        raise NotImplementedError
+
 
 class Herbivore(Animal):
     def __init__(self):

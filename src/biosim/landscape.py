@@ -31,7 +31,13 @@ class Savanna(Cell):
     def __init__(self):
         raise NotImplementedError
 
+    def grow(self):
+        raise NotImplementedError
+
 
 class Jungle(Cell):
     def __init__(self):
+        raise NotImplementedError
+
+    def grow(self):
         raise NotImplementedError

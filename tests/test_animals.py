@@ -8,12 +8,30 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 class TestAnimal:
-    assert False
+    def test_init(self):
+        assert False
+
+    def test_migration(self):
+        assert False
+
+    def test_birth(self):
+        assert False
+
+    def test_death(self):
+        assert False
 
 
 class TestHerbivore:
-    assert False
+    def test_init(self):
+        assert False
+
+    def test_feed(self):
+        assert False
 
 
 class TestCarnivore:
-    assert False
+    def test_init(self):
+        assert False
+
+    def test_feed(self):
+        assert False
