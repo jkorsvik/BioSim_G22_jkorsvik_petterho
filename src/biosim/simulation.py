@@ -4,7 +4,7 @@
 """
 
 __author__ = ""
-__email__ = "petterho@nmbu.no"
+__email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 class BioSim:
