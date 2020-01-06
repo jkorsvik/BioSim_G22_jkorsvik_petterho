@@ -9,28 +9,50 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 class TestSimulation:
     def test_set_animal_parameters(self):
-        raise NotImplementedError
+        assert False
 
     def test_set_landscape_parameters(self):
-        raise NotImplementedError
+        assert False
 
     def test_simulate(self):
-        raise NotImplementedError
+        assert False
 
     def test_add_population(self):
-        raise NotImplementedError
+        assert False
 
     def test_year(self):
-        raise NotImplementedError
+        assert False
 
     def test_num_animals(self):
-        raise NotImplementedError
+        assert False
 
     def test_num_animals_per_species(self):
-        raise NotImplementedError
+        assert False
 
     def test_animal_distribution(self):
-        raise NotImplementedError
+        assert False
 
     def test_make_movie(self):
-        raise NotImplementedError
+        assert False
+
+    # Tests for the implementation-methods
+    def test_feed(self):
+        assert False
+
+    def test_feed_herbivores(self):
+        assert False
+
+    def test_feed_carnivores(self):
+        assert False
+
+    def test_procreation(self):
+        assert False
+
+    def test_migration(self):
+        assert False
+
+    def test_aging(self):
+        assert False
+
+    def test_simulate_one_year(self):
+        assert False
