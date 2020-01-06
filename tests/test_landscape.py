@@ -8,24 +8,24 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 class TestCell:
-    raise NotImplementedError
+    assert False
 
 
 class TestOcean:
-    raise NotImplementedError
+    assert False
 
 
 class TestMountain:
-    raise NotImplementedError
+    assert False
 
 
 class TestDesert:
-    raise NotImplementedError
+    assert False
 
 
 class TestSavanna:
-    raise NotImplementedError
+    assert False
 
 
 class TestJungle:
-    raise NotImplementedError
+    assert False

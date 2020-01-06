@@ -8,12 +8,12 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 class TestAnimal:
-    raise NotImplementedError
+    assert False
 
 
 class TestHerbivore:
-    raise NotImplementedError
+    assert False
 
 
 class TestCarnivore:
-    raise NotImplementedError
+    assert False
