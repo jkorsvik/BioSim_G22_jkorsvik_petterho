@@ -9,8 +9,21 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 class Cell:
     def __init__(self):
+        self.herbivores = []
+        self.carnivore = []
         raise NotImplementedError
 
+    @property
+    def num_carnivore(self):
+        return len(self.carnivore)
+
+    @property
+    def num_herbivore(self):
+        return len(self.herbivores)
+
+    @property
+    def num_animals(self):
+        return self.num_carnivore + self.num_herbivore
 
 class Ocean(Cell):
     def __init__(self):
@@ -47,3 +60,7 @@ class Jungle(Cell):
     def grow(self):
 
         raise NotImplementedError
+
+
+class Map:
+    def __init__(self):pass

@@ -2,6 +2,7 @@
 
 """
 """
+from abc import ABC
 
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
@@ -29,10 +30,11 @@ class Animal:
 
     @position.setter
     def location(self, loc):
-        # sjekk om det dette er en mulig lokasjon på kartet
+        pass
+    # sjekk om det dette er en mulig lokasjon på kartet
 
 
-class Herbivore(Animal):
+class Herbivore(Animal, ABC):
     w_birth = 8.0
     sigma_birth = 1.5
     beta = 0.9
@@ -54,14 +56,15 @@ class Herbivore(Animal):
 
     def feed(self):
         raise NotImplementedError
-    
+
     @classmethod
     def change_parameter(cls, parameter, value):
-        try
-        cls.parameter = value
-        except raise NameError('No parameter with given name for Carnivore')
+        try:
+            cls.parameter = value
+        except ValueError:
+            raise NameError('No parameter with given name for Carnivore')
 
-class Carnivore(Animal):
+class Carnivore(Animal, ABC):
     def __init__(self):
         raise NotImplementedError
 
