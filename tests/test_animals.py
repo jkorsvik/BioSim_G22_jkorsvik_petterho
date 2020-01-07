@@ -5,15 +5,10 @@
 
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
+
+
 from src.biosim.animals import Animal
 
-
-class MyList(list):
-    def __init__(self, *args):
-        super(MyList, self).__init__(args)
-
-    def __sub__(self, other):
-        return self.__class__(*[item for item in self if item not in other])
 
 class TestAnimal:
     def test_init(self):
@@ -40,7 +35,6 @@ class TestAnimal:
         new = test_animal.position
         delta = [a - b for a, b in zip(new, old)]
         assert abs(sum(delta)) == 1 or sum(delta) == 0
-
 
     def test_birth(self):
         assert False
