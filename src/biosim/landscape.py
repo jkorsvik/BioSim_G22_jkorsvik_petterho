@@ -16,6 +16,9 @@ class Cell:
         self.carnivores = []
         self.fodder = 0
 
+    def eat(self):
+        raise NotImplementedError
+
     @property
     def num_carnivore(self):
         return len(self.carnivores)
@@ -25,23 +28,27 @@ class Cell:
         return len(self.herbivores)
 
     @property
+    def meat_for_carnivores(self):
+        return sum(self.herbivores)
+
+    @property
     def num_animals(self):
         return self.num_carnivore + self.num_herbivore
 
 
 class Ocean(Cell):
     def __init__(self):
-        raise NotImplementedError
+        super().__init__()
 
 
 class Mountain(Cell):
     def __init__(self):
-        raise NotImplementedError
+        super().__init__()
 
 
 class Desert(Cell):
     def __init__(self):
-        raise NotImplementedError
+        super().__init__()
 
 
 class Savanna(Cell):
@@ -84,3 +91,7 @@ class Map:
 
     def make_map(self, multiple_line_string):
         raise NotImplementedError
+
+
+if __name__ == '__main__':
+    pass

@@ -8,6 +8,7 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 import src.biosim.landscape as ls
+import src.biosim.animals as ani
 
 
 class TestCell:
@@ -16,7 +17,17 @@ class TestCell:
         assert type(cell.herbivores) is list
         assert type(cell.carnivores) is list
         assert cell.fodder == 0
-        
+
+    def test_eat(self):
+        cell = ls.Cell()
+        cell.herbivores.append(ani.Herbivore())
+        cell.fodder = 1
+        cell.eat()
+        assert cell.fodder == 0
+        cell.carnivores.append(ani.Carnivore())
+        cell.eat()
+        assert cell.num_herbivore == 0
+
     def test_num_carnivore(self):
         cell = ls.Cell()
         assert cell.num_carnivore == 0
@@ -77,4 +88,3 @@ class TestJungle:
         jungle.fodder = 0
         jungle.grow()
         assert jungle.fodder == ls.Jungle.f_max
-
