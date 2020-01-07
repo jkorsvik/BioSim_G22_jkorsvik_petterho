@@ -12,26 +12,46 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-def propensity(fodder, same_species, F):
-    return np.exp(fodder/(same_species+1)*F)
+
 
 
 def sigmoid(value):
     return 1/(1 + np.exp(value))
 
+
 class Animal:
-    def __init__(self):
-        raise NotImplementedError
+    def __init__(self, age=0, weight=None):
+        self.weight = weight
+        if weight is None:
+            self.weight = np.random.normal(self.w_birth, self.sigma_birth)
+        self.age = age
+        self.fitness = self.calculate_fitness()
+
+    def calculate_fitness(self):
+        positive_q_age = self.phi_age * (self.age - self.a_half)
+        negative_q_weight = - self.phi_weight * (self.weight - self.w_half)
+        return sigmoid(positive_q_age) * sigmoid(negative_q_weight)
+
+
+    @staticmethod
+    def propensity(fodder, same_species, F):
+        return np.exp(fodder / (same_species + 1) * F)
+
 
     def migrate(self):
         prob_to_move = self.fitness*self.mu
         if random.random() < prob_to_move:
-            neighbour_tiles = []  # dette ligger hos cellen
+            neighbour_tiles = []  # dette ligger hos cellen (landscape)
 
 
 
     def birth(self):
-        raise NotImplementedError
+        prob_to_birth = np.min(1, self.gamma*self.fitness)
+        if map.map[self.position].num_animals() >= 2:
+            if np.random.random() < prob_to_birth:
+
+
+
 
     def death(self):
         raise NotImplementedError
