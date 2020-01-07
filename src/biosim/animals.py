@@ -3,7 +3,6 @@
 """
 """
 import random
-from abc import ABC
 
 import numpy as np
 
@@ -21,6 +20,8 @@ def sigmoid(value):
 
 class Animal:
     def __init__(self, age=0, weight=None):
+        self.gamma = None
+        self.mu = None
         self.weight = weight
         if weight is None:
             self.weight = np.random.normal(self.w_birth, self.sigma_birth)
@@ -86,8 +87,9 @@ class Herbivore(Animal, ABC):
     omega = 0.4
     F = 10.0
 
-    def __init__(self):
-        raise NotImplementedError
+    def __init__(self, age=0, weight=None):
+        self.
+        super().__init__(self, age, weight)
 
     def feed(self):
         raise NotImplementedError
@@ -100,9 +102,27 @@ class Herbivore(Animal, ABC):
             raise NameError('No parameter with given name for Carnivore')
 
 
-class Carnivore(Animal, ABC):
-    def __init__(self):
-        raise NotImplementedError
+class Carnivore(Animal):
+    w_birth = 6.0
+    sigma_birth = 1.0
+    beta = 0.75
+    eta = 0.125
+    a_half = 60.0
+    phi_age = 0.4
+    w_half = 4.0
+    phi_weight = 0
+    mu = 0.4
+    lambda_ = 1.0
+    gamma = 0.8
+    zeta = 3.5
+    xi = 1.1
+    omega = 0.9
+    F = 50.0
+    DeltaPhiMax = 10.0
+
+    def __init__(self, age=0, weight=None):
+        super().__init__(self, age, weight)
+
 
     def feed(self):
         raise NotImplementedError
