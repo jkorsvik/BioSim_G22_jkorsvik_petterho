@@ -2,10 +2,16 @@
 
 """
 """
-from abc import ABC
+import random
+import numpy as np
+
 
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
+
+
+def sigmoid(fodder, same_species, F):
+    np.exp(fodder/(same_species+1)*F)
 
 
 class Animal:
@@ -13,7 +19,11 @@ class Animal:
         raise NotImplementedError
 
     def migrate(self):
-        raise NotImplementedError
+        prob_to_move = self.fitness*self.mu
+        if random.random() < prob_to_move:
+            neighbour_tiles = []  # dette ligger hos cellen
+
+
 
     def birth(self):
         raise NotImplementedError
@@ -58,11 +68,12 @@ class Herbivore(Animal, ABC):
         raise NotImplementedError
 
     @classmethod
-    def change_parameter(cls, parameter, value):
+    def change_parameter(cls, parameters):
         try:
-            cls.parameter = value
+            cls.parameter
         except ValueError:
             raise NameError('No parameter with given name for Carnivore')
+
 
 class Carnivore(Animal, ABC):
     def __init__(self):

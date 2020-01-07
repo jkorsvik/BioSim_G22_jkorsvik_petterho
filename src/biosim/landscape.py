@@ -8,9 +8,13 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 class Cell:
+    f_max = 0
+    alpha = 0
+
     def __init__(self):
         self.herbivores = []
         self.carnivore = []
+        self.fodder = 0
         raise NotImplementedError
 
     @property
@@ -24,6 +28,7 @@ class Cell:
     @property
     def num_animals(self):
         return self.num_carnivore + self.num_herbivore
+
 
 class Ocean(Cell):
     def __init__(self):
@@ -45,22 +50,31 @@ class Savanna(Cell):
     alpha = 0.3
 
     def __init__(self):
-        raise NotImplementedError
+        super().__init__()
+        self.fodder = self.f_max
 
-    def grow(self):
-        raise NotImplementedError
+    def grow(self, savanna_fodder=f_max):
+        self.fodder = self.fodder + self.alpha*(self.f_max - self.fodder)
+
+    @classmethod
+    def change_parameters(cls, parameters):
+        pass
 
 
 class Jungle(Cell):
     f_max = 800.0
 
     def __init__(self):
-        raise NotImplementedError
+        super().__init__()
+        self.fodder = self.f_max
 
     def grow(self):
+        self.fodder = self.f_max
 
-        raise NotImplementedError
+    @classmethod
+    def change_parameters(cls, parameters):
+        pass
 
 
 class Map:
-    def __init__(self):pass
+    def __init__(self): pass
