@@ -13,8 +13,8 @@ import src.biosim.landscape as ls
 class TestCell:
     def test_init(self):
         cell = ls.Cell()
-        assert cell.herbivores is list
-        assert cell.carnivores is list
+        assert type(cell.herbivores) is list
+        assert type(cell.carnivores) is list
         assert cell.fodder == 0
         
     def test_num_carnivore(self):
@@ -50,8 +50,8 @@ class TestDesert:
 class TestSavanna:
     def test_init(self):
         savanna = ls.Savanna()
-        assert savanna.herbivores is list
-        assert savanna.carnivores is list
+        assert type(savanna.herbivores) is list
+        assert type(savanna.carnivores) is list
         assert savanna.fodder == ls.Savanna.f_max
 
     def test_grow(self):
@@ -68,8 +68,8 @@ class TestSavanna:
 class TestJungle:
     def test_init(self):
         jungle = ls.Jungle()
-        assert jungle.herbivores is list
-        assert jungle.carnivores is list
+        assert type(jungle.herbivores) is list
+        assert type(jungle.carnivores) is list
         assert jungle.fodder == ls.Jungle.f_max
 
     def test_grow(self):
