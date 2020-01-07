@@ -102,9 +102,11 @@ class BioSim:
         """Create MPEG4 movie from visualization images saved."""
 
     # The way i think it would be smart to do the work behind the simulation.
-    # These are not obligatory, but the wau i think it would be smart to do
+    # These are not obligatory, but the way i think it would be smart to do
     # the task.
     # - Petter
+
+
     def feed(self):
         raise NotImplementedError
 

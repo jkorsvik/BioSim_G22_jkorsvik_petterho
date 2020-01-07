@@ -11,7 +11,7 @@ class Animal:
     def __init__(self):
         raise NotImplementedError
 
-    def migration(self):
+    def migrate(self):
         raise NotImplementedError
 
     def birth(self):
@@ -20,17 +20,46 @@ class Animal:
     def death(self):
         raise NotImplementedError
 
-    def feed(self):
-        raise NotImplementedError
+    def feed(self):  # This will be overwritten by the subclasses
+        pass
+
+    @property
+    def position(self):
+        return self.position
+
+    @position.setter
+    def location(self, loc):
+        # sjekk om det dette er en mulig lokasjon på kartet
 
 
 class Herbivore(Animal):
+    w_birth = 8.0
+    sigma_birth = 1.5
+    beta = 0.9
+    eta = 0.05
+    a_half = 40
+    phi_age = 0.2
+    w_half = 10
+    phi_weight = 0.1
+    mu = 0.25
+    lambda_ = 1.0
+    gamma = 0.2
+    zeta = 3.5
+    xi = 1.2
+    omega = 0.4
+    F = 10.0
+
     def __init__(self):
         raise NotImplementedError
 
     def feed(self):
         raise NotImplementedError
-
+    
+    @classmethod
+    def change_parameter(cls, parameter, value):
+        try
+        cls.parameter = value
+        except raise NameError('No parameter with given name for Carnivore')
 
 class Carnivore(Animal):
     def __init__(self):

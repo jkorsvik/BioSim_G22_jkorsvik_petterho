@@ -28,6 +28,9 @@ class Desert(Cell):
 
 
 class Savanna(Cell):
+    f_max = 300.0
+    alpha = 0.3
+
     def __init__(self):
         raise NotImplementedError
 
@@ -36,8 +39,11 @@ class Savanna(Cell):
 
 
 class Jungle(Cell):
+    f_max = 800.0
+
     def __init__(self):
         raise NotImplementedError
 
     def grow(self):
+
         raise NotImplementedError
