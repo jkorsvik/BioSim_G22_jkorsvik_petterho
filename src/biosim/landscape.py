@@ -13,13 +13,12 @@ class Cell:
 
     def __init__(self):
         self.herbivores = []
-        self.carnivore = []
+        self.carnivores = []
         self.fodder = 0
-        raise NotImplementedError
 
     @property
     def num_carnivore(self):
-        return len(self.carnivore)
+        return len(self.carnivores)
 
     @property
     def num_herbivore(self):
@@ -53,8 +52,8 @@ class Savanna(Cell):
         super().__init__()
         self.fodder = self.f_max
 
-    def grow(self, savanna_fodder=f_max):
-        self.fodder = self.fodder + self.alpha*(self.f_max - self.fodder)
+    def grow(self):
+        self.fodder += self.alpha*(self.f_max - self.fodder)
 
     @classmethod
     def change_parameters(cls, parameters):
@@ -77,4 +76,11 @@ class Jungle(Cell):
 
 
 class Map:
-    def __init__(self): pass
+    map_params = {'O': Ocean, 'M': Mountain, 'D': Desert, 'S': Savanna,
+                  'J': Jungle}
+
+    def __init__(self, multiple_line_string):
+        self.map = self.make_map(multiple_line_string)
+
+    def make_map(self, multiple_line_string):
+        raise NotImplementedError

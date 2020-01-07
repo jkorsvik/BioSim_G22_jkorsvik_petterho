@@ -3,6 +3,8 @@
 """
 """
 import random
+from abc import ABC
+
 import numpy as np
 
 
@@ -10,9 +12,12 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-def sigmoid(fodder, same_species, F):
-    np.exp(fodder/(same_species+1)*F)
+def propensity(fodder, same_species, F):
+    return np.exp(fodder/(same_species+1)*F)
 
+
+def sigmoid(value):
+    return 1/(1 + np.exp(value))
 
 class Animal:
     def __init__(self):
