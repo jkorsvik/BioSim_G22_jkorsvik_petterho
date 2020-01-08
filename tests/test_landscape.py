@@ -9,6 +9,14 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 import src.biosim.landscape as ls
 import src.biosim.animals as ani
+import pytest
+
+
+@pytest.fixture
+def parameters():
+    return {'f_max': 100,
+            'alpha': 1
+            }
 
 
 class TestCell:
@@ -42,6 +50,12 @@ class TestCell:
         herbivores = cell.num_herbivore
         assert cell.num_animals == carnivores + herbivores
 
+    def test_set_parameters(self, parameters):
+        cell = ls.Cell()
+        cell.set_parameters(parameters)
+        assert cell.f_max == parameters['f_max']
+        assert cell.alpha == parameters['alpha']
+
 
 class TestOcean:
     def test_init(self):
@@ -71,9 +85,6 @@ class TestSavanna:
         savanna.grow()
         assert savanna.fodder < ls.Savanna.f_max
         assert savanna.fodder > 0
-
-    def test_change_parameters(self):
-        assert False
 
 
 class TestJungle:
