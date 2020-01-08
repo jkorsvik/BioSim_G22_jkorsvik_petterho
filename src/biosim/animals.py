@@ -50,6 +50,7 @@ class Animal:
         prob_to_birth = np.min(1, self.gamma*self.fitness)
         if map.map[self.position].num_animals() >= 2:
             if np.random.random() < prob_to_birth:
+                pass
 
 
 
@@ -70,7 +71,7 @@ class Animal:
     # sjekk om det dette er en mulig lokasjon på kartet
 
 
-class Herbivore(Animal, ABC):
+class Herbivore(Animal):
     w_birth = 8.0
     sigma_birth = 1.5
     beta = 0.9
@@ -88,7 +89,6 @@ class Herbivore(Animal, ABC):
     F = 10.0
 
     def __init__(self, age=0, weight=None):
-        self.
         super().__init__(self, age, weight)
 
     def feed(self):
