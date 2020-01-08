@@ -99,3 +99,15 @@ class TestJungle:
         jungle.fodder = 0
         jungle.grow()
         assert jungle.fodder == ls.Jungle.f_max
+
+
+class TestMoreThanOneCell:
+    def test_set_parameters_only_changes_one_class(self, parameters):
+        cell = ls.Cell()
+        ocean = ls.Ocean()
+
+        ocean.set_parameters(parameters)
+        assert ocean.f_max == parameters['f_max']
+        assert cell.f_max == 0
+
+
