@@ -26,19 +26,16 @@ class TestCell:
         assert type(cell.carnivores) is list
         assert cell.fodder == 0
 
-    def test_eat(self):
-        cell = ls.Cell()
-        cell.herbivores.append(ani.Herbivore())
-        cell.fodder = 1
-        cell.eat()
-        assert cell.fodder == 0
-        cell.carnivores.append(ani.Carnivore())
-        cell.eat()
-        assert cell.num_herbivore == 0
+    def test_feed_herbivores(self):
+        jungle = ls.Jungle()
+        jungle.herbivores.append(ani.Herbivore())
+        jungle.fodder = 1
+        jungle.feed_herbivores()
+        assert jungle.fodder == 0
 
     def test_num_carnivore(self):
         cell = ls.Cell()
-        assert cell.num_carnivore == 0
+        assert cell.num_carnivores == 0
 
     def test_num_herbivore(self):
         cell = ls.Cell()
@@ -103,11 +100,10 @@ class TestJungle:
 
 class TestMoreThanOneCell:
     def test_set_parameters_only_changes_one_class(self, parameters):
-        cell = ls.Cell()
-        ocean = ls.Ocean()
+        jungle = ls.Jungle()
+        savanna = ls.Savanna()
 
-        ocean.set_parameters(parameters)
-        assert ocean.f_max == parameters['f_max']
-        assert cell.f_max == 0
-
-
+        savanna.set_parameters(parameters)
+        assert savanna.f_max == parameters['f_max']
+        assert savanna.alpha == parameters['alpha']
+        assert jungle.f_max == 800
