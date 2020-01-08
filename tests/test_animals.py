@@ -35,6 +35,26 @@ class TestAnimal:
         delta = [a - b for a, b in zip(new, old)]
         assert abs(sum(delta)) == 1 or sum(delta) == 0
 
+    def test_weight_prop(self):
+        test_animal = Animal()
+        test_animal.weight = 20
+        assert test_animal.weight == 20
+
+    def test_add_weight(self):
+        test_animal = Animal()
+        test_animal.weight = 20
+        test_animal.weight += 20
+        assert test_animal.weight == 40
+
+    def test_fitness_calc(self):
+        test_animal = Animal()
+        old = test_animal.fitness
+        test_animal.feed(200)
+        new = test_animal.fitness
+        print(old, new)
+        assert new != old
+
+
     def test_reset_of_has_moved(self):
         test_animal = Animal()
         test_animal._has_moved = True

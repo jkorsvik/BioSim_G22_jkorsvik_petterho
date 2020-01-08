@@ -50,7 +50,12 @@ class Animal:
         self._fitness = None
         self._has_moved = False
         if weight is None:
-            self.weight = np.random.normal(self.w_birth, self.sigma_birth)
+            normal = np.random.normal(self.w_birth, self.sigma_birth)
+            self.weight = normal
+            if normal < 0:
+                self.weight = 0  # newborns with <= 0 will die end of year
+
+
 
     def migrate(self, list_for_moving):
         prob_to_move = self.fitness*self.mu
@@ -98,6 +103,8 @@ class Animal:
 
     @property
     def fitness(self):
+        if self._compute_fitness is False:
+            return self._fitness
         if self.weight <= 0:
             return 0
 
@@ -126,14 +133,14 @@ class Animal:
         self._compute_fitness = True
         self._weight = new_weight
 
-
-
     @classmethod
-    def change_parameter(cls, parameters):
-        try:
-            something = 0#  cls.parameter
-        except ValueError:
-            raise NameError('No parameter with given name for Carnivore')
+    def set_parameters(cls, parameters):
+        for key, value in parameters.items():
+            if key in cls.__dict__.keys():
+                setattr(cls, key, value)
+            else:
+                raise NameError(
+                    'One the keys in your dict_attr is not an attribute.')
 
 
 class Herbivore(Animal):
@@ -155,9 +162,6 @@ class Herbivore(Animal):
 
     def __init__(self, age=0, weight=None):
         super().__init__(self, age, weight)
-
-    def feed(self):
-        raise NotImplementedError
 
 
 class Carnivore(Animal):
@@ -182,14 +186,36 @@ class Carnivore(Animal):
         super().__init__(self, age, weight)
 
     def kill_or_not(self, herbivore):
-        
+        probability_to_kill = ((self.fitness - herbivore.fitness) /
+                               self.DeltaPhiMax)
+        return bool(np.random.binomial(1, probability_to_kill))
+
+    def feed(self, meat, eaten):
+        if meat + eaten < self.F:
+            self.weight += self.beta * meat
+        else:
+            self.weight += self.beta*(self.F - eaten)
 
     def prey(self, list_herbivores_least_fit):
         eaten = 0
-        while eaten < self.F:
-            for herbivore in list_herbivores_least_fit:
-                if self.DeltaPhiMax < self.weight - herbivore.weight:
-                    self.feed(herbivore.weight)
-                    eaten += herbivore.weight
-                    del list_herbivores_least_fit[0]
+        for ind, herbivore in enumerate(list_herbivores_least_fit):
+            if eaten >= self.F:
+                break
+            if self.DeltaPhiMax < self.fitness - herbivore.fitness:
+                self.feed(herbivore, eaten)
+                eaten += herbivore.weight
+                del list_herbivores_least_fit[ind]
+
+            if self.fitness <= herbivore.fitness:
+                continue
+            else:
+                if self.kill_or_not(herbivore):
+                    self.feed(herbivore, eaten)
+                    del list_herbivores_least_fit[ind]
+
+
+
+
+
+
 
