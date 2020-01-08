@@ -19,6 +19,15 @@ def parameters():
             }
 
 
+@pytest.fixture
+def animals_list():
+    return [
+        {'species': 'Herbivore', 'age': 10, 'weight': 12.5},
+        {'species': 'Herbivore', 'age': 9, 'weight': 10.3},
+        {'species': 'Carnivore', 'age': 5, 'weight': 8.1},
+            ]
+
+
 class TestCell:
     def test_init(self):
         cell = ls.Cell()
@@ -39,19 +48,29 @@ class TestCell:
 
     def test_num_herbivore(self):
         cell = ls.Cell()
-        assert cell.num_herbivore == 0
+        assert cell.num_herbivores == 0
 
     def test_num_animals(self):
         cell = ls.Cell()
-        carnivores = cell.num_carnivore
-        herbivores = cell.num_herbivore
+        carnivores = cell.num_carnivores
+        herbivores = cell.num_herbivores
         assert cell.num_animals == carnivores + herbivores
 
     def test_set_parameters(self, parameters):
-        cell = ls.Cell()
-        cell.set_parameters(parameters)
-        assert cell.f_max == parameters['f_max']
-        assert cell.alpha == parameters['alpha']
+        savanna = ls.Savanna()
+        savanna.set_parameters(parameters)
+        assert savanna.f_max == parameters['f_max']
+        assert savanna.alpha == parameters['alpha']
+
+    def test_meat_for_carnivores(self):
+        assert False
+
+    def test_add_animals(self, animals_list):
+        jungle = ls.Jungle()
+        jungle.add_animals(animals_list)
+        assert jungle.num_herbivores == 2
+        assert jungle.num_carnivores == 1
+        assert jungle.num_animals == len(animals_list)
 
 
 class TestOcean:
