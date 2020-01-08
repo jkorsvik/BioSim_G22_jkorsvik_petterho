@@ -2,7 +2,6 @@
 
 """
 """
-import random
 
 import numpy as np
 
@@ -28,54 +27,81 @@ def probability_for_moving(list_for_moving):
 
 
 class Animal:
+    w_birth = 6.0
+    sigma_birth = 1.0
+    beta = 0.75
+    eta = 0.125
+    a_half = 60.0
+    phi_age = 0.4
+    w_half = 4.0
+    phi_weight = 0
+    mu = 0.4
+    lambda_ = 1.0
+    gamma = 0.8
+    omega = 0.9
+
     def __init__(self, age=0, weight=None):
-        self.gamma = None
-        self.mu = None
-        self.weight = weight
+        self._age = age
+        self._weight = weight
+        self._compute_fitness = True
+        self._fitness = None
         if weight is None:
             self.weight = np.random.normal(self.w_birth, self.sigma_birth)
-        self.age = age
         self.fitness = self.calculate_fitness()
 
-    def calculate_fitness(self):
-        positive_q_age = self.phi_age * (self.age - self.a_half)
-        negative_q_weight = - (self.phi_weight * (self.weight - self.w_half))
-        return sigmoid(positive_q_age) * sigmoid(negative_q_weight)
 
 
     def migrate(self, list_for_moving):
         prob_to_move = self.fitness*self.mu
-        if random.random() < prob_to_move:
+        if np.random.random() < prob_to_move:
             list_for_moving = []
             cumulative_sum = np.cumsum(probability_for_moving(list_for_moving))
-            for _
-            return
-
-
+            r = np.random.random()
+            index = 0
+            while r >= cumulative_sum[n]:
+                index += 1
+            return index
 
     def birth(self):
+
         prob_to_birth = np.min(1, self.gamma*self.fitness)
-        if map.map[self.position].num_animals() >= 2:
-            if np.random.random() < prob_to_birth:
-                pass
-
-
+        if self.num_animals() >= 2:
+            if np.random.binomial(1, 1 - prob_to_birth):
 
 
     def death(self):
-        raise NotImplementedError
+        prob_to_die = self.omega*(1-self.fitness)
+        return np.random.binomial(1, 1 - prob_to_die) or self.fitness <= 0
 
     def feed(self):  # This will be overwritten by the subclasses
         pass
 
     @property
-    def position(self):
-        return self.position
+    def fitness(self):
+        if self.weight <= 0:
+            return 0
 
-    @position.setter
-    def location(self, loc):
-        pass
+        positive_q_age = self.phi_age * (self.age - self.a_half)
+        negative_q_weight = - (self.phi_weight * (self.weight - self.w_half))
+
+        return sigmoid(positive_q_age) * sigmoid(negative_q_weight)
+
+    @property
+    def age(self):
+        return self._age
+
+    @age.setter
+    def age(self, new_age):
+        self._compute_fitness = True
+        self._age =
     # sjekk om det dette er en mulig lokasjon på kartet
+
+    @classmethod
+    def change_parameter(cls, parameters):
+        try:
+              #  cls.parameter
+        except ValueError:
+            raise NameError('No parameter with given name for Carnivore')
 
 
 class Herbivore(Animal):
@@ -100,13 +126,6 @@ class Herbivore(Animal):
 
     def feed(self):
         raise NotImplementedError
-
-    @classmethod
-    def change_parameter(cls, parameters):
-        try:
-            cls.parameter
-        except ValueError:
-            raise NameError('No parameter with given name for Carnivore')
 
 
 class Carnivore(Animal):
