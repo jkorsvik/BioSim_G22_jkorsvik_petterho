@@ -27,51 +27,66 @@ def probability_for_moving(list_for_moving):
 
 
 class Animal:
-    w_birth = 6.0
-    sigma_birth = 1.0
-    beta = 0.75
-    eta = 0.125
-    a_half = 60.0
-    phi_age = 0.4
-    w_half = 4.0
-    phi_weight = 0
-    mu = 0.4
+    w_birth = 8.0
+    sigma_birth = 1.5
+    beta = 0.9
+    eta = 0.05
+    a_half = 40
+    phi_age = 0.2
+    w_half = 10
+    phi_weight = 0.1
+    mu = 0.25
     lambda_ = 1.0
-    gamma = 0.8
-    omega = 0.9
+    gamma = 0.2
+    zeta = 3.5
+    xi = 1.2
+    omega = 0.4
+    F = 10.0
 
     def __init__(self, age=0, weight=None):
         self._age = age
         self._weight = weight
         self._compute_fitness = True
         self._fitness = None
+        self._has_moved = False
         if weight is None:
             self.weight = np.random.normal(self.w_birth, self.sigma_birth)
-        self.fitness = self.calculate_fitness()
-
 
 
     def migrate(self, list_for_moving):
         prob_to_move = self.fitness*self.mu
-        if np.random.random() < prob_to_move:
+        if bool(np.random.binomial(1, prob_to_move)):
             list_for_moving = []
             cumulative_sum = np.cumsum(probability_for_moving(list_for_moving))
-            r = np.random.random()
             index = 0
-            while r >= cumulative_sum[n]:
+            while not np.random.binomial(1, cumulative_sum[index]):
                 index += 1
             return index
+        pass
+
+    def reset_has_moved(self):
+        self._has_moved = False
 
     def birth(self):
+        # Have to find out how we are going to do it with more partners
+        # I think it will be easier to check number of partners in landscape
+        prob_to_birth = np.min(1, self.gamma * self.fitness)
+        if self._weight < self.zeta*(self.w_birth + self.phi_weight):
+            prob_to_birth = 0
 
-        prob_to_birth = np.min(1, self.gamma*self.fitness)
-        if self.num_animals() >= 2:
-            if np.random.binomial(1, 1 - prob_to_birth):
+        if np.random.binomial(1, prob_to_birth):
+            offspring = type(self)()
+            weight_loss = self.xi*offspring.weight
+
+            if self.weight >= weight_loss:
+                self.weight -= weight_loss
+                return offspring
 
 
     def death(self):
         prob_to_die = self.omega*(1-self.fitness)
-        return np.random.binomial(1, 1 - prob_to_die) or self.fitness <= 0
+        dies = bool(np.random.binomial(1, prob_to_die))
+        return dies or self.fitness <= 0
 
     def feed(self):  # This will be overwritten by the subclasses
         pass
@@ -84,6 +99,8 @@ class Animal:
         positive_q_age = self.phi_age * (self.age - self.a_half)
         negative_q_weight = - (self.phi_weight * (self.weight - self.w_half))
 
+        self._compute_fitness = False
+
         return sigmoid(positive_q_age) * sigmoid(negative_q_weight)
 
     @property
@@ -93,13 +110,23 @@ class Animal:
     @age.setter
     def age(self, new_age):
         self._compute_fitness = True
-        self._age =
-    # sjekk om det dette er en mulig lokasjon på kartet
+        self._age = new_age
+
+    @property
+    def weight(self):
+        return self._weight
+
+    @weight.setter
+    def weight(self, new_weight):
+        self._compute_fitness = True
+        self._weight = new_weight
+
+
 
     @classmethod
     def change_parameter(cls, parameters):
         try:
-              #  cls.parameter
+            something = 0#  cls.parameter
         except ValueError:
             raise NameError('No parameter with given name for Carnivore')
 

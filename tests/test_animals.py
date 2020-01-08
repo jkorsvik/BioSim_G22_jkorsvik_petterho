@@ -12,7 +12,7 @@ from src.biosim.animals import Animal
 
 class TestAnimal:
     def test_init(self):
-        test_animal = Animal(10, 20, (1, 3))
+        test_animal = Animal(10, 20)
         assert hasattr(test_animal, 'age')
         assert test_animal.age is not None
         assert hasattr(test_animal, 'weight')
@@ -20,8 +20,7 @@ class TestAnimal:
         assert hasattr(test_animal, 'fitness')
         assert test_animal.fitness is not None
         assert 0 <= test_animal.fitness <= 1
-        assert hasattr(test_animal, 'location')
-        assert test_animal.location is not None
+
 
     def test_migration(self):
         """
@@ -35,6 +34,12 @@ class TestAnimal:
         new = test_animal.position
         delta = [a - b for a, b in zip(new, old)]
         assert abs(sum(delta)) == 1 or sum(delta) == 0
+
+    def test_reset_of_has_moved(self):
+        test_animal = Animal()
+        test_animal._has_moved = True
+        test_animal.reset_has_moved()
+        assert not test_animal._has_moved
 
     def test_birth(self):
         assert False
