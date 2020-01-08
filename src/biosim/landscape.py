@@ -16,6 +16,10 @@ class Cell:
         self.carnivores = []
         self.fodder = 0
 
+    def add_animal(self, species, animal):
+        # Could be better if it takes more than one animal, one or more
+        raise NotImplementedError
+
     def eat(self):
         raise NotImplementedError
 
@@ -34,6 +38,14 @@ class Cell:
     @property
     def num_animals(self):
         return self.num_carnivore + self.num_herbivore
+
+    @classmethod
+    def set_parameters(cls, parameters):
+        for key, value in parameters.items():
+            if key in cls.__dict__.keys():
+                setattr(cls, key, value)
+            else:
+                raise NameError('One the keys in your dict_attr is not an attribute.')
 
 
 class Ocean(Cell):
@@ -62,10 +74,6 @@ class Savanna(Cell):
     def grow(self):
         self.fodder += self.alpha*(self.f_max - self.fodder)
 
-    @classmethod
-    def change_parameters(cls, parameters):
-        pass
-
 
 class Jungle(Cell):
     f_max = 800.0
@@ -76,10 +84,6 @@ class Jungle(Cell):
 
     def grow(self):
         self.fodder = self.f_max
-
-    @classmethod
-    def change_parameters(cls, parameters):
-        pass
 
 
 class Map:
@@ -94,4 +98,5 @@ class Map:
 
 
 if __name__ == '__main__':
-    pass
+    cell = Cell()
+    cell.set_parameters({'f_max': 100, 'alpha': 1})
