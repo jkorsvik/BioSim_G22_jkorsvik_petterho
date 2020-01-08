@@ -52,7 +52,6 @@ class Animal:
         if weight is None:
             self.weight = np.random.normal(self.w_birth, self.sigma_birth)
 
-
     def migrate(self, list_for_moving):
         prob_to_move = self.fitness*self.mu
         if bool(np.random.binomial(1, prob_to_move)):
@@ -67,7 +66,7 @@ class Animal:
     def reset_has_moved(self):
         self._has_moved = False
 
-    def birth(self):
+    def birth(self, num_of_species):
         # Have to find out how we are going to do it with more partners
         # I think it will be easier to check number of partners in landscape
         prob_to_birth = np.min(1, self.gamma * self.fitness)
@@ -82,14 +81,20 @@ class Animal:
                 self.weight -= weight_loss
                 return offspring
 
-
     def death(self):
         prob_to_die = self.omega*(1-self.fitness)
         dies = bool(np.random.binomial(1, prob_to_die))
         return dies or self.fitness <= 0
 
-    def feed(self):  # This will be overwritten by the subclasses
-        pass
+    def feed(self, available_food):  # Will be overwritten by the subclasses
+        if self.F <= available_food:
+            self.weight += self.beta * self.F
+            return available_food - self.F
+
+        if 0 < available_food:
+            self.weight += self.beta * available_food
+
+        return 0
 
     @property
     def fitness(self):
@@ -176,6 +181,15 @@ class Carnivore(Animal):
     def __init__(self, age=0, weight=None):
         super().__init__(self, age, weight)
 
+    def kill_or_not(self, herbivore):
+        
 
-    def feed(self):
-        raise NotImplementedError
+    def prey(self, list_herbivores_least_fit):
+        eaten = 0
+        while eaten < self.F:
+            for herbivore in list_herbivores_least_fit:
+                if self.DeltaPhiMax < self.weight - herbivore.weight:
+                    self.feed(herbivore.weight)
+                    eaten += herbivore.weight
+                    del list_herbivores_least_fit[0]
+
