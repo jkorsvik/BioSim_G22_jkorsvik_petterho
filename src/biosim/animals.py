@@ -56,6 +56,7 @@ class Animal:
                 self.weight = 0  # newborns with <= 0 will die end of year
 
     def migrate(self, list_for_moving):
+        # Liste som skal inn er Fodder og dyr av samme type, med lokasjon
         prob_to_move = self.fitness*self.mu
         if bool(np.random.binomial(1, prob_to_move)):
             list_for_moving = []
@@ -64,6 +65,7 @@ class Animal:
             while not np.random.binomial(1, cumulative_sum[index]):
                 index += 1
             return index
+        #return Boool, new_location
         pass
 
     def reset_has_moved(self):
