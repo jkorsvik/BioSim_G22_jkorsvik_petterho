@@ -7,7 +7,7 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-from src.biosim.animals import Animal
+from src.biosim.animals import Animal, Carnivore, Herbivore
 
 
 class TestAnimal:
@@ -49,8 +49,15 @@ class TestAnimal:
 
 
 class TestHerbivore:
-    def test_init(self):
-        assert False
+    def _init__herb(self):
+        test_herbivore = Herbivore(10, 20)
+        assert hasattr(test_herbivore, 'age')
+        assert test_herbivore.age is not None
+        assert hasattr(test_herbivore, 'weight')
+        assert test_herbivore.weight is not None
+        assert hasattr(test_herbivore, 'fitness')
+        assert test_herbivore.fitness is not None
+        assert 0 <= test_herbivore.fitness <= 1
 
     def test_feed(self):
         assert False
@@ -58,7 +65,14 @@ class TestHerbivore:
 
 class TestCarnivore:
     def test_init(self):
-        assert False
+        test_herbivore = Herbivore(10, 20)
+        assert hasattr(test_herbivore, 'age')
+        assert test_herbivore.age is not None
+        assert hasattr(test_herbivore, 'weight')
+        assert test_herbivore.weight is not None
+        assert hasattr(test_herbivore, 'fitness')
+        assert test_herbivore.fitness is not None
+        assert 0 <= test_herbivore.fitness <= 1
 
     def test_feed(self):
         assert False
