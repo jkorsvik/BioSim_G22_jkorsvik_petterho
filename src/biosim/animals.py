@@ -138,8 +138,8 @@ class Animal:
             if key in cls.__dict__.keys():
                 setattr(cls, key, value)
             else:
-                raise NameError(
-                    'One the keys in your dict_attr is not an attribute.')
+                raise NameError('One the keys in your parameters is not an '
+                                'attribute.')
 
 
 class Herbivore(Animal):
@@ -211,10 +211,6 @@ class Carnivore(Animal):
                 if self.kill_or_not(herbivore):
                     self.feed(herbivore, eaten)
                     del list_herbivores_least_fit[ind]
-
-
-
-
 
 
 
