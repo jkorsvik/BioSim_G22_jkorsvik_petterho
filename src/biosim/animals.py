@@ -11,11 +11,20 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-
-
-
 def sigmoid(value):
     return 1/(1 + np.exp(value))
+
+
+def propensity(fodder, same_species, F):
+    return np.exp(fodder / (same_species + 1) * F)
+
+
+def probability_for_moving(list_for_moving):
+    sum_propensity = 0
+    for fodder, same_species, F in list_for_moving:
+        sum_propensity += propensity(fodder, same_species, F)
+    probability = propensity(fodder, same_species, F) / sum_propensity
+    return probability
 
 
 class Animal:
@@ -30,19 +39,17 @@ class Animal:
 
     def calculate_fitness(self):
         positive_q_age = self.phi_age * (self.age - self.a_half)
-        negative_q_weight = - self.phi_weight * (self.weight - self.w_half)
+        negative_q_weight = - (self.phi_weight * (self.weight - self.w_half))
         return sigmoid(positive_q_age) * sigmoid(negative_q_weight)
 
 
-    @staticmethod
-    def propensity(fodder, same_species, F):
-        return np.exp(fodder / (same_species + 1) * F)
-
-
-    def migrate(self):
+    def migrate(self, list_for_moving):
         prob_to_move = self.fitness*self.mu
         if random.random() < prob_to_move:
-            neighbour_tiles = []  # dette ligger hos cellen (landscape)
+            list_for_moving = []
+            cumulative_sum = np.cumsum(probability_for_moving(list_for_moving))
+            for _
+            return
 
 
 
