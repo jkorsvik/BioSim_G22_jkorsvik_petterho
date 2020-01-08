@@ -54,6 +54,14 @@ class TestAnimal:
         print(old, new)
         assert new != old
 
+    def test_fitness_unchanged(self):
+        """ Checks if calling fitness without updating weight
+            or age will produce the same result."""
+        test_animal = Animal()
+        old = test_animal.fitness
+        new = test_animal.fitness
+        print(old, new)
+        assert old == new
 
     def test_reset_of_has_moved(self):
         test_animal = Animal()

@@ -55,8 +55,6 @@ class Animal:
             if normal < 0:
                 self.weight = 0  # newborns with <= 0 will die end of year
 
-
-
     def migrate(self, list_for_moving):
         prob_to_move = self.fitness*self.mu
         if bool(np.random.binomial(1, prob_to_move)):
@@ -103,17 +101,18 @@ class Animal:
 
     @property
     def fitness(self):
-        if self._compute_fitness is False:
+        if self._compute_fitness is True:
+            if self.weight <= 0:
+                return 0
+
+            positive_q_age = self.phi_age * (self.age - self.a_half)
+            negative_q_weight = - (self.phi_weight * (self.weight - self.w_half))
+
+            self._compute_fitness = False
+            self._fitness = sigmoid(positive_q_age) * sigmoid(negative_q_weight)
             return self._fitness
-        if self.weight <= 0:
-            return 0
 
-        positive_q_age = self.phi_age * (self.age - self.a_half)
-        negative_q_weight = - (self.phi_weight * (self.weight - self.w_half))
-
-        self._compute_fitness = False
-
-        return sigmoid(positive_q_age) * sigmoid(negative_q_weight)
+        return self._fitness
 
     @property
     def age(self):
