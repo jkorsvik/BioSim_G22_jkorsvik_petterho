@@ -5,6 +5,9 @@
 
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
+import src.biosim.animals as ani
+import textwrap
+from pprint import pprint
 
 
 class Cell:
@@ -13,9 +16,15 @@ class Cell:
         self.carnivores = []
         self.fodder = 0
 
-    def add_animal(self, species, animal):
-        # Could be better if it takes more than one animal, one or more
-        raise NotImplementedError
+    def add_animals(self, animal_list):
+        # Takes list of dicts with are the animal
+        for animal in animal_list:
+            if animal['species'] == 'Herbivore':
+                self.herbivores.append(ani.Herbivore(
+                    age=animal['age'], weight=animal['weight']))
+            if animal['species'] == 'Herbivore':
+                self.carnivores.append(ani.Carnivore(
+                    age=animal['age'], weight=animal['weight']))
 
     # Maybe to be used
     def update_and_sort_animals_by_fitness(self):
@@ -24,6 +33,9 @@ class Cell:
     def feed_herbivores(self):
         for herbivore in self.herbivores:
             self.fodder = herbivore.feed(self.fodder)
+
+    def feed_carnivores(self):
+        raise NotImplementedError
 
     @property
     def num_carnivores(self):
@@ -35,7 +47,10 @@ class Cell:
 
     @property
     def meat_for_carnivores(self):
-        return sum(self.herbivores)
+        meat = 0
+        for herbivore in self.herbivores:
+            meat += herbivore.weight
+        return meat
 
     @property
     def num_animals(self):
@@ -94,12 +109,44 @@ class Map:
                   'J': Jungle}
 
     def __init__(self, multiple_line_string):
-        self.map = self.make_map(multiple_line_string)
+        lines = self.clean_multi_line_string(multiple_line_string)
+        print(lines)
+        self.map = self.make_map(lines)
+
+    @staticmethod
+    def clean_multi_line_string(multi_line_string):
+        lines = multi_line_string.split('\n')
+        return lines
 
     def make_map(self, multiple_line_string):
-        raise NotImplementedError
+        island_map = {}
+
+        for y, line in enumerate(multiple_line_string):
+            for x, letter in enumerate(line):
+                island_map[(y, x)] = self.map_params[letter.upper()]()
+        return island_map
 
 
 if __name__ == '__main__':
     savanna = Savanna()
     savanna.set_parameters({'f_max': 100, 'alpha': 1})
+
+    geogr = """\
+               OOOOOOOOOOOOOOOOOOOOO
+               OOOOOOOOSMMMMJJJJJJJO
+               OSSSSSJJJJMMJJJJJJJOO
+               OSSSSSSSSSMMJJJJJJOOO
+               OSSSSSJJJJJJJJJJJJOOO
+               OSSSSSJJJDDJJJSJJJOOO
+               OSSJJJJJDDDJJJSSSSOOO
+               OOSSSSJJJDDJJJSOOOOOO
+               OSSSJJJJJDDJJJJJJJOOO
+               OSSSSJJJJDDJJJJOOOOOO
+               OOSSSSJJJJJJJJOOOOOOO
+               OOOSSSSJJJJJJJOOOOOOO
+               OOOOOOOOOOOOOOOOOOOOO"""
+
+    geogr = textwrap.dedent(geogr)
+
+    island = Map(geogr)
+    pprint(island.map)
