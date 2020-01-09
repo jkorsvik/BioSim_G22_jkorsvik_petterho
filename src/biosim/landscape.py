@@ -22,7 +22,7 @@ class Cell:
             if animal['species'] == 'Herbivore':
                 self.herbivores.append(ani.Herbivore(
                     age=animal['age'], weight=animal['weight']))
-            if animal['species'] == 'Herbivore':
+            if animal['species'] == 'Carnivore':
                 self.carnivores.append(ani.Carnivore(
                     age=animal['age'], weight=animal['weight']))
 
