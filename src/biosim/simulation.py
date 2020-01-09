@@ -168,7 +168,7 @@ class BioSim:
 
     def age_animals(self):
         for cell in self.island_map.values():
-            cell.age()
+            cell.age_pop()
 
     def lose_weight(self):
         for cell in self.island_map.values():
@@ -181,10 +181,11 @@ class BioSim:
     def simulate_one_year(self):
         self.feed()
         self.procreate()
-        self.migrate()
+        # self.migrate()
         self.age_animals()
         self.lose_weight()
         self.die()
+        self._year += 1
 
 if __name__ == '__main__':
     geogr = """\
@@ -204,4 +205,8 @@ if __name__ == '__main__':
     ]
 
     sim = BioSim(geogr, ini_herbs, 1)
-    sim.simulate_one_year()
+    for _ in range(50):
+        sim.simulate_one_year()
+        print(sim.year)
+        print(sim.num_animals)
+
