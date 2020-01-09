@@ -219,6 +219,8 @@ class Carnivore(Animal):
                     self.feed(herbivore, eaten)
                     del list_herbivores_least_fit[ind]
 
+        return list_herbivores_least_fit
+
 
 
 if __name__ == '__main__':
