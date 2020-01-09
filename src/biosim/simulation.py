@@ -97,8 +97,11 @@ class BioSim:
 
         :param population: List of dictionaries specifying population
         """
-        # map_location is a dictionary with loc 
+        # map_location is a dictionary with loc
         for map_location in population:
+            loc = map_location['loc']
+            pop = map_location['pop']
+            self.island_map[loc].add_animals(pop)
 
 
     @property
