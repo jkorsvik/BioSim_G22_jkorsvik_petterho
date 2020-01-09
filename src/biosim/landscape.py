@@ -10,10 +10,6 @@ import textwrap
 from pprint import pprint
 
 
-def sort_by_fitness(animal_list):
-    return animal_list.sort(key=lambda var: var.fitness)
-
-
 class Cell:
     def __init__(self):
         self.herbivores = []
