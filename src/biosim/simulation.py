@@ -7,6 +7,7 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 from src.biosim.landscape import *
+import textwrap
 from src.biosim.animals import *
 
 
@@ -54,7 +55,7 @@ class BioSim:
         where img_no are consecutive image numbers starting from 0.
         img_base should contain a path and beginning of a file name.
         """
-        self.year = 0
+        self._year = 0
 
         self.island_map = self.make_map(island_map)
         self.add_population(ini_pop)
@@ -112,7 +113,7 @@ class BioSim:
     @property
     def year(self):
         """Last year simulated."""
-        return self.year
+        return self._year
 
     @property
     def num_animals(self):
@@ -167,7 +168,7 @@ class BioSim:
 
     def age_animals(self):
         for cell in self.island_map.values():
-            cell.age()
+            cell.age_pop()
 
     def lose_weight(self):
         for cell in self.island_map.values():
@@ -180,7 +181,32 @@ class BioSim:
     def simulate_one_year(self):
         self.feed()
         self.procreate()
-        self.migrate()
+        # self.migrate()
         self.age_animals()
         self.lose_weight()
         self.die()
+        self._year += 1
+
+if __name__ == '__main__':
+    geogr = """\
+            OOO
+            OJO
+            OOO"""
+    geogr = textwrap.dedent(geogr)
+
+    ini_herbs = [
+        {
+            "loc": (1, 1),
+            "pop": [
+                {"species": "Herbivore", "age": 5, "weight": 20}
+                for _ in range(50)
+            ],
+        }
+    ]
+
+    sim = BioSim(geogr, ini_herbs, 1)
+    for _ in range(50):
+        sim.simulate_one_year()
+        print(sim.year)
+        print(sim.num_animals)
+

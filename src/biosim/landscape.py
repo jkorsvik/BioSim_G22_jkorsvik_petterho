@@ -10,10 +10,6 @@ import textwrap
 from pprint import pprint
 
 
-def sort_by_fitness(animal_list):
-    return animal_list.sort(key=lambda var: var.fitness)
-
-
 class Cell:
     def __init__(self):
         self.herbivores = []
@@ -31,26 +27,49 @@ class Cell:
                     age=animal['age'], weight=animal['weight']))
 
     def procreate(self):
-        pass
+        for herbivore in self.herbivores:
+            herbivore.birth(self.num_herbivores)
+        for carnivore in self.carnivores:
+            carnivore.birth(self.num_carnivores)
+
+    def lose_weight(self):
+        for herbivore in self.herbivores:
+            herbivore.lose_weight()
+        for carnivore in self.carnivores:
+            carnivore.lose_weight()
 
     @staticmethod
     def sort_by_fitness(animal_list):
-        return animal_list.sort(key=lambda var: var.fitness)
+        sorted_list = sorted(animal_list, key=lambda var: var.fitness)
+        return sorted_list
 
     def feed_all(self):
         self.feed_herbivores()
         self.feed_carnivores()
 
     def feed_herbivores(self):
-        self.herbivores = sort_by_fitness(self.herbivores)
+        self.herbivores = self.sort_by_fitness(self.herbivores)
         for herbivore in reversed(self.herbivores):
             self.fodder = herbivore.feed(self.fodder)
 
     def feed_carnivores(self):
-        self.herbivores = sort_by_fitness(self.herbivores)
-        self.carnivores = sort_by_fitness(self.carnivores)
+        self.herbivores = self.sort_by_fitness(self.herbivores)
+        self.carnivores = self.sort_by_fitness(self.carnivores)
         for carnivore in reversed(self.carnivores):
             self.herbivores = carnivore.feed(self.herbivores)
+
+    def age_pop(self):
+        for herbivore in self.herbivores:
+            herbivore.age += 1
+        for carnivore in self.carnivores:
+            carnivore.age += 1
+
+    def die(self):
+        raise NotImplementedError
+        for herbivore in self.herbivores:
+            herbivore.death()
+        for carnivore in self.carnivores:
+            carnivore.death()
 
     @property
     def num_carnivores(self):
