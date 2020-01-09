@@ -6,8 +6,15 @@
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
+from src.biosim.landscape import *
+from src.biosim.animals import *
 
 class BioSim:
+    map_params = {'O': Ocean,
+                  'M': Mountain,
+                  'D': Desert,
+                  'S': Savanna,
+                  'J': Jungle}
     def __init__(
         self,
         island_map,
@@ -45,6 +52,16 @@ class BioSim:
         where img_no are consecutive image numbers starting from 0.
         img_base should contain a path and beginning of a file name.
         """
+        self.island_map = self.make_map(island_map)
+
+
+    def make_map(self, island_map_string):
+        island_map = {}
+        lines = island_map_string.split('\n')
+        for y, line in enumerate(lines):
+            for x, letter in enumerate(line):
+                island_map[(y, x)] = self.map_params[letter.upper()]()
+        return island_map
 
     def set_animal_parameters(self, species, params):
         """
@@ -80,6 +97,9 @@ class BioSim:
 
         :param population: List of dictionaries specifying population
         """
+        # map_location is a dictionary with loc 
+        for map_location in population:
+
 
     @property
     def year(self):
