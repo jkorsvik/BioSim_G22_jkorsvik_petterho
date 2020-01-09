@@ -55,6 +55,9 @@ class Animal:
             if normal < 0:
                 self.weight = 0  # newborns with <= 0 will die end of year
 
+    def __lt__(self, other):
+        return self.fitness < other.fitness
+    
     def reset_has_moved(self):
         self._has_moved = False
 
