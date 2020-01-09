@@ -6,8 +6,17 @@
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
+from src.biosim.landscape import *
+from src.biosim.animals import *
+
 
 class BioSim:
+    map_params = {'O': Ocean,
+                  'M': Mountain,
+                  'D': Desert,
+                  'S': Savanna,
+                  'J': Jungle}
+
     def __init__(
         self,
         island_map,
@@ -45,6 +54,18 @@ class BioSim:
         where img_no are consecutive image numbers starting from 0.
         img_base should contain a path and beginning of a file name.
         """
+        self.year = 0
+
+        self.island_map = self.make_map(island_map)
+        self.add_population(ini_pop)
+
+    def make_map(self, island_map_string):
+        island_map = {}
+        lines = island_map_string.split('\n')
+        for y, line in enumerate(lines):
+            for x, letter in enumerate(line):
+                island_map[(y, x)] = self.map_params[letter.upper()]()
+        return island_map
 
     def set_animal_parameters(self, species, params):
         """
@@ -53,6 +74,7 @@ class BioSim:
         :param species: String, name of animal species
         :param params: Dict with valid parameter specification for species
         """
+        globals()[species].set_parameters(params)
 
     def set_landscape_parameters(self, landscape, params):
         """
@@ -61,6 +83,7 @@ class BioSim:
         :param landscape: String, code letter for landscape
         :param params: Dict with valid parameter specification for landscape
         """
+        globals()[landscape].set_parameters(params)
 
     def simulate(self, num_years, vis_years=1, img_years=None):
         """
@@ -80,50 +103,84 @@ class BioSim:
 
         :param population: List of dictionaries specifying population
         """
+        # map_location is a dictionary with loc
+        for map_location in population:
+            loc = map_location['loc']
+            pop = map_location['pop']
+            self.island_map[loc].add_animals(pop)
 
     @property
     def year(self):
         """Last year simulated."""
+        return self.year
 
     @property
     def num_animals(self):
         """Total number of animals on island."""
+        num_animals = 0
+        for num_type in self.num_animals_per_species.values():
+            num_animals += num_type
+        return num_animals
 
     @property
     def num_animals_per_species(self):
         """Number of animals per species in island, as dictionary."""
+        num_animals_per_species = {}
+        num_herbivores = 0
+        num_carnivores = 0
+
+        for cell in self.island_map.values():
+            num_herbivores += cell.num_herbivores
+            num_carnivores += cell.num_carnivores
+
+        num_animals_per_species['Herbivores'] = num_herbivores
+        num_animals_per_species['Carnivores'] = num_carnivores
+
+        return num_animals_per_species
 
     @property
     def animal_distribution(self):
         """Pandas DataFrame with animal count per species for each cell
         on island."""
+        raise NotImplementedError
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
+        raise NotImplementedError
 
     # The way i think it would be smart to do the work behind the simulation.
     # These are not obligatory, but the way i think it would be smart to do
     # the task.
     # - Petter
 
-
     def feed(self):
-        raise NotImplementedError
+        for cell in self.island_map.values():
+            cell.feed_all()
 
-    def feed_herbivores(self):
-        raise NotImplementedError
+    def procreate(self):
+        for cell in self.island_map.values():
+            cell.procreate()
 
-    def feed_carnivores(self):
-        raise NotImplementedError
+    def migrate(self):
+        for cell in self.island_map.values():
+            cell.migrate()
 
-    def procreation(self):
-        raise NotImplementedError
+    def age_animals(self):
+        for cell in self.island_map.values():
+            cell.age()
 
-    def migration(self):
-        raise NotImplementedError
+    def lose_weight(self):
+        for cell in self.island_map.values():
+            cell.lose_weight()
 
-    def aging(self):
-        raise NotImplementedError
+    def die(self):
+        for cell in self.island_map.values():
+            cell.die()
 
     def simulate_one_year(self):
-        raise NotImplementedError
+        self.feed()
+        self.procreate()
+        self.migrate()
+        self.age_animals()
+        self.lose_weight()
+        self.die()
