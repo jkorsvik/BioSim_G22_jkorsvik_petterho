@@ -31,7 +31,16 @@ class Cell:
                     age=animal['age'], weight=animal['weight']))
 
     def procreate(self):
-        pass
+        for herbivore in self.herbivores:
+            herbivore.birth(self.num_herbivores)
+        for carnivore in self.carnivores:
+            carnivore.birth(self.num_carnivores)
+
+    def loose_weight(self):
+        for herbivore in self.herbivores:
+            herbivore.loose_weight()
+        for carnivore in self.carnivores:
+            carnivore.loose_weight()
 
     @staticmethod
     def sort_by_fitness(animal_list):
@@ -58,6 +67,12 @@ class Cell:
             herbivore.age += 1
         for carnivore in self.carnivores:
             carnivore.age += 1
+
+    def die(self):
+        for herbivore in self.herbivores:
+            herbivore.death()
+        for carnivore in self.carnivores:
+            carnivore.death()
 
     @property
     def num_carnivores(self):
