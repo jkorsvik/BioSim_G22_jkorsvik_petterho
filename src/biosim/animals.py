@@ -221,6 +221,8 @@ class Carnivore(Animal):
 
         return list_herbivores_least_fit
 
+    # lage indekserings liste, reversere å slette dyrene som ble spist
+
 
 
 if __name__ == '__main__':
