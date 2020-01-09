@@ -55,9 +55,13 @@ class Animal:
             if normal < 0:
                 self.weight = 0  # newborns with <= 0 will die end of year
 
+    def reset_has_moved(self):
+        self._has_moved = False
+
     def migrate(self, list_for_moving):
         # Liste som skal inn er Fodder og dyr av samme type, med lokasjon
         prob_to_move = self.fitness*self.mu
+        self._has_moved = True
         if bool(np.random.binomial(1, prob_to_move)):
             list_for_moving = []
             cumulative_sum = np.cumsum(probability_for_moving(list_for_moving))
@@ -65,16 +69,14 @@ class Animal:
             while not np.random.binomial(1, cumulative_sum[index]):
                 index += 1
             return index
-        #return Boool, new_location
+        # return Bool, new_location
         pass
 
-    def reset_has_moved(self):
-        self._has_moved = False
-
-    def birth(self, num_of_species):
+    def birth(self, num_same_species):
         # Have to find out how we are going to do it with more partners
         # I think it will be easier to check number of partners in landscape
-        prob_to_birth = np.min(1, self.gamma * self.fitness)
+        mates = num_same_species - 1
+        prob_to_birth = (np.min(1, self.gamma * self.fitness)) * mates
         if self._weight < self.zeta*(self.w_birth + self.phi_weight):
             prob_to_birth = 0
 
