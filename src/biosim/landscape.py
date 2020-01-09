@@ -27,11 +27,15 @@ class Cell:
                     age=animal['age'], weight=animal['weight']))
 
     def procreate(self):
-        for animal.
+        pass
 
     @staticmethod
     def sort_by_fitness(list_of_animals):
         return list_of_animals.sorted(key=lambda var: var.fitness)
+
+    def feed_all(self):
+        self.feed_herbivores()
+        self.feed_carnivores()
 
     def feed_herbivores(self):
         self.herbivores = self.sort_by_fitness(self.herbivores)
