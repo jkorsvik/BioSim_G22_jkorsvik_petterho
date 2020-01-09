@@ -35,22 +35,29 @@ class Cell:
 
     @staticmethod
     def sort_by_fitness(animal_list):
-        return animal_list.sort(key=lambda var: var.fitness)
+        sorted_list = sorted(animal_list, key=lambda var: var.fitness)
+        return sorted_list
 
     def feed_all(self):
         self.feed_herbivores()
         self.feed_carnivores()
 
     def feed_herbivores(self):
-        self.herbivores = sort_by_fitness(self.herbivores)
+        self.herbivores = self.sort_by_fitness(self.herbivores)
         for herbivore in reversed(self.herbivores):
             self.fodder = herbivore.feed(self.fodder)
 
     def feed_carnivores(self):
-        self.herbivores = sort_by_fitness(self.herbivores)
-        self.carnivores = sort_by_fitness(self.carnivores)
+        self.herbivores = self.sort_by_fitness(self.herbivores)
+        self.carnivores = self.sort_by_fitness(self.carnivores)
         for carnivore in reversed(self.carnivores):
             self.herbivores = carnivore.feed(self.herbivores)
+
+    def age_pop(self):
+        for herbivore in self.herbivores:
+            herbivore.age += 1
+        for carnivore in self.carnivores:
+            carnivore.age += 1
 
     @property
     def num_carnivores(self):
