@@ -91,7 +91,7 @@ class Animal:
                 self.weight -= weight_loss
                 return offspring
 
-    def loose_weight(self):
+    def lose_weight(self):
         self.weight -= self.eta*self.weight
 
     def death(self):

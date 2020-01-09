@@ -205,5 +205,8 @@ if __name__ == '__main__':
     ]
 
     sim = BioSim(geogr, ini_herbs, 1)
-    sim.simulate_one_year()
-    print(sim.year)
+    for _ in range(50):
+        sim.simulate_one_year()
+        print(sim.year)
+        print(sim.num_animals)
+

@@ -36,11 +36,11 @@ class Cell:
         for carnivore in self.carnivores:
             carnivore.birth(self.num_carnivores)
 
-    def loose_weight(self):
+    def lose_weight(self):
         for herbivore in self.herbivores:
-            herbivore.loose_weight()
+            herbivore.lose_weight()
         for carnivore in self.carnivores:
-            carnivore.loose_weight()
+            carnivore.lose_weight()
 
     @staticmethod
     def sort_by_fitness(animal_list):
@@ -69,6 +69,7 @@ class Cell:
             carnivore.age += 1
 
     def die(self):
+        raise NotImplementedError
         for herbivore in self.herbivores:
             herbivore.death()
         for carnivore in self.carnivores:
