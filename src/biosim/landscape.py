@@ -26,16 +26,23 @@ class Cell:
                 self.carnivores.append(ani.Carnivore(
                     age=animal['age'], weight=animal['weight']))
 
-    # Maybe to be used
-    def update_and_sort_animals_by_fitness(self):
-        raise NotImplementedError
+    def procreate(self):
+        for animal.
+
+    @staticmethod
+    def sort_by_fitness(list_of_animals):
+        return list_of_animals.sorted(key=lambda var: var.fitness)
 
     def feed_herbivores(self):
-        for herbivore in self.herbivores:
-            self.fodder = herbivore.feed(self.fodder)
+        self.herbivores = self.sort_by_fitness(self.herbivores)
+        for herbivore in reversed(self.herbivores):
+            herbivore.feed(self.fodder)
 
     def feed_carnivores(self):
-        raise NotImplementedError
+        self.herbivores = self.sort_by_fitness(self.herbivores)
+        self.carnivores = self.sort_by_fitness(self.carnivores)
+        for carnivore in reversed(self.carnivores):
+            carnivore.feed(self.herbivores)
 
     @property
     def num_carnivores(self):
