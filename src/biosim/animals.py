@@ -167,7 +167,7 @@ class Herbivore(Animal):
     F = 10.0
 
     def __init__(self, age=0, weight=None):
-        super().__init__(self, age, weight)
+        super().__init__(age, weight)
 
 
 class Carnivore(Animal):
@@ -189,7 +189,7 @@ class Carnivore(Animal):
     DeltaPhiMax = 10.0
 
     def __init__(self, age=0, weight=None):
-        super().__init__(self, age, weight)
+        super().__init__(age, weight)
 
     def kill_or_not(self, herbivore):
         probability_to_kill = ((self.fitness - herbivore.fitness) /
@@ -221,3 +221,10 @@ class Carnivore(Animal):
 
 
 
+if __name__ == '__main__':
+    
+    test_animal = Animal()
+    test_herb = Herbivore()
+    test_carn = Carnivore()
+
+    print(test_animal, test_herb, test_carn)
