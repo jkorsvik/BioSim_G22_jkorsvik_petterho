@@ -70,10 +70,19 @@ class TestCell:
         assert jungle.num_animals == len(animal_list)
 
     def test_sort_by_fitness(self, animal_list):
+        list_tuple = []
+        for x in range(10):
+            for y in range(5, 20):
+                list_tuple.append((x, y))
         jungle = ls.Jungle()
-        jungle.add_animals(animal_list)
-        jungle.sort_by_fitness(jungle.herbivores)
-        assert jungle.herbivores[0].age == 9
+        for x, y in list_tuple:
+            jungle.herbivores.append(ani.Herbivore(x, y))
+        jungle.herbivores = jungle.sort_by_fitness(jungle.herbivores)
+        x = 0
+        for herbivore in jungle.herbivores:
+            print(herbivore.fitness)
+            assert x < herbivore.fitness
+            x = herbivore.fitness
 
 
 class TestOcean:
@@ -121,22 +130,27 @@ class TestJungle:
 
     def test_feed_herbivore(self, animal_list):
         test_jungle = ls.Jungle()
-        test_jungle.add_animals(animal_list)
-        test_jungle.fodder = 15
+        test_jungle.herbivores.append(ani.Herbivore(5, 40))
+        test_jungle.herbivores.append(ani.Herbivore(50, 4))
         test_jungle.herbivores = (
             test_jungle.sort_by_fitness(test_jungle.herbivores)
         )
-        a_weight = test_jungle.herbivores[1].weight
-        b_weight = test_jungle.herbivores[0].weight
+        test_jungle.fodder = 15
+        a_weight = test_jungle.herbivores[0].weight
+        b_weight = test_jungle.herbivores[1].weight
         #  herbivore F is 10 and beta is 0.9
-        #  a will eat 10 and gain 10*0.9 weight
-        #  b will eat 5 and gain 5*0.9 weight
-        test_jungle.feed_herbivores()
-        assert test_jungle.fodder == 0
+        #  b will eat 10 and gain 10*0.9 weight
+        #  a will eat 5 and gain 5*0.9 weight
         a, b = test_jungle.herbivores
+        print(a_weight)
+        print(b_weight)
+        test_jungle.feed_herbivores()
+        print(a.weight)
+        print(b.weight)
+        assert test_jungle.fodder == 0
         #  b will be last because its fitness will be higher
-        assert b.weight == a_weight + 10 * 0.9
-        assert a.weight == b_weight + 5 * 0.9
+        assert b.weight == b_weight + 10 * 0.9
+        assert a.weight == a_weight + 5 * 0.9
 
 
 class TestMoreThanOneCell:
