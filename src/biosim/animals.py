@@ -79,7 +79,7 @@ class Animal:
         # Have to find out how we are going to do it with more partners
         # I think it will be easier to check number of partners in landscape
         mates = num_same_species - 1
-        prob_to_birth = (np.min(1, self.gamma * self.fitness)) * mates
+        prob_to_birth = (np.minimum(1, self.gamma * self.fitness * mates))
         if self._weight < self.zeta*(self.w_birth + self.phi_weight):
             prob_to_birth = 0
 
@@ -90,6 +90,9 @@ class Animal:
             if self.weight >= weight_loss:
                 self.weight -= weight_loss
                 return offspring
+
+    def lose_weight(self):
+        self.weight -= self.eta*self.weight
 
     def death(self):
         prob_to_die = self.omega*(1-self.fitness)
