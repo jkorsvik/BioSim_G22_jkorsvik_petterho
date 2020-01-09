@@ -20,7 +20,7 @@ def parameters():
 
 
 @pytest.fixture
-def animals_list():
+def animal_list():
     return [
         {'species': 'Herbivore', 'age': 10, 'weight': 12.5},
         {'species': 'Herbivore', 'age': 9, 'weight': 10.3},
@@ -62,15 +62,12 @@ class TestCell:
         assert savanna.f_max == parameters['f_max']
         assert savanna.alpha == parameters['alpha']
 
-    def test_meat_for_carnivores(self):
-        assert False
-
-    def test_add_animals(self, animals_list):
+    def test_add_animals(self, animal_list):
         jungle = ls.Jungle()
-        jungle.add_animals(animals_list)
+        jungle.add_animals(animal_list)
         assert jungle.num_herbivores == 2
         assert jungle.num_carnivores == 1
-        assert jungle.num_animals == len(animals_list)
+        assert jungle.num_animals == len(animal_list)
 
 
 class TestOcean:
@@ -115,6 +112,22 @@ class TestJungle:
         jungle.fodder = 0
         jungle.grow()
         assert jungle.fodder == ls.Jungle.f_max
+
+    def test_feed_herbivore(self):
+        test_jungle = ls.Jungle()
+        test_jungle.add_animals(animal_list)
+        test_jungle.fodder = 15
+        test_jungle.herbivores = test_jungle.sort_by_fitness()
+        a_weight = test_jungle.herbivores.weight[1]
+        b_weight = test_jungle.herbivores.weight[0]
+        # herbivore F is 10 and beta is 0.9
+        #a will eat 10 and gain 10*0.9 weight
+        #b will eat 5 and gain 5*0.9 weight
+        test_jungle.feed_herbivores()
+        assert test_jungle.fodder == 0
+        a, b = test_jungle.herbivores
+        assert a.weight == a_weight + 10 * 0.9
+        assert b.weight == b_weight + 5 * 0.9
 
 
 class TestMoreThanOneCell:
