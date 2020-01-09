@@ -120,7 +120,7 @@ class TestJungle:
         assert jungle.fodder == ls.Jungle.f_max
 
     def test_feed_herbivore(self, animal_list):
-        test_jungle = ls
+        test_jungle = ls.Jungle()
         test_jungle.add_animals(animal_list)
         test_jungle.fodder = 15
         test_jungle.herbivores = (
@@ -128,14 +128,15 @@ class TestJungle:
         )
         a_weight = test_jungle.herbivores[1].weight
         b_weight = test_jungle.herbivores[0].weight
-        # herbivore F is 10 and beta is 0.9
-        #a will eat 10 and gain 10*0.9 weight
-        #b will eat 5 and gain 5*0.9 weight
+        #  herbivore F is 10 and beta is 0.9
+        #  a will eat 10 and gain 10*0.9 weight
+        #  b will eat 5 and gain 5*0.9 weight
         test_jungle.feed_herbivores()
-        #assert test_jungle.fodder == 0
+        assert test_jungle.fodder == 0
         a, b = test_jungle.herbivores
-        assert a.weight == a_weight + 10 * 0.9
-        assert b.weight == b_weight + 5 * 0.9
+        #  b will be last because its fitness will be higher
+        assert b.weight == a_weight + 10 * 0.9
+        assert a.weight == b_weight + 5 * 0.9
 
 
 class TestMoreThanOneCell:
