@@ -83,30 +83,28 @@ class Animal:
         pass
 
     def birth(self, num_same_species):
-        # Have to find out how we are going to do it with more partners
-        # I think it will be easier to check number of partners in landscape
         mates = num_same_species - 1
-        prob_to_birth = (np.minimum(1, self.gamma * self.fitness * mates))
-        if self._weight < self.zeta*(self.w_birth + self.phi_weight):
-            prob_to_birth = 0
+        prob_to_birth = np.minimum(1, ((self.gamma * self.fitness)*mates))
+        if self.weight < self.zeta*(self.w_birth + self.phi_weight):
+            return 0
 
         if np.random.binomial(1, prob_to_birth):
             offspring = type(self)()
-            weight_loss = self.xi*offspring.weight
+            weight_loss = self.xi * offspring.weight
 
             if self.weight >= weight_loss:
                 self.weight -= weight_loss
                 return offspring
 
-        return False
+        return 0
 
     def lose_weight(self):
         self.weight -= self.eta*self.weight
 
     def death(self):
         prob_to_die = self.omega*(1-self.fitness)
-        dies = bool(np.random.binomial(1, prob_to_die))
-        return dies or self.fitness <= 0
+        dies = np.random.binomial(1, prob_to_die)
+        return bool(dies) or self.fitness <= 0
 
     def feed(self, available_food):  # Will be overwritten by the subclasses
         if self.F <= available_food:
@@ -165,7 +163,7 @@ class Herbivore(Animal):
     w_birth = 8.0
     sigma_birth = 1.5
     beta = 0.9
-    eta = 0.05
+    eta = 0.01  # sjekker med lavere eta
     a_half = 40
     phi_age = 0.2
     w_half = 10
@@ -221,7 +219,7 @@ class Carnivore(Animal):
             if eaten >= self.F:
                 break
             if self.DeltaPhiMax < self.fitness - herbivore.fitness:
-                self.feed(herbivore, eaten)
+                self.feed(herbivore.weight, eaten)
                 eaten += herbivore.weight
                 deletion_list_ind.append(ind)
 
@@ -229,7 +227,7 @@ class Carnivore(Animal):
                 continue
             else:
                 if self.kill_or_not(herbivore):
-                    self.feed(herbivore, eaten)
+                    self.feed(herbivore.weight, eaten)
                     deletion_list_ind.append(ind)
 
         for ind in reversed(deletion_list_ind):
