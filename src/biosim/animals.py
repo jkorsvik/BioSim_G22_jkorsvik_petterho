@@ -14,9 +14,6 @@ def sigmoid(value):
     return 1/(1 + np.exp(value))
 
 
-def propensity(fodder, same_species, F):
-    return np.exp(fodder / (same_species + 1) * F)
-
 """"
 def probability_for_moving(list_for_moving):
     sum_propensity = 0
@@ -43,6 +40,19 @@ class Animal:
     xi = 1.2
     omega = 0.4
     F = 10.0
+
+    @classmethod
+    def set_parameters(cls, parameters):
+        for key, value in parameters.items():
+            if key in cls.__dict__.keys():
+                if value < 0:
+                    raise ValueError('Parameters must be positive.')
+                else:
+                    setattr(cls, key, value)
+
+            else:
+                raise NameError('One the keys in your parameters is not an '
+                                'attribute.')
 
     def __init__(self, age=0, weight=None):
         self._age = age
@@ -127,12 +137,12 @@ class Animal:
             if self.weight <= 0:
                 return 0
 
-            positive_q_age = self.phi_age * (self.age - self.a_half)
-            negative_q_weight = - (self.phi_weight * (self.weight - self.w_half))
+            pos_q_age = self.phi_age * (self.age - self.a_half)
+            neg_q_weight = - (self.phi_weight * (self.weight - self.w_half))
 
             self._compute_fitness = False
-            self._fitness = (sigmoid(positive_q_age)
-                             * sigmoid(negative_q_weight)
+            self._fitness = (sigmoid(pos_q_age)
+                             * sigmoid(neg_q_weight)
                              )
             return self._fitness
 
@@ -156,19 +166,11 @@ class Animal:
         self._compute_fitness = True
         self._weight = new_weight
 
-    @classmethod
-    def set_parameters(cls, parameters):
-        for key, value in parameters.items():
-            if key in cls.__dict__.keys():
-                if value < 0:
-                    raise ValueError('Parameters must be positive.')
-                else:
-                    setattr(cls, key, value)
-
-            else:
-                raise NameError('One the keys in your parameters is not an '
-                                'attribute.')
-
+    @property
+    def has_moved(self):
+        moved = self._has_moved
+        self._has_moved = True
+        return moved
 
 class Herbivore(Animal):
     w_birth = 8.0
