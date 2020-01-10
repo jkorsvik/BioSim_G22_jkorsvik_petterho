@@ -153,7 +153,11 @@ class Animal:
     def set_parameters(cls, parameters):
         for key, value in parameters.items():
             if key in cls.__dict__.keys():
-                setattr(cls, key, value)
+                if value < 0:
+                    raise ValueError('Parameters must be positive.')
+                else:
+                    setattr(cls, key, value)
+
             else:
                 raise NameError('One the keys in your parameters is not an '
                                 'attribute.')
@@ -206,20 +210,20 @@ class Carnivore(Animal):
                                self.DeltaPhiMax)
         return bool(np.random.binomial(1, probability_to_kill))
 
-    def feed(self, meat, eaten):
+    def eat(self, meat, eaten):
         if meat + eaten < self.F:
             self.weight += self.beta * meat
         else:
             self.weight += self.beta*(self.F - eaten)
 
-    def prey(self, list_herbivores_least_fit):
+    def feed(self, list_herbivores_least_fit):
         eaten = 0
         deletion_list_ind = []
         for ind, herbivore in enumerate(list_herbivores_least_fit):
             if eaten >= self.F:
                 break
             if self.DeltaPhiMax < self.fitness - herbivore.fitness:
-                self.feed(herbivore.weight, eaten)
+                self.eat(herbivore.weight, eaten)
                 eaten += herbivore.weight
                 deletion_list_ind.append(ind)
 
@@ -227,7 +231,7 @@ class Carnivore(Animal):
                 continue
             else:
                 if self.kill_or_not(herbivore):
-                    self.feed(herbivore.weight, eaten)
+                    self.eat(herbivore.weight, eaten)
                     deletion_list_ind.append(ind)
 
         for ind in reversed(deletion_list_ind):

@@ -8,7 +8,17 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 from src.biosim.animals import Animal, Carnivore, Herbivore
+import pytest
 from pprint import pprint
+
+
+@pytest.fixture
+def carnivore_parameters_right():
+    return {'eta': 0.03, 'phi_age': 0.3, 'DeltaPhiMax': 8.0}
+
+@pytest.fixture
+def carnivore_parameters_wrong():
+    return {'zettet': 7}
 
 
 class TestAnimal:
@@ -87,6 +97,12 @@ class TestAnimal:
         for _ in range(100):
             assert animal_2.death()
 
+    def test_set_param(self, carnivore_parameters_right):
+        animal = Carnivore(30, 10)
+        animal.set_parameters(carnivore_parameters_right)
+        assert animal.eta == 0.03
+        assert animal.phi_age == 0.3
+
 
 class TestHerbivore:
     def _init__herb(self):
@@ -119,4 +135,4 @@ class TestCarnivore:
         assert 0 <= test_herbivore.fitness <= 1
 
     def test_feed(self):
-        assert False
+
