@@ -155,29 +155,6 @@ class Jungle(Cell):
         self.fodder = self.f_max
 
 
-class Map:
-    map_params = {'O': Ocean, 'M': Mountain, 'D': Desert, 'S': Savanna,
-                  'J': Jungle}
-
-    def __init__(self, multiple_line_string):
-        lines = self.clean_multi_line_string(multiple_line_string)
-        print(lines)
-        self.map = self.make_map(lines)
-
-    @staticmethod
-    def clean_multi_line_string(multi_line_string):
-        lines = multi_line_string.split('\n')
-        return lines
-
-    def make_map(self, multiple_line_string):
-        island_map = {}
-
-        for y, line in enumerate(multiple_line_string):
-            for x, letter in enumerate(line):
-                island_map[(y, x)] = self.map_params[letter.upper()]()
-        return island_map
-
-
 if __name__ == '__main__':
     savanna = Savanna()
     savanna.set_parameters({'f_max': 100, 'alpha': 1})
