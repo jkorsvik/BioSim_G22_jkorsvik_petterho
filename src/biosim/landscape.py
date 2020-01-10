@@ -65,7 +65,7 @@ class Cell:
         self.herbivores = self.sort_by_fitness(self.herbivores)
         self.carnivores = self.sort_by_fitness(self.carnivores)
         for carnivore in reversed(self.carnivores):
-            self.herbivores = carnivore.prey(self.herbivores)
+            self.herbivores = carnivore.feed(self.herbivores)
 
     def age_pop(self):
         for herbivore in self.herbivores:

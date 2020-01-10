@@ -17,13 +17,14 @@ def sigmoid(value):
 def propensity(fodder, same_species, F):
     return np.exp(fodder / (same_species + 1) * F)
 
-
+""""
 def probability_for_moving(list_for_moving):
     sum_propensity = 0
     for fodder, same_species, F in list_for_moving:
         sum_propensity += propensity(fodder, same_species, F)
     probability = propensity(fodder, same_species, F) / sum_propensity
     return probability
+    """
 
 
 class Animal:
@@ -67,7 +68,7 @@ class Animal:
 
     def reset_has_moved(self):
         self._has_moved = False
-
+    """
     def migrate(self, list_for_moving):
         # Liste som skal inn er Fodder og dyr av samme type, med lokasjon
         prob_to_move = self.fitness*self.mu
@@ -80,11 +81,15 @@ class Animal:
                 index += 1
             return index
         # return Bool, new_location
-        pass
+        pass"""
+
+    def will_migrate(self):
+        prob_to_move = self.fitness * self.mu
+        return bool(np.random.binomial(1, prob_to_move))
 
     def birth(self, num_same_species):
         mates = num_same_species - 1
-        prob_to_birth = np.minimum(1, ((self.gamma * self.fitness)*mates))
+        prob_to_birth = np.minimum(1, (self.gamma * self.fitness * mates))
         if self.weight < self.zeta*(self.w_birth + self.phi_weight):
             return 0
 
@@ -126,7 +131,9 @@ class Animal:
             negative_q_weight = - (self.phi_weight * (self.weight - self.w_half))
 
             self._compute_fitness = False
-            self._fitness = sigmoid(positive_q_age) * sigmoid(negative_q_weight)
+            self._fitness = (sigmoid(positive_q_age)
+                             * sigmoid(negative_q_weight)
+                             )
             return self._fitness
 
         return self._fitness
@@ -153,7 +160,11 @@ class Animal:
     def set_parameters(cls, parameters):
         for key, value in parameters.items():
             if key in cls.__dict__.keys():
-                setattr(cls, key, value)
+                if value < 0:
+                    raise ValueError('Parameters must be positive.')
+                else:
+                    setattr(cls, key, value)
+
             else:
                 raise NameError('One the keys in your parameters is not an '
                                 'attribute.')
@@ -163,7 +174,7 @@ class Herbivore(Animal):
     w_birth = 8.0
     sigma_birth = 1.5
     beta = 0.9
-    eta = 0.01  # sjekker med lavere eta
+    eta = 0.05  # sjekker med lavere eta
     a_half = 40
     phi_age = 0.2
     w_half = 10
@@ -188,7 +199,7 @@ class Carnivore(Animal):
     a_half = 60.0
     phi_age = 0.4
     w_half = 4.0
-    phi_weight = 0
+    phi_weight = 0.4
     mu = 0.4
     lambda_ = 1.0
     gamma = 0.8
@@ -206,20 +217,20 @@ class Carnivore(Animal):
                                self.DeltaPhiMax)
         return bool(np.random.binomial(1, probability_to_kill))
 
-    def feed(self, meat, eaten):
+    def eat(self, meat, eaten):
         if meat + eaten < self.F:
             self.weight += self.beta * meat
         else:
             self.weight += self.beta*(self.F - eaten)
 
-    def prey(self, list_herbivores_least_fit):
+    def feed(self, list_herbivores_least_fit):
         eaten = 0
         deletion_list_ind = []
         for ind, herbivore in enumerate(list_herbivores_least_fit):
             if eaten >= self.F:
                 break
             if self.DeltaPhiMax < self.fitness - herbivore.fitness:
-                self.feed(herbivore.weight, eaten)
+                self.eat(herbivore.weight, eaten)
                 eaten += herbivore.weight
                 deletion_list_ind.append(ind)
 
@@ -227,7 +238,8 @@ class Carnivore(Animal):
                 continue
             else:
                 if self.kill_or_not(herbivore):
-                    self.feed(herbivore.weight, eaten)
+                    self.eat(herbivore.weight, eaten)
+                    eaten += herbivore.weight
                     deletion_list_ind.append(ind)
 
         for ind in reversed(deletion_list_ind):
