@@ -41,6 +41,7 @@ def animal_list():
         {'species': 'Carnivore', 'age': 5, 'weight': 50},
             ]
 
+
 @pytest.fixture
 def carnivore_list():
     return [
@@ -48,6 +49,7 @@ def carnivore_list():
         {'species': 'Carnivore', 'age': 9, 'weight': 10.3},
         {'species': 'Carnivore', 'age': 5, 'weight': 50},
             ]
+
 
 @pytest.fixture
 def jungle_many_animals():
@@ -90,11 +92,9 @@ class TestCell:
         print(jungle_many_animals.num_herbivores, num_herbivores)
         assert jungle_many_animals.num_herbivores < num_herbivores
 
-
-
-    def test_feed_all(self):
+    def test_feed_all(self, jungle_many_animals, carnivore_list):
         self.test_feed_herbivores()
-        self.test_feed_carnivores()
+        self.test_feed_carnivores(jungle_many_animals, carnivore_list)
 
     def test_age_pop(self, jungle_with_animals):
         age_herbivore0 = jungle_with_animals.herbivores[0].age
@@ -104,6 +104,22 @@ class TestCell:
         assert age_herbivore0 < jungle_with_animals.herbivores[0].age
         assert age_herbivore1 < jungle_with_animals.herbivores[1].age
         assert age_carnivore0 < jungle_with_animals.carnivores[0].age
+
+    def test_die(self, jungle_many_animals, carnivore_list):
+        num_animals = jungle_many_animals.num_animals
+        jungle_many_animals.die()
+        assert num_animals > jungle_many_animals.num_animals
+        jungle = ls.Jungle()
+        jungle.add_animals(carnivore_list)
+        carnivore0 = jungle.carnivores[0]
+        carnivore0._fitness = 0
+        carnivore0._compute_fitness = False
+        carnivore1 = jungle.carnivores[1]
+        carnivore1._fitness = 1
+        carnivore0._compute_fitness = False
+        jungle.die()
+        assert carnivore0 not in jungle.carnivores
+        assert carnivore1 in jungle.carnivores
 
     def test_num_carnivore(self):
         cell = ls.Cell()
@@ -118,6 +134,16 @@ class TestCell:
         carnivores = cell.num_carnivores
         herbivores = cell.num_herbivores
         assert cell.num_animals == carnivores + herbivores
+
+    def test_meat_for_carnivores(self):
+        jungle = ls.Jungle()
+        jungle.add_animals([{'species': 'Herbivore',
+                             'age': 10, 'weight': 100}])
+        assert type(jungle.meat_for_carnivores) is float or \
+            type(jungle.meat_for_carnivores) is int
+        assert jungle.meat_for_carnivores == 100
+
+
 
     def test_set_parameters(self, parameters_savanna,
                             default_parameters_savanna):
