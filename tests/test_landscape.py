@@ -13,19 +13,32 @@ import pytest
 
 
 @pytest.fixture
-def parameters():
+def parameters_savanna():
     return {'f_max': 100,
             'alpha': 1
             }
 
 
 @pytest.fixture
+def default_parameters_savanna():
+    return {'f_max': 300,
+            'alpha': 0.3
+            }
+
+
+@pytest.fixture
 def animal_list():
     return [
-        {'species': 'Herbivore', 'age': 10, 'weight': 12.5},
+        {'species': 'Herbivore', 'age': 10, 'weight': 100},
         {'species': 'Herbivore', 'age': 9, 'weight': 10.3},
         {'species': 'Carnivore', 'age': 5, 'weight': 8.1},
             ]
+
+@pytest.fixture
+def jungle_with_animals(animal_list):
+    jungle = ls.Jungle()
+    jungle.add_animals(animal_list)
+    return jungle
 
 
 class TestCell:
@@ -56,11 +69,15 @@ class TestCell:
         herbivores = cell.num_herbivores
         assert cell.num_animals == carnivores + herbivores
 
-    def test_set_parameters(self, parameters):
+    def test_set_parameters(self, parameters_savanna,
+                            default_parameters_savanna):
         savanna = ls.Savanna()
-        savanna.set_parameters(parameters)
-        assert savanna.f_max == parameters['f_max']
-        assert savanna.alpha == parameters['alpha']
+        savanna.set_parameters(parameters_savanna)
+        assert savanna.f_max == parameters_savanna['f_max']
+        assert savanna.alpha == parameters_savanna['alpha']
+        savanna.set_parameters(default_parameters_savanna)
+        assert savanna.f_max == default_parameters_savanna['f_max']
+        assert savanna.alpha == default_parameters_savanna['alpha']
 
     def test_add_animals(self, animal_list):
         jungle = ls.Jungle()
@@ -68,6 +85,34 @@ class TestCell:
         assert jungle.num_herbivores == 2
         assert jungle.num_carnivores == 1
         assert jungle.num_animals == len(animal_list)
+        herbivore0 = jungle.herbivores[0]
+        herbivore1 = jungle.herbivores[1]
+        carnivore0 = jungle.carnivores[0]
+        assert herbivore0.age == animal_list[0]['age']
+        assert herbivore0.weight == animal_list[0]['weight']
+        assert herbivore1.age == animal_list[1]['age']
+        assert herbivore1.weight == animal_list[1]['weight']
+        assert carnivore0.age == animal_list[2]['age']
+        assert carnivore0.weight == animal_list[2]['weight']
+
+    def test_lose_weight(self, jungle_with_animals):
+        herbivore0_weight = jungle_with_animals.herbivores[0].weight
+        herbivore1_weight = jungle_with_animals.herbivores[1].weight
+        carnivore0_weight = jungle_with_animals.carnivores[0].weight
+        jungle_with_animals.lose_weight()
+        assert herbivore0_weight > jungle_with_animals.herbivores[0].weight
+        assert herbivore1_weight > jungle_with_animals.herbivores[1].weight
+        assert carnivore0_weight > jungle_with_animals.carnivores[0].weight
+
+    def test_procreate(self, jungle_with_animals):
+        # Works only with two or more herbivores and one or zero carnivores
+        num_herbivores_start = jungle_with_animals.num_herbivores
+        num_carnivores_start = jungle_with_animals.num_carnivores
+        for _ in range(100):
+            jungle_with_animals.procreate()
+        assert jungle_with_animals.num_herbivores > num_herbivores_start
+        assert jungle_with_animals.num_carnivores == num_carnivores_start
+
 
     def test_sort_by_fitness(self, animal_list):
         list_tuple = []
@@ -80,24 +125,32 @@ class TestCell:
         jungle.herbivores = jungle.sort_by_fitness(jungle.herbivores)
         x = 0
         for herbivore in jungle.herbivores:
-            print(herbivore.fitness)
             assert x < herbivore.fitness
             x = herbivore.fitness
 
 
 class TestOcean:
     def test_init(self):
-        assert False
+        ocean = ls.Ocean()
+        assert type(ocean.herbivores) is list
+        assert type(ocean.carnivores) is list
+        assert ocean.fodder == 0
 
 
 class TestMountain:
     def test_init(self):
-        assert False
+        mountain = ls.Mountain()
+        assert type(mountain.herbivores) is list
+        assert type(mountain.carnivores) is list
+        assert mountain.fodder == 0
 
 
 class TestDesert:
     def test_init(self):
-        assert False
+        desert = ls.Desert()
+        assert type(desert.herbivores) is list
+        assert type(desert.carnivores) is list
+        assert desert.fodder == 0
 
 
 class TestSavanna:
@@ -154,11 +207,13 @@ class TestJungle:
 
 
 class TestMoreThanOneCell:
-    def test_set_parameters_only_changes_one_class(self, parameters):
+    def test_set_parameters_only_changes_one_class(self, parameters_savanna,
+                                                   default_parameters_savanna):
         jungle = ls.Jungle()
         savanna = ls.Savanna()
 
-        savanna.set_parameters(parameters)
-        assert savanna.f_max == parameters['f_max']
-        assert savanna.alpha == parameters['alpha']
+        savanna.set_parameters(parameters_savanna)
+        assert savanna.f_max == parameters_savanna['f_max']
+        assert savanna.alpha == parameters_savanna['alpha']
         assert jungle.f_max == 800
+        savanna.set_parameters(default_parameters_savanna)

@@ -27,16 +27,18 @@ class Cell:
                     age=animal['age'], weight=animal['weight']))
 
     def procreate(self):
-        if self.num_herbivores > 1:
+        number_of_adult_herbivores = self.num_herbivores
+        if number_of_adult_herbivores > 1:
             for herbivore in self.herbivores:
-                offspring = herbivore.birth(self.num_herbivores)
+                offspring = herbivore.birth(number_of_adult_herbivores)
                 if not offspring:
                     continue
                 self.herbivores.append(offspring)
 
-        if self.num_carnivores > 1:
+        number_of_adult_carnivores = self.num_carnivores
+        if number_of_adult_carnivores > 1:
             for carnivore in self.carnivores:
-                offspring = carnivore.birth(self.num_carnivores)
+                offspring = carnivore.birth(number_of_adult_carnivores)
                 if not offspring:
                     continue
                 self.carnivores.append(offspring)
@@ -158,49 +160,5 @@ class Jungle(Cell):
         self.fodder = self.f_max
 
 
-class Map:
-    map_params = {'O': Ocean, 'M': Mountain, 'D': Desert, 'S': Savanna,
-                  'J': Jungle}
-
-    def __init__(self, multiple_line_string):
-        lines = self.clean_multi_line_string(multiple_line_string)
-        print(lines)
-        self.map = self.make_map(lines)
-
-    @staticmethod
-    def clean_multi_line_string(multi_line_string):
-        lines = multi_line_string.split('\n')
-        return lines
-
-    def make_map(self, multiple_line_string):
-        island_map = {}
-
-        for y, line in enumerate(multiple_line_string):
-            for x, letter in enumerate(line):
-                island_map[(y, x)] = self.map_params[letter.upper()]()
-        return island_map
-
-
 if __name__ == '__main__':
-    savanna = Savanna()
-    savanna.set_parameters({'f_max': 100, 'alpha': 1})
-
-    geogr = """\
-               OOOOOOOOOOOOOOOOOOOOO
-               OOOOOOOOSMMMMJJJJJJJO
-               OSSSSSJJJJMMJJJJJJJOO
-               OSSSSSSSSSMMJJJJJJOOO
-               OSSSSSJJJJJJJJJJJJOOO
-               OSSSSSJJJDDJJJSJJJOOO
-               OSSJJJJJDDDJJJSSSSOOO
-               OOSSSSJJJDDJJJSOOOOOO
-               OSSSJJJJJDDJJJJJJJOOO
-               OSSSSJJJJDDJJJJOOOOOO
-               OOSSSSJJJJJJJJOOOOOOO
-               OOOSSSSJJJJJJJOOOOOOO
-               OOOOOOOOOOOOOOOOOOOOO"""
-
-    geogr = textwrap.dedent(geogr)
-
-    island = Map(geogr)
-    pprint(island.map)
+    pass
