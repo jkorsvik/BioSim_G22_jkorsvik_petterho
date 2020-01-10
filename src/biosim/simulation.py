@@ -184,7 +184,7 @@ class BioSim:
         # self.migrate()
         self.age_animals()
         self.lose_weight()
-        self.die()
+        #self.die()
         self._year += 1
 
 if __name__ == '__main__':
@@ -209,4 +209,5 @@ if __name__ == '__main__':
         sim.simulate_one_year()
         print(sim.year)
         print(sim.num_animals)
+        #print(sim.island_map[(1, 1)].herbivores[-1])
 

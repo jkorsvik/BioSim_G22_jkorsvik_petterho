@@ -27,10 +27,19 @@ class Cell:
                     age=animal['age'], weight=animal['weight']))
 
     def procreate(self):
-        for herbivore in self.herbivores:
-            herbivore.birth(self.num_herbivores)
-        for carnivore in self.carnivores:
-            carnivore.birth(self.num_carnivores)
+        if self.num_herbivores > 1:
+            for herbivore in self.herbivores:
+                offspring = herbivore.birth(self.num_herbivores)
+                if not offspring:
+                    continue
+                self.herbivores.append(offspring)
+
+        if self.num_carnivores > 1:
+            for carnivore in self.carnivores:
+                offspring = carnivore.birth(self.num_carnivores)
+                if not offspring:
+                    continue
+                self.carnivores.append(offspring)
 
     def lose_weight(self):
         for herbivore in self.herbivores:
@@ -65,11 +74,19 @@ class Cell:
             carnivore.age += 1
 
     def die(self):
-        raise NotImplementedError
-        for herbivore in self.herbivores:
-            herbivore.death()
-        for carnivore in self.carnivores:
-            carnivore.death()
+        death_index_list = []
+        for ind, herbivore in enumerate(self.herbivores):
+            if herbivore.death():
+                death_index_list.append(ind)
+        for ind in reversed(death_index_list):
+            del self.herbivores[ind]
+
+        death_index_list = []
+        for ind, carnivore in enumerate(self.carnivores):
+            if carnivore.death():
+                death_index_list.append(ind)
+        for ind in reversed(death_index_list):
+            del self.herbivores[ind]
 
     @property
     def num_carnivores(self):

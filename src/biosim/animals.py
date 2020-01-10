@@ -57,7 +57,14 @@ class Animal:
 
     def __lt__(self, other):
         return self.fitness < other.fitness
-    
+
+    def __repr__(self):
+        string = f"Animal Type: {type(self).__name__}\n" \
+                 f"Age: {self.age}\n" \
+                 f"Weight: {self.weight}\n" \
+                 f"Fitness: {self.fitness}\n"
+        return string
+
     def reset_has_moved(self):
         self._has_moved = False
 
@@ -90,6 +97,8 @@ class Animal:
             if self.weight >= weight_loss:
                 self.weight -= weight_loss
                 return offspring
+
+        return False
 
     def lose_weight(self):
         self.weight -= self.eta*self.weight
@@ -207,25 +216,25 @@ class Carnivore(Animal):
 
     def prey(self, list_herbivores_least_fit):
         eaten = 0
+        deletion_list_ind = []
         for ind, herbivore in enumerate(list_herbivores_least_fit):
             if eaten >= self.F:
                 break
             if self.DeltaPhiMax < self.fitness - herbivore.fitness:
                 self.feed(herbivore, eaten)
                 eaten += herbivore.weight
-                del list_herbivores_least_fit[ind]
+                deletion_list_ind.append(ind)
 
             if self.fitness <= herbivore.fitness:
                 continue
             else:
                 if self.kill_or_not(herbivore):
                     self.feed(herbivore, eaten)
-                    del list_herbivores_least_fit[ind]
+                    deletion_list_ind.append(ind)
 
+        for ind in reversed(deletion_list_ind):
+            del list_herbivores_least_fit[ind]
         return list_herbivores_least_fit
-
-    # lage indekserings liste, reversere å slette dyrene som ble spist
-
 
 
 if __name__ == '__main__':
