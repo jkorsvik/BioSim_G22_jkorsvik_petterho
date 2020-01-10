@@ -5,25 +5,49 @@
 
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
-import src.biosim.animals as ani
-import textwrap
-from pprint import pprint
+
+from src.biosim.animals import Herbivore, Carnivore
+import numpy as np
 
 
 class Cell:
+    passable = True
+    f_max = 0
+    alpha = 0
+
+
+    @classmethod
+    def set_parameters(cls, parameters):
+        for key, value in parameters.items():
+            if key in cls.__dict__.keys():
+                if value < 0:
+                    raise ValueError('Parameters must be positive.')
+                else:
+                    setattr(cls, key, value)
+
+            else:
+                raise NameError('One the keys in your parameters is not an '
+                                'attribute.')
+
     def __init__(self):
         self.herbivores = []
         self.carnivores = []
+        self._calculate_propensity = True
+        self._propensity = None
         self.fodder = 0
+
+
+    def grow(self):
+        pass
 
     def add_animals(self, animal_list):
         # Takes list of dicts with are the animal
         for animal in animal_list:
             if animal['species'] == 'Herbivore':
-                self.herbivores.append(ani.Herbivore(
+                self.herbivores.append(Herbivore(
                     age=animal['age'], weight=animal['weight']))
             if animal['species'] == 'Carnivore':
-                self.carnivores.append(ani.Carnivore(
+                self.carnivores.append(Carnivore(
                     age=animal['age'], weight=animal['weight']))
 
     def procreate(self):
@@ -92,6 +116,28 @@ class Cell:
         for dead in death_list:
             self.carnivores.remove(dead)
 
+    @property
+    def propensity(self):
+        if not self._calculate_propensity:
+            return self._propensity
+
+        gamma = self.herbivores[0].gamma
+        appetite = self.herbivores[0].F
+        propensity_herb = np.exp(gamma*(self.fodder
+                                        / (self.num_herbivores + 1)
+                                        * appetite))
+        gamma = self.carnivores[0].gamma
+        appetite = self.carnivores[0].F
+        meat = 0
+        for herbivore in self.herbivores:
+            meat += herbivore.weight
+        propensity_carn = np.exp(gamma*(meat
+                                        / (self.num_herbivores + 1)
+                                        * appetite))
+        self._propensity = {'Carnivore': propensity_carn,
+                            'Herbivore': propensity_herb}
+
+        return self._propensity
 
     @property
     def num_carnivores(self):
@@ -112,32 +158,27 @@ class Cell:
     def num_animals(self):
         return self.num_carnivores + self.num_herbivores
 
-    @classmethod
-    def set_parameters(cls, parameters):
-        for key, value in parameters.items():
-            if key in cls.__dict__.keys():
-                setattr(cls, key, value)
-            else:
-                raise NameError('One the keys in your parameters is not an '
-                                'attribute.')
-
 
 class Ocean(Cell):
+    passable = False
     def __init__(self):
         super().__init__()
 
 
 class Mountain(Cell):
+    passable = False
     def __init__(self):
         super().__init__()
 
 
 class Desert(Cell):
+    passable = True
     def __init__(self):
         super().__init__()
 
 
 class Savanna(Cell):
+    passable = True
     f_max = 300.0
     alpha = 0.3
 
@@ -150,6 +191,7 @@ class Savanna(Cell):
 
 
 class Jungle(Cell):
+    passable = True
     f_max = 800.0
 
     def __init__(self):
