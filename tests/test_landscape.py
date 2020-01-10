@@ -29,7 +29,7 @@ def default_parameters_savanna():
 @pytest.fixture
 def animal_list():
     return [
-        {'species': 'Herbivore', 'age': 10, 'weight': 12.5},
+        {'species': 'Herbivore', 'age': 10, 'weight': 100},
         {'species': 'Herbivore', 'age': 9, 'weight': 10.3},
         {'species': 'Carnivore', 'age': 5, 'weight': 8.1},
             ]
@@ -103,6 +103,16 @@ class TestCell:
         assert herbivore0_weight > jungle_with_animals.herbivores[0].weight
         assert herbivore1_weight > jungle_with_animals.herbivores[1].weight
         assert carnivore0_weight > jungle_with_animals.carnivores[0].weight
+
+    def test_procreate(self, jungle_with_animals):
+        # Works only with two or more herbivores and one or zero carnivores
+        num_herbivores_start = jungle_with_animals.num_herbivores
+        num_carnivores_start = jungle_with_animals.num_carnivores
+        for _ in range(100):
+            jungle_with_animals.procreate()
+        assert jungle_with_animals.num_herbivores > num_herbivores_start
+        assert jungle_with_animals.num_carnivores == num_carnivores_start
+
 
     def test_sort_by_fitness(self, animal_list):
         list_tuple = []
