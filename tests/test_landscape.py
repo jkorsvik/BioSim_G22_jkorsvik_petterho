@@ -28,11 +28,38 @@ def default_parameters_savanna():
 
 @pytest.fixture
 def animal_list():
+    """
+    Must be to herbivores and one carnivore. (At least that maybe)
+
+    Returns
+    -------
+
+    """
     return [
         {'species': 'Herbivore', 'age': 10, 'weight': 100},
         {'species': 'Herbivore', 'age': 9, 'weight': 10.3},
-        {'species': 'Carnivore', 'age': 5, 'weight': 8.1},
+        {'species': 'Carnivore', 'age': 5, 'weight': 50},
             ]
+
+@pytest.fixture
+def carnivore_list():
+    return [
+        {'species': 'Carnivore', 'age': 10, 'weight': 100},
+        {'species': 'Carnivore', 'age': 9, 'weight': 10.3},
+        {'species': 'Carnivore', 'age': 5, 'weight': 50},
+            ]
+
+@pytest.fixture
+def jungle_many_animals():
+    list_tuple = []
+    for x in range(10):
+        for y in range(5, 20):
+            list_tuple.append((x, y))
+    jungle = ls.Jungle()
+    for x, y in list_tuple:
+        jungle.herbivores.append(ani.Herbivore(x, y))
+    return jungle
+
 
 @pytest.fixture
 def jungle_with_animals(animal_list):
@@ -54,6 +81,29 @@ class TestCell:
         jungle.fodder = 1
         jungle.feed_herbivores()
         assert jungle.fodder == 0
+
+    def test_feed_carnivores(self, jungle_many_animals, carnivore_list):
+        jungle_many_animals.add_animals(carnivore_list)
+        num_herbivores = jungle_many_animals.num_herbivores
+        for _ in range(10):
+            jungle_many_animals.feed_carnivores()
+        print(jungle_many_animals.num_herbivores, num_herbivores)
+        assert jungle_many_animals.num_herbivores < num_herbivores
+
+
+
+    def test_feed_all(self):
+        self.test_feed_herbivores()
+        self.test_feed_carnivores()
+
+    def test_age_pop(self, jungle_with_animals):
+        age_herbivore0 = jungle_with_animals.herbivores[0].age
+        age_herbivore1 = jungle_with_animals.herbivores[1].age
+        age_carnivore0 = jungle_with_animals.carnivores[0].age
+        jungle_with_animals.age_pop()
+        assert age_herbivore0 < jungle_with_animals.herbivores[0].age
+        assert age_herbivore1 < jungle_with_animals.herbivores[1].age
+        assert age_carnivore0 < jungle_with_animals.carnivores[0].age
 
     def test_num_carnivore(self):
         cell = ls.Cell()
@@ -104,7 +154,7 @@ class TestCell:
         assert herbivore1_weight > jungle_with_animals.herbivores[1].weight
         assert carnivore0_weight > jungle_with_animals.carnivores[0].weight
 
-    def test_procreate(self, jungle_with_animals):
+    def test_procreate(self, jungle_with_animals, animal_list):
         # Works only with two or more herbivores and one or zero carnivores
         num_herbivores_start = jungle_with_animals.num_herbivores
         num_carnivores_start = jungle_with_animals.num_carnivores
@@ -112,16 +162,14 @@ class TestCell:
             jungle_with_animals.procreate()
         assert jungle_with_animals.num_herbivores > num_herbivores_start
         assert jungle_with_animals.num_carnivores == num_carnivores_start
+        jungle_with_animals.add_animals(animal_list)
+        for _ in range(100):
+            jungle_with_animals.procreate()
+        assert jungle_with_animals.num_herbivores > num_herbivores_start
+        assert jungle_with_animals.num_carnivores > num_carnivores_start
 
-
-    def test_sort_by_fitness(self, animal_list):
-        list_tuple = []
-        for x in range(10):
-            for y in range(5, 20):
-                list_tuple.append((x, y))
-        jungle = ls.Jungle()
-        for x, y in list_tuple:
-            jungle.herbivores.append(ani.Herbivore(x, y))
+    def test_sort_by_fitness(self, jungle_many_animals):
+        jungle = jungle_many_animals
         jungle.herbivores = jungle.sort_by_fitness(jungle.herbivores)
         x = 0
         for herbivore in jungle.herbivores:
