@@ -16,9 +16,11 @@ from pprint import pprint
 def carnivore_parameters_right():
     return {'eta': 0.03, 'phi_age': 0.3, 'DeltaPhiMax': 8.0}
 
+
 @pytest.fixture
 def carnivore_parameters_wrong():
     return {'zettet': 7}
+
 
 @pytest.fixture
 def herbivore_list():
@@ -44,7 +46,6 @@ class TestAnimal:
         assert test_animal.fitness is not None
         assert 0 <= test_animal.fitness <= 1
 
-
     def test_migration(self):
         """
         Test if location has not changed more than by a increment of 1. will
@@ -58,6 +59,7 @@ class TestAnimal:
         new = test_animal.position
         delta = [a - b for a, b in zip(new, old)]
         assert abs(sum(delta)) == 1 or sum(delta) == 0"""
+        pass
 
     def test_weight_prop(self):
         test_animal = Animal()
@@ -118,7 +120,7 @@ class TestAnimal:
 
 
 class TestHerbivore:
-    def _init__herb(self):
+    def test__init__(self):
         test_herbivore = Herbivore(10, 20)
         assert hasattr(test_herbivore, 'age')
         assert test_herbivore.age is not None
@@ -135,6 +137,8 @@ class TestHerbivore:
         b = herb.weight
         assert food == 5
         assert a < b
+        assert b - a <= herb.beta * herb.F
+
 
 class TestCarnivore:
     def test_init(self):
@@ -155,8 +159,9 @@ class TestCarnivore:
         new_list = carnivore.feed(sorted_list)
         length_b = len(new_list)
         weight_b = carnivore.weight
-        print(length_a _ )
+        print(length_a, length_b, weight_a, weight_b)
         assert length_b < length_a
         assert weight_a < weight_b
+        assert weight_b - weight_a <= carnivore.F*carnivore.beta
 
 

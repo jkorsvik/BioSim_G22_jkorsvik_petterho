@@ -83,6 +83,10 @@ class Animal:
         # return Bool, new_location
         pass"""
 
+    def will_migrate(self):
+        prob_to_move = self.fitness * self.mu
+        return bool(np.random.binomial(1, prob_to_move))
+
     def birth(self, num_same_species):
         mates = num_same_species - 1
         prob_to_birth = np.minimum(1, (self.gamma * self.fitness * mates))
@@ -235,6 +239,7 @@ class Carnivore(Animal):
             else:
                 if self.kill_or_not(herbivore):
                     self.eat(herbivore.weight, eaten)
+                    eaten += herbivore.weight
                     deletion_list_ind.append(ind)
 
         for ind in reversed(deletion_list_ind):
