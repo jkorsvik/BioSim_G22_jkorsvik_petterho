@@ -68,6 +68,42 @@ class BioSim:
                 island_map[(y, x)] = self.map_params[letter.upper()]()
         return island_map
 
+    def migrate(self):
+        for pos, cell in self.island_map.items():
+            y, x = pos
+            if cell.passable and cell.num_animals > 0:
+                option_1 = self.island_map[(y - 1, x)]
+                option_2 = self.island_map[(y + 1, x)]
+                option_3 = self.island_map[(y, x - 1)]
+                option_4 = self.island_map[(y, x + 1)]
+            propensity_sum = 0
+            if option_1.passable:
+                propensity_1 = option_1.propensity
+                propensity_sum += propensity_1
+
+            if option_2.passable:
+                propensity_2 = option_2.propensity
+                propensity_sum += propensity_2
+
+            if option_3.passable:
+                propensity_3 = option_3.propensity
+                propensity_sum += propensity_3
+
+            if option_4.passable:
+                propensity_4 = option_4.propensity
+                propensity_sum += propensity_4
+
+            try:
+                prob_1 = propensity_1 / propensity_sum
+            except NameError
+            try:
+                prob_2 = propensity_1 / propensity_sum
+            except NameError
+                prob_2 = propensity_1 / propensity_sum
+
+                prob_2 = propensity_1 / propensity_sum
+
+
     def set_animal_parameters(self, species, params):
         """
         Set parameters for animal species.
