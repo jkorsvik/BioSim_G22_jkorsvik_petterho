@@ -65,7 +65,7 @@ class Cell:
         self.herbivores = self.sort_by_fitness(self.herbivores)
         self.carnivores = self.sort_by_fitness(self.carnivores)
         for carnivore in reversed(self.carnivores):
-            self.herbivores = carnivore.feed(self.herbivores)
+            self.herbivores = carnivore.prey(self.herbivores)
 
     def age_pop(self):
         for herbivore in self.herbivores:
@@ -74,19 +74,22 @@ class Cell:
             carnivore.age += 1
 
     def die(self):
-        death_index_list = []
-        for ind, herbivore in enumerate(self.herbivores):
+        death_list = []
+        for herbivore in self.herbivores:
             if herbivore.death():
-                death_index_list.append(ind)
-        for ind in reversed(death_index_list):
-            del self.herbivores[ind]
+                death_list.append(herbivore)
 
-        death_index_list = []
-        for ind, carnivore in enumerate(self.carnivores):
+        for dead in death_list:
+            self.herbivores.remove(dead)
+
+        death_list = []
+        for carnivore in self.carnivores:
             if carnivore.death():
-                death_index_list.append(ind)
-        for ind in reversed(death_index_list):
-            del self.herbivores[ind]
+                death_list.append(carnivore)
+
+        for dead in death_list:
+            self.carnivores.remove(dead)
+
 
     @property
     def num_carnivores(self):

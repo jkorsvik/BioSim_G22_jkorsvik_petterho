@@ -8,6 +8,7 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 from src.biosim.animals import Animal, Carnivore, Herbivore
+from pprint import pprint
 
 
 class TestAnimal:
@@ -70,10 +71,21 @@ class TestAnimal:
         assert not test_animal._has_moved
 
     def test_birth(self):
-        assert False
+        animal = Animal(10, 40)
+        value = animal.birth(10000)
+        print(value)
+        assert value != 0
 
     def test_death(self):
-        assert False
+        animal = Animal(50, 1.4)
+        list_ = []
+        for _ in range(100):
+            list_.append(animal.death())
+        assert True in list_
+
+        animal_2 = Animal(50, 0)
+        for _ in range(100):
+            assert animal_2.death()
 
 
 class TestHerbivore:
@@ -88,8 +100,12 @@ class TestHerbivore:
         assert 0 <= test_herbivore.fitness <= 1
 
     def test_feed(self):
-        assert False
-
+        herb = Herbivore()
+        a = herb.weight
+        food = herb.feed(15)
+        b = herb.weight
+        assert food == 5
+        assert a < b
 
 class TestCarnivore:
     def test_init(self):

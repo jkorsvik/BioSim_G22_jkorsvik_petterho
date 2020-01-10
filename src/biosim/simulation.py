@@ -184,8 +184,9 @@ class BioSim:
         # self.migrate()
         self.age_animals()
         self.lose_weight()
-        #self.die()
+        self.die()
         self._year += 1
+
 
 if __name__ == '__main__':
     geogr = """\
@@ -198,16 +199,31 @@ if __name__ == '__main__':
         {
             "loc": (1, 1),
             "pop": [
-                {"species": "Herbivore", "age": 5, "weight": 20}
+                {"species": "Herbivore", "age": 0, "weight": 20}
                 for _ in range(50)
             ],
         }
     ]
 
+    ini_carn = [
+        {
+            "loc": (1, 1),
+            "pop": [
+                {"species": "Carnivore", "age": 0, "weight": 50}
+                for _ in range(10)
+            ],
+        }
+    ]
+
     sim = BioSim(geogr, ini_herbs, 1)
+    sim.add_population(ini_carn)
     for _ in range(50):
         sim.simulate_one_year()
         print(sim.year)
         print(sim.num_animals)
-        #print(sim.island_map[(1, 1)].herbivores[-1])
+        print(sim.num_animals_per_species)
+        try:
+            print(sim.island_map[(1, 1)].herbivores[-1])
+        except IndexError:
+            pass
 
