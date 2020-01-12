@@ -6,8 +6,14 @@
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
+import pytest
+
+@pytest.fixture
+
 
 class TestSimulation:
+    def test_migrate(self):
+
     def test_set_animal_parameters(self):
         assert False
 
@@ -56,3 +62,5 @@ class TestSimulation:
 
     def test_simulate_one_year(self):
         assert False
+
+
