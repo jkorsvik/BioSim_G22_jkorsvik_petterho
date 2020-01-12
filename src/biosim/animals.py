@@ -172,6 +172,7 @@ class Animal:
         self._has_moved = True
         return moved
 
+
 class Herbivore(Animal):
     w_birth = 8.0
     sigma_birth = 1.5

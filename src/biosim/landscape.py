@@ -10,12 +10,10 @@ from src.biosim.animals import Herbivore, Carnivore
 import numpy as np
 
 
-
 class Cell:
     passable = True
     f_max = 0
     alpha = 0
-
 
     @classmethod
     def set_parameters(cls, parameters):
