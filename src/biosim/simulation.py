@@ -11,6 +11,7 @@ import textwrap
 from src.biosim.animals import *
 
 
+
 class BioSim:
     map_params = {'O': Ocean,
                   'M': Mountain,
@@ -72,36 +73,42 @@ class BioSim:
         for pos, cell in self.island_map.items():
             y, x = pos
             if cell.passable and cell.num_animals > 0:
-                option_1 = self.island_map[(y - 1, x)]
-                option_2 = self.island_map[(y + 1, x)]
-                option_3 = self.island_map[(y, x - 1)]
-                option_4 = self.island_map[(y, x + 1)]
-            propensity_sum = 0
-            if option_1.passable:
-                propensity_1 = option_1.propensity
-                propensity_sum += propensity_1
+                loc_1 = (y - 1, x)
+                loc_2 = (y + 1, x)
+                loc_3 = (y, x - 1)
+                loc_4 = (y, x + 1)
+                option_1 = self.island_map[loc_1]
+                option_2 = self.island_map[loc_2]
+                option_3 = self.island_map[loc_3]
+                option_4 = self.island_map[loc_4]
 
-            if option_2.passable:
-                propensity_2 = option_2.propensity
-                propensity_sum += propensity_2
+                list_ = [(loc_1, option_1), (loc_2, option_2),
+                         (loc_3, option_3), (loc_4, option_4)]
+                propensity_list = []
+                for loc, option in list_:
+                    if option.passable:
+                        propensity_list.append((loc,
+                                                option.propensity)
+                                               )
 
-            if option_3.passable:
-                propensity_3 = option_3.propensity
-                propensity_sum += propensity_3
+                prop_sum = sum(propensity_list[:][1])
+                prob_list = []
+                for loc, prop in propensity_list:
+                    prob_list.append((loc, prop / prop_sum))
 
-            if option_4.passable:
-                propensity_4 = option_4.propensity
-                propensity_sum += propensity_4
+                cumulative_sum = np.cumsum(prob_list[:][1])
+                print(cumulative_sum)
+                index = 0
+                while not np.random.binomial(1, cumulative_sum[index]):
+                    index += 1
 
-            try:
-                prob_1 = propensity_1 / propensity_sum
-            except NameError
-            try:
-                prob_2 = propensity_1 / propensity_sum
-            except NameError
-                prob_2 = propensity_1 / propensity_sum
+                animal_for_moving
 
-                prob_2 = propensity_1 / propensity_sum
+                return prob_list[index][0]
+
+        def move_animals
+
+
 
 
     def set_animal_parameters(self, species, params):
@@ -235,7 +242,7 @@ if __name__ == '__main__':
         {
             "loc": (1, 1),
             "pop": [
-                {"species": "Herbivore", "age": 0, "weight": 20}
+                {"species": "Herbivore", "age": 5, "weight": 20}
                 for _ in range(50)
             ],
         }
@@ -245,7 +252,7 @@ if __name__ == '__main__':
         {
             "loc": (1, 1),
             "pop": [
-                {"species": "Carnivore", "age": 0, "weight": 50}
+                {"species": "Carnivore", "age": 2, "weight": 30}
                 for _ in range(10)
             ],
         }
