@@ -121,21 +121,28 @@ class Cell:
         if not self._calculate_propensity:
             return self._propensity
 
-        gamma = self.herbivores[0].gamma
-        appetite = self.herbivores[0].F
-        propensity_herb = np.exp(gamma*(self.fodder
-                                        / (self.num_herbivores + 1)
-                                        * appetite))
-        gamma = self.carnivores[0].gamma
-        appetite = self.carnivores[0].F
-        meat = 0
-        for herbivore in self.herbivores:
-            meat += herbivore.weight
-        propensity_carn = np.exp(gamma*(meat
-                                        / (self.num_herbivores + 1)
-                                        * appetite))
-        self._propensity = {'Carnivore': propensity_carn,
-                            'Herbivore': propensity_herb}
+        if not self.passable:
+            self._propensity = {'Carnivore': 0,
+                                'Herbivore': 0}
+        else:
+
+            gamma = self.herbivores[0].gamma
+            appetite = self.herbivores[0].F
+            propensity_herb = np.exp(gamma*(self.fodder
+                                            / (self.num_herbivores + 1)
+                                            * appetite))
+            gamma = self.carnivores[0].gamma
+            appetite = self.carnivores[0].F
+            meat = 0
+            for herbivore in self.herbivores:
+                meat += herbivore.weight
+            propensity_carn = np.exp(gamma*(meat
+                                            / (self.num_herbivores + 1)
+                                            * appetite))
+            self._propensity = {'Carnivore': propensity_carn,
+                                'Herbivore': propensity_herb}
+
+        self._calculate_propensity = False
 
         return self._propensity
 
@@ -161,18 +168,21 @@ class Cell:
 
 class Ocean(Cell):
     passable = False
+
     def __init__(self):
         super().__init__()
 
 
 class Mountain(Cell):
     passable = False
+
     def __init__(self):
         super().__init__()
 
 
 class Desert(Cell):
     passable = True
+
     def __init__(self):
         super().__init__()
 
