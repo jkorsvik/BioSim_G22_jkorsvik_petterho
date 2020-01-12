@@ -131,6 +131,14 @@ class BioSim:
                             cell.remove_migrated_carn(carnivore)
                             self.add_carn_to_new_cell(new_loc, carnivore)
 
+    def ready_for_new_year(self):
+        for cell in self.island_map.values():
+            if cell.f_max > 0:
+                cell.grow()
+            for herbivore in cell.herbivores:
+                herbivore.reset_has_moved()
+            for carnivore in cell.carnivores:
+                carnivore.reset_has_moved()
 
     def set_animal_parameters(self, species, params):
         """
@@ -167,6 +175,10 @@ class BioSim:
         Add a population to the island
 
         :param population: List of dictionaries specifying population
+
+        Parameters
+        ----------
+        self
         """
         # map_location is a dictionary with loc
         for map_location in population:
@@ -226,7 +238,6 @@ class BioSim:
         for cell in self.island_map.values():
             cell.procreate()
 
-
     def age_animals(self):
         for cell in self.island_map.values():
             cell.age_pop()
@@ -240,6 +251,7 @@ class BioSim:
             cell.die()
 
     def simulate_one_year(self):
+        self.ready_for_new_year()
         self.feed()
         self.procreate()
         self.migrate()
