@@ -13,7 +13,6 @@ from src.biosim.animals import *
 
 def choose_new_location(prob_list):
     probabilities = [x[1] for x in prob_list]
-    print(probabilities)
     locations = [x[0] for x in prob_list]
     index = np.random.choice(len(prob_list), 1, p=probabilities)
     return locations[index[0]]
@@ -262,8 +261,8 @@ if __name__ == '__main__':
         {
             "loc": (1, 1),
             "pop": [
-                {"species": "Herbivore", "age": 5, "weight": 20}
-                for _ in range(50)
+                {"species": "Herbivore", "age": 5, "weight": 40}
+                for _ in range(100)
             ],
         }
     ]
@@ -272,8 +271,8 @@ if __name__ == '__main__':
         {
             "loc": (1, 1),
             "pop": [
-                {"species": "Carnivore", "age": 2, "weight": 30}
-                for _ in range(10)
+                {"species": "Carnivore", "age": 2, "weight": 20}
+                for _ in range(4)
             ],
         }
     ]
