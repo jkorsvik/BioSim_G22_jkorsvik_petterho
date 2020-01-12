@@ -138,19 +138,21 @@ class Cell:
                                 'Herbivore': 0}
         else:
 
-            gamma = Herbivore.gamma
-            appetite = Herbivore.gamma
-            propensity_herb = np.exp((gamma*(self.fodder
-                                             / (self.num_herbivores + 1)
-                                             * appetite)), dtype=np.float64)
-            gamma_1 = Carnivore.gamma
-            appetite_1 = Carnivore.F
+            lambda_ = Herbivore.lambda_
+            appetite = Herbivore.F
+            dividend = ((self.num_herbivores + 1) * appetite)
+            exponent_herb = (lambda_*(self.fodder / dividend))
+            propensity_herb = np.exp(exponent_herb)
+
+            lambda_ = Carnivore.lambda_
+            appetite_ = Carnivore.F
             meat = 0
             for herbivore in self.herbivores:
                 meat += herbivore.weight
-            propensity_carn = np.exp(gamma_1*(meat
-                                              / (self.num_carnivores + 1)
-                                              * appetite_1), dtype=np.float64)
+
+            dividend = ((self.num_carnivores + 1) * appetite_)
+            exponent_carn = (lambda_*(meat / dividend))
+            propensity_carn = np.exp(exponent_carn)
             self._propensity = {'Carnivore': propensity_carn,
                                 'Herbivore': propensity_herb}
 
