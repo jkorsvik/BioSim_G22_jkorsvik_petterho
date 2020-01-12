@@ -11,6 +11,13 @@ import textwrap
 from src.biosim.animals import *
 
 
+def choose_new_location(prob_list):
+    probabilities = [x[1] for x in prob_list]
+    print(probabilities)
+    locations = [x[0] for x in prob_list]
+    index = np.random.choice(len(prob_list), 1, p=probabilities)
+    return locations[index[0]]
+
 
 class BioSim:
     map_params = {'O': Ocean,
@@ -69,46 +76,61 @@ class BioSim:
                 island_map[(y, x)] = self.map_params[letter.upper()]()
         return island_map
 
+    def probability_calc(self, pos, animal):
+        species = animal.__class__.__name__
+        y, x = pos
+        loc_1 = (y - 1, x)
+        loc_2 = (y + 1, x)
+        loc_3 = (y, x - 1)
+        loc_4 = (y, x + 1)
+        option_1 = self.island_map[loc_1]
+        option_2 = self.island_map[loc_2]
+        option_3 = self.island_map[loc_3]
+        option_4 = self.island_map[loc_4]
+
+        list_ = [(loc_1, option_1), (loc_2, option_2),
+                 (loc_3, option_3), (loc_4, option_4)]
+        propensity_list = []
+
+        for loc, option in list_:
+            if option.passable:
+                propensity_list.append((loc,
+                                        option.propensity[species])
+                                       )
+
+        prop_sum = sum(dict(propensity_list).values())
+        prob_list = []
+        for loc, prop in propensity_list:
+            prob_list.append((loc, prop / prop_sum))
+
+        return prob_list
+
+    def add_herb_to_new_cell(self, new_loc, herbivore):
+        self.island_map[new_loc].add_migrated_herb(herbivore)
+
+    def add_carn_to_new_cell(self, new_loc, carnivore):
+        self.island_map[new_loc].add_migrated_carn(carnivore)
+
     def migrate(self):
         for pos, cell in self.island_map.items():
-            y, x = pos
             if cell.passable and cell.num_animals > 0:
-                loc_1 = (y - 1, x)
-                loc_2 = (y + 1, x)
-                loc_3 = (y, x - 1)
-                loc_4 = (y, x + 1)
-                option_1 = self.island_map[loc_1]
-                option_2 = self.island_map[loc_2]
-                option_3 = self.island_map[loc_3]
-                option_4 = self.island_map[loc_4]
+                if cell.num_herbivores > 0:
+                    for herbivore in cell.herbivores:
+                        if not herbivore.has_moved:
 
-                list_ = [(loc_1, option_1), (loc_2, option_2),
-                         (loc_3, option_3), (loc_4, option_4)]
-                propensity_list = []
-                for loc, option in list_:
-                    if option.passable:
-                        propensity_list.append((loc,
-                                                option.propensity)
-                                               )
+                            prob_list = self.probability_calc(pos, herbivore)
+                            new_loc = choose_new_location(prob_list)
+                            cell.remove_migrated_herb(herbivore)
+                            self.add_herb_to_new_cell(new_loc, herbivore)
 
-                prop_sum = sum(propensity_list[:][1])
-                prob_list = []
-                for loc, prop in propensity_list:
-                    prob_list.append((loc, prop / prop_sum))
+                if cell.num_carnivores > 0:
+                    for carnivore in cell.carnivores:
+                        if not carnivore.has_moved:
 
-                cumulative_sum = np.cumsum(prob_list[:][1])
-                print(cumulative_sum)
-                index = 0
-                while not np.random.binomial(1, cumulative_sum[index]):
-                    index += 1
-
-                animal_for_moving
-
-                return prob_list[index][0]
-
-        def move_animals
-
-
+                            prob_list = self.probability_calc(pos, carnivore)
+                            new_loc = choose_new_location(prob_list)
+                            cell.remove_migrated_carn(carnivore)
+                            self.add_carn_to_new_cell(new_loc, carnivore)
 
 
     def set_animal_parameters(self, species, params):
@@ -205,9 +227,6 @@ class BioSim:
         for cell in self.island_map.values():
             cell.procreate()
 
-    def migrate(self):
-        for cell in self.island_map.values():
-            cell.migrate()
 
     def age_animals(self):
         for cell in self.island_map.values():
@@ -224,7 +243,7 @@ class BioSim:
     def simulate_one_year(self):
         self.feed()
         self.procreate()
-        # self.migrate()
+        self.migrate()
         self.age_animals()
         self.lose_weight()
         self.die()
@@ -233,9 +252,10 @@ class BioSim:
 
 if __name__ == '__main__':
     geogr = """\
-            OOO
-            OJO
-            OOO"""
+            OOOOO
+            OJJSO
+            OJSSO
+            OOOOO"""
     geogr = textwrap.dedent(geogr)
 
     ini_herbs = [
@@ -267,6 +287,7 @@ if __name__ == '__main__':
         print(sim.num_animals_per_species)
         try:
             print(sim.island_map[(1, 1)].herbivores[-1])
+            print(sim.island_map[(2, 2)].carnivores[-1])
         except IndexError:
             pass
 

@@ -10,6 +10,7 @@ from src.biosim.animals import Herbivore, Carnivore
 import numpy as np
 
 
+
 class Cell:
     passable = True
     f_max = 0
@@ -36,7 +37,6 @@ class Cell:
         self._propensity = None
         self.fodder = 0
 
-
     def grow(self):
         pass
 
@@ -49,6 +49,18 @@ class Cell:
             if animal['species'] == 'Carnivore':
                 self.carnivores.append(Carnivore(
                     age=animal['age'], weight=animal['weight']))
+
+    def add_migrated_herb(self, herbivore):
+        self.herbivores.append(herbivore)
+
+    def add_migrated_carn(self, carnivore):
+        self.carnivores.append(carnivore)
+
+    def remove_migrated_herb(self, herbivore):
+        self.herbivores.remove(herbivore)
+
+    def remove_migrated_carn(self, carnivore):
+        self.carnivores.remove(carnivore)
 
     def procreate(self):
         number_of_adult_herbivores = self.num_herbivores
@@ -126,19 +138,19 @@ class Cell:
                                 'Herbivore': 0}
         else:
 
-            gamma = self.herbivores[0].gamma
-            appetite = self.herbivores[0].F
-            propensity_herb = np.exp(gamma*(self.fodder
-                                            / (self.num_herbivores + 1)
-                                            * appetite))
-            gamma = self.carnivores[0].gamma
-            appetite = self.carnivores[0].F
+            gamma = Herbivore.gamma
+            appetite = Herbivore.gamma
+            propensity_herb = np.exp((gamma*(self.fodder
+                                             / (self.num_herbivores + 1)
+                                             * appetite)), dtype=np.float64)
+            gamma_1 = Carnivore.gamma
+            appetite_1 = Carnivore.F
             meat = 0
             for herbivore in self.herbivores:
                 meat += herbivore.weight
-            propensity_carn = np.exp(gamma*(meat
-                                            / (self.num_herbivores + 1)
-                                            * appetite))
+            propensity_carn = np.exp(gamma_1*(meat
+                                              / (self.num_carnivores + 1)
+                                              * appetite_1), dtype=np.float64)
             self._propensity = {'Carnivore': propensity_carn,
                                 'Herbivore': propensity_herb}
 
