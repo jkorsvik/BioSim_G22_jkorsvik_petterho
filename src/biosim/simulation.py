@@ -147,6 +147,18 @@ class BioSim:
         :param species: String, name of animal species
         :param params: Dict with valid parameter specification for species
         """
+        """
+import sys
+import types
+
+def str_to_class(field):
+    try:
+        identifier = getattr(sys.modules[__name__], field)
+    except AttributeError:
+        raise NameError("%s doesn't exist." % field)
+    if isinstance(identifier, (types.ClassType, types.TypeType)):
+        return identifier
+    raise TypeError("%s is not a class." % field)"""
         globals()[species].set_parameters(params)
 
     def set_landscape_parameters(self, landscape, params):
