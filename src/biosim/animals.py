@@ -5,14 +5,19 @@
 
 import numpy as np
 import names
-
+from numba import jit
 
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
+@jit
 def sigmoid(value):
     return 1/(1 + np.exp(value))
+
+
+def generate_rand_name():
+    return names.get_last_name()
 
 
 """"
@@ -56,7 +61,7 @@ class Animal:
                                 'attribute.')
 
     def __init__(self, age=0, weight=None):
-        self.name = names.get_last_name()
+        # self.name = generate_rand_name()
         self._age = age
         self._weight = weight
         self._compute_fitness = True
@@ -72,8 +77,7 @@ class Animal:
         return self.fitness < other.fitness
 
     def __repr__(self):
-        string = f"Name: {self.name}\n" \
-                 f"Animal Type: {type(self).__name__}\n" \
+        string = f"Animal Type: {type(self).__name__}\n" \
                  f"Age: {self.age}\n" \
                  f"Weight: {self.weight}\n" \
                  f"Fitness: {self.fitness}\n"
@@ -81,20 +85,6 @@ class Animal:
 
     def reset_has_moved(self):
         self._has_moved = False
-    """
-    def migrate(self, list_for_moving):
-        # Liste som skal inn er Fodder og dyr av samme type, med lokasjon
-        prob_to_move = self.fitness*self.mu
-        self._has_moved = True
-        if bool(np.random.binomial(1, prob_to_move)):
-            list_for_moving = []
-            cumulative_sum = np.cumsum(probability_for_moving(list_for_moving))
-            index = 0
-            while not np.random.binomial(1, cumulative_sum[index]):
-                index += 1
-            return index
-        # return Bool, new_location
-        pass"""
 
     def will_migrate(self):
         prob_to_move = self.fitness * self.mu
@@ -231,14 +221,14 @@ class Carnivore(Animal):
 
     def feed(self, list_herbivores_least_fit):
         eaten = 0
-        deletion_list_ind = []
-        for ind, herbivore in enumerate(list_herbivores_least_fit):
+        deletion_list = []
+        for herbivore in list_herbivores_least_fit:
             if eaten >= self.F:
                 break
             if self.DeltaPhiMax < self.fitness - herbivore.fitness:
                 self.eat(herbivore.weight, eaten)
                 eaten += herbivore.weight
-                deletion_list_ind.append(ind)
+                deletion_list.append(herbivore)
 
             if self.fitness <= herbivore.fitness:
                 continue
@@ -246,10 +236,10 @@ class Carnivore(Animal):
                 if self.kill_or_not(herbivore):
                     self.eat(herbivore.weight, eaten)
                     eaten += herbivore.weight
-                    deletion_list_ind.append(ind)
+                    deletion_list.append(herbivore)
 
-        for ind in reversed(deletion_list_ind):
-            del list_herbivores_least_fit[ind]
+        for herbivore in deletion_list:
+            list_herbivores_least_fit.remove(herbivore)
         return list_herbivores_least_fit
 
 
