@@ -6,35 +6,18 @@
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
-from src.biosim.landscape import *
-import textwrap
-from src.biosim.animals import *
-#from src.biosim.visualization import *
+
+from src.biosim.island import *
+# from src.biosim.visualization import *
 import pandas as pd
 
 
-def choose_new_location(prob_list):
-    probabilities = [x[1] for x in prob_list]
-    cumulative_sum = np.cumsum(probabilities)
-    locations = [x[0] for x in prob_list]
-    index = 0
-    while not np.random.binomial(1, cumulative_sum[index]):
-        index += 1
-    return locations[index]
-
-
 class BioSim:
-    map_params = {'O': Ocean,
-                  'M': Mountain,
-                  'D': Desert,
-                  'S': Savanna,
-                  'J': Jungle}
-
     def __init__(
         self,
         island_map,
         ini_pop,
-        seed,
+        seed=None,
         ymax_animals=None,
         cmax_animals=None,
         img_base=None,
@@ -68,91 +51,15 @@ class BioSim:
         img_base should contain a path and beginning of a file name.
         """
         self._year = 0
-        self.island_map = self.make_map(island_map)
-        self.add_population(ini_pop)
+        self.island = Island(island_map, ini_pop)
+        if seed is not None:
+            np.random.seed(seed)
+        self.ymax_animals = ymax_animals
+        self.cmax_animals = cmax_animals
+        self.img_base = img_base
+        self.img_fmt = img_fmt
 
-    def make_map(self, island_map_string):
-        island_map = {}
-        lines = island_map_string.split('\n')
-        for y, line in enumerate(lines):
-            for x, letter in enumerate(line):
-                island_map[(y, x)] = self.map_params[letter.upper()]()
-        return island_map
-
-    def probability_calc(self, pos, animal):
-        species = animal.__class__.__name__
-        y, x = pos
-        loc_1 = (y - 1, x)
-        loc_2 = (y + 1, x)
-        loc_3 = (y, x - 1)
-        loc_4 = (y, x + 1)
-        option_1 = self.island_map[loc_1]
-        option_2 = self.island_map[loc_2]
-        option_3 = self.island_map[loc_3]
-        option_4 = self.island_map[loc_4]
-
-        list_ = [(loc_1, option_1), (loc_2, option_2),
-                 (loc_3, option_3), (loc_4, option_4)]
-        propensity_list = []
-
-        for loc, option in list_:
-            propensity_list.append((loc,
-                                    option.propensity[species])
-                                   )
-
-        prop_sum = np.sum(sum(dict(propensity_list).values()))
-        prob_list = []
-        for loc, prop in propensity_list:
-            prob_list.append((loc, (prop / prop_sum)))
-
-        return prob_list
-
-    def add_herb_to_new_cell(self, new_loc, herbivore):
-        self.island_map[new_loc].add_migrated_herb(herbivore)
-
-    def add_carn_to_new_cell(self, new_loc, carnivore):
-        self.island_map[new_loc].add_migrated_carn(carnivore)
-
-    def migrate(self):
-        for pos, cell in self.island_map.items():
-            deletion_list = []
-            if cell.passable and cell.num_animals > 0:
-                if cell.num_herbivores > 0:
-                    for herbivore in cell.herbivores:
-                        if not herbivore.has_moved:
-
-                            prob_list = self.probability_calc(pos, herbivore)
-                            try:
-                                new_loc = choose_new_location(prob_list)
-                            except ValueError:
-                                new_loc = pos
-                            deletion_list.append(herbivore)
-                            self.add_herb_to_new_cell(new_loc, herbivore)
-                    for herbivore in deletion_list:
-                        cell.remove_migrated_herb(herbivore)
-
-                deletion_list = []
-                if cell.num_carnivores > 0:
-                    for carnivore in cell.carnivores:
-                        if not carnivore.has_moved:
-
-                            prob_list = self.probability_calc(pos, carnivore)
-                            try:
-                                new_loc = choose_new_location(prob_list)
-                            except ValueError:
-                                new_loc = pos
-                            deletion_list.append(carnivore)
-                            self.add_carn_to_new_cell(new_loc, carnivore)
-                    for carnivore in deletion_list:
-                        cell.remove_migrated_carn(carnivore)
-    def ready_for_new_year(self):
-        for cell in self.island_map.values():
-            cell.grow()
-            for herbivore in cell.herbivores:
-                herbivore.reset_has_moved()
-            for carnivore in cell.carnivores:
-                carnivore.reset_has_moved()
-
+    @staticmethod
     def set_animal_parameters(self, species, params):
         """
         Set parameters for animal species.
@@ -174,6 +81,7 @@ def str_to_class(field):
     raise TypeError("%s is not a class." % field)"""
         globals()[species].set_parameters(params)
 
+    @staticmethod
     def set_landscape_parameters(self, landscape, params):
         """
         Set parameters for landscape type.
@@ -196,13 +104,13 @@ def str_to_class(field):
         """
         index = 0
         while index < num_years:
-            self.simulate_one_year()
-            index += 0
+            self.island.simulate_one_year()
+            index += 1
+            self.year += 1
             if index % vis_years:
                 pass
             if index % img_years:
                 pass
-
 
     def add_population(self, population):
         """
@@ -214,47 +122,33 @@ def str_to_class(field):
         ----------
         self
         """
-        # map_location is a dictionary with loc
-        for map_location in population:
-            loc = map_location['loc']
-            pop = map_location['pop']
-            self.island_map[loc].add_animals(pop)
+        self.island.add_population(population)
 
     @property
     def year(self):
         """Last year simulated."""
         return self._year
 
+    @year.setter
+    def year(self, new_value):
+        self._year = new_value
+
     @property
     def num_animals(self):
         """Total number of animals on island."""
-        num_animals = 0
-        for num_type in self.num_animals_per_species.values():
-            num_animals += num_type
-        return num_animals
+        return self.island.num_animals
 
     @property
     def num_animals_per_species(self):
         """Number of animals per species in island, as dictionary."""
-        num_animals_per_species = {}
-        num_herbivores = 0
-        num_carnivores = 0
-
-        for cell in self.island_map.values():
-            num_herbivores += cell.num_herbivores
-            num_carnivores += cell.num_carnivores
-
-        num_animals_per_species['Herbivores'] = num_herbivores
-        num_animals_per_species['Carnivores'] = num_carnivores
-
-        return num_animals_per_species
+        return self.island.num_animals_per_species
 
     @property
     def animal_distribution(self):
         """Pandas DataFrame with animal count per species for each cell
         on island."""
         dict_for_df = {"Row": [], "Col": [], "Herbivore": [], "Carnivore": []}
-        for pos, cell in self.island_map.items():
+        for pos, cell in self.island.map.items():
             row, col = pos
             dict_for_df["Row"].append(row)
             dict_for_df["Col"].append(col)
@@ -264,45 +158,9 @@ def str_to_class(field):
         df_sim = pd.DataFrame.from_dict(dict_for_df)
         return df_sim
 
-
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
         raise NotImplementedError
-
-    # The way i think it would be smart to do the work behind the simulation.
-    # These are not obligatory, but the way i think it would be smart to do
-    # the task.
-    # - Petter
-
-    def feed(self):
-        for cell in self.island_map.values():
-            cell.feed_all()
-
-    def procreate(self):
-        for cell in self.island_map.values():
-            cell.procreate()
-
-    def age_animals(self):
-        for cell in self.island_map.values():
-            cell.age_pop()
-
-    def lose_weight(self):
-        for cell in self.island_map.values():
-            cell.lose_weight()
-
-    def die(self):
-        for cell in self.island_map.values():
-            cell.die()
-
-    def simulate_one_year(self):
-        self.ready_for_new_year()
-        self.feed()
-        self.procreate()
-        self.migrate()
-        self.age_animals()
-        self.lose_weight()
-        self.die()
-        self._year += 1
 
 
 if __name__ == '__main__':
@@ -344,19 +202,3 @@ if __name__ == '__main__':
     ]
 
     sim = BioSim(geogr, ini_herbs, 1)
-    for x in range(150):
-        sim.simulate_one_year()
-        if x == 50:
-            sim.add_population(ini_carn)
-        print(sim.year)
-        print(sim.num_animals)
-        print(sim.num_animals_per_species)
-        """
-        for position in sim.island_map:
-            try:
-                print(sim.island_map[position].herbivores[-1], position)
-                print(sim.island_map[position].carnivores[-1], position)
-                print(position)
-            except IndexError:
-                pass"""
-    print(sim.animal_distribution)
