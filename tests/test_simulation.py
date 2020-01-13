@@ -89,14 +89,24 @@ class TestSimulation:
             assert carnivore.age == 10
             assert carnivore.weight == 14.5
 
-    def test_year(self):
-        assert False
+    def test_year(self, test_island):
+        assert test_island.year == 0
+        test_island.simulate_one_year()
+        assert test_island.year == 1
 
-    def test_num_animals(self):
-        assert False
+    def test_num_animals(self, test_island, ini_herbs):
+        assert test_island.num_animals == 110
+        test_island.add_population(ini_herbs)
+        assert test_island.num_animals == 210
 
-    def test_num_animals_per_species(self):
-        assert False
+    def test_num_animals_per_species(self, test_island, ini_herbs, ini_carns):
+        assert test_island.num_animals_per_species['Carnivores'] == 10
+        assert test_island.num_animals_per_species['Herbivores'] == 100
+        test_island.add_population(ini_herbs)
+        test_island.add_population(ini_carns)
+        assert test_island.num_animals_per_species['Carnivores'] == 20
+        assert test_island.num_animals_per_species['Herbivores'] == 200
+
 
     def test_animal_distribution(self):
         assert False
@@ -122,23 +132,27 @@ class TestSimulation:
         print(num_animals11, num_animals12)
         assert num_animals12 * 0.8 < num_animals11 < num_animals12 * 1.2
 
+        # Does not test if it checks for all animals to migrate
+
     def test_feed(self):
-        assert False
-
-    def test_feed_herbivores(self):
-        assert False
-
-    def test_feed_carnivores(self):
         assert False
 
     def test_procreation(self):
         assert False
 
-    def test_migration(self):
-        assert False
-
-    def test_aging(self):
-        assert False
+    def test_aging(self, test_island):
+        test_island.add_population([{'loc': (1, 2),
+                                     'pop': [{"species": "Herbivore",
+                                              "age": 5,
+                                              "weight": 40},
+                                             {"species": "Carnivore",
+                                              "age": 10,
+                                              "weight": 14.5}
+                                             ]
+                                     }])
+        test_island.age_animals()
+        assert test_island.island_map[(1, 2)].herbivores[0].age == 6
+        assert test_island.island_map[(1, 2)].carnivores[0].age == 11
 
     def test_simulate_one_year(self):
         assert False
