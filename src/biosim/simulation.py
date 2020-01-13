@@ -197,6 +197,7 @@ def str_to_class(field):
         index = 0
         while index < num_years:
             self.simulate_one_year()
+            index += 0
             if index % vis_years:
                 pass
             if index % img_years:
