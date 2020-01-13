@@ -9,6 +9,8 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 from src.biosim.landscape import *
 import textwrap
 from src.biosim.animals import *
+import matplotlib.pyplot as plt
+import pandas as pd
 
 
 def choose_new_location(prob_list):
@@ -63,7 +65,6 @@ class BioSim:
         img_base should contain a path and beginning of a file name.
         """
         self._year = 0
-
         self.island_map = self.make_map(island_map)
         self.add_population(ini_pop)
 
@@ -186,6 +187,13 @@ def str_to_class(field):
 
         Image files will be numbered consecutively.
         """
+        index = 0
+        while index < num_years:
+            index += 1
+            self.simulate_one_year()
+            pass
+
+
 
     def add_population(self, population):
         """
@@ -236,7 +244,11 @@ def str_to_class(field):
     def animal_distribution(self):
         """Pandas DataFrame with animal count per species for each cell
         on island."""
-        raise NotImplementedError
+        ducty
+        df_sim = pd.DataFrame.from_dict(self.island_map, orient='index',
+                                        columns=['Herbivore', 'Carnivore'])
+        print(df_sim)
+
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
