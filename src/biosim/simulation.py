@@ -133,8 +133,7 @@ class BioSim:
 
     def ready_for_new_year(self):
         for cell in self.island_map.values():
-            if cell.f_max > 0:
-                cell.grow()
+            cell.grow()
             for herbivore in cell.herbivores:
                 herbivore.reset_has_moved()
             for carnivore in cell.carnivores:
