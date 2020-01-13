@@ -9,14 +9,13 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 from src.biosim.landscape import *
 import textwrap
 from src.biosim.animals import *
-import matplotlib.pyplot as plt
+#from src.biosim.visualization import *
 import pandas as pd
 
 
 def choose_new_location(prob_list):
     probabilities = [x[1] for x in prob_list]
     cumulative_sum = np.cumsum(probabilities)
-    print(cumulative_sum)
     locations = [x[0] for x in prob_list]
     index = 0
     while not np.random.binomial(1, cumulative_sum[index]):
@@ -97,15 +96,14 @@ class BioSim:
         propensity_list = []
 
         for loc, option in list_:
-            if option.passable:
-                propensity_list.append((loc,
-                                        option.propensity[species])
-                                       )
+            propensity_list.append((loc,
+                                    option.propensity[species])
+                                   )
 
         prop_sum = np.sum(sum(dict(propensity_list).values()))
         prob_list = []
         for loc, prop in propensity_list:
-            prob_list.append((loc, prop / prop_sum))
+            prob_list.append((loc, (prop / prop_sum)))
 
         return prob_list
 
@@ -254,12 +252,16 @@ def str_to_class(field):
     def animal_distribution(self):
         """Pandas DataFrame with animal count per species for each cell
         on island."""
-        dict_for_df = {}
+        dict_for_df = {"Row": [], "Col": [], "Herbivore": [], "Carnivore": []}
         for pos, cell in self.island_map.items():
-            dict_for_df[pos] = [cell.num_herbivores, cell.num_carnivores]
-        df_sim = pd.DataFrame.from_dict(dict_for_df, orient='index',
-                                        columns=['Herbivore', 'Carnivore'])
-        print(df_sim)
+            row, col = pos
+            dict_for_df["Row"].append(row)
+            dict_for_df["Col"].append(col)
+            dict_for_df["Herbivore"].append(cell.num_herbivores)
+            dict_for_df["Carnivore"].append(cell.num_carnivores)
+
+        df_sim = pd.DataFrame.from_dict(dict_for_df)
+        return df_sim
 
 
     def make_movie(self):
@@ -325,25 +327,26 @@ if __name__ == '__main__':
             "loc": (2, 1),
             "pop": [
                 {"species": "Herbivore", "age": 5, "weight": 40}
-                for _ in range(100)
+                for _ in range(200)
             ],
         }
     ]
 
     ini_carn = [
         {
-            "loc": (2, 1),
+            "loc": (4, 6),
             "pop": [
-                {"species": "Carnivore", "age": 2, "weight": 20}
+                {"species": "Carnivore", "age": 2, "weight": 40}
                 for _ in range(4)
             ],
         }
     ]
 
     sim = BioSim(geogr, ini_herbs, 1)
-    sim.add_population(ini_carn)
-    for _ in range(100):
+    for x in range(150):
         sim.simulate_one_year()
+        if x == 50:
+            sim.add_population(ini_carn)
         print(sim.year)
         print(sim.num_animals)
         print(sim.num_animals_per_species)
@@ -355,4 +358,4 @@ if __name__ == '__main__':
                 print(position)
             except IndexError:
                 pass"""
-
+    print(sim.animal_distribution)
