@@ -28,8 +28,8 @@ class Island:
                   'S': Savanna,
                   'J': Jungle}
 
-    def __init__(self, island_map, ini_pop):
-        self.map = self.make_map(island_map)
+    def __init__(self, island_map_string, ini_pop):
+        self.map = self.make_map(island_map_string)
         self.add_population(ini_pop)
 
     @property

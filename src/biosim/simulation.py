@@ -60,7 +60,7 @@ class BioSim:
         self.img_fmt = img_fmt
 
     @staticmethod
-    def set_animal_parameters(self, species, params):
+    def set_animal_parameters(species, params):
         """
         Set parameters for animal species.
 
@@ -82,7 +82,7 @@ def str_to_class(field):
         globals()[species].set_parameters(params)
 
     @staticmethod
-    def set_landscape_parameters(self, landscape, params):
+    def set_landscape_parameters(landscape, params):
         """
         Set parameters for landscape type.
 
