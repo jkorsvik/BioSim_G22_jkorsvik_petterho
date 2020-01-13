@@ -194,6 +194,7 @@ class Mountain(Cell):
 
 class Desert(Cell):
     passable = True
+    f_max = 0
 
     def __init__(self):
         super().__init__()
