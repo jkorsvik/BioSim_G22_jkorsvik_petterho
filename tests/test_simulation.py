@@ -12,7 +12,34 @@ import src.biosim.simulation as simulation
 
 
 @pytest.fixture
-def test_island():
+def ini_herbs():
+    ini_herbs = [
+        {
+            "loc": (1, 1),
+            "pop": [
+                {"species": "Herbivore", "age": 5, "weight": 40}
+                for _ in range(100)
+            ],
+        }
+    ]
+    return ini_herbs
+
+
+@pytest.fixture
+def ini_carns():
+    ini_carns = [
+        {
+            "loc": (1, 1),
+            "pop": [
+                {"species": "Carnivore", "age": 2, "weight": 20}
+                for _ in range(10)
+            ],
+        }
+    ]
+    return ini_carns
+
+@pytest.fixture
+def test_island(ini_carns, ini_herbs):
     """
     Important that all animals are inserted to one cell.
     And only uses Jungle as passable cell
@@ -27,26 +54,9 @@ def test_island():
             OJJO
             OOOO"""
     geogr = textwrap.dedent(geogr)
-    ini_herbs = [
-        {
-            "loc": (1, 1),
-            "pop": [
-                {"species": "Herbivore", "age": 5, "weight": 40}
-                for _ in range(100)
-            ],
-        }
-    ]
-    ini_carn = [
-        {
-            "loc": (1, 1),
-            "pop": [
-                {"species": "Carnivore", "age": 2, "weight": 20}
-                for _ in range(10)
-            ],
-        }
-    ]
+
     test_island = simulation.BioSim(geogr, ini_herbs, 1)
-    test_island.add_population(ini_carn)
+    test_island.add_population(ini_carns)
 
     return test_island
 
@@ -61,8 +71,23 @@ class TestSimulation:
     def test_simulate(self):
         assert False
 
-    def test_add_population(self):
-        assert False
+    def test_add_population(self, test_island):
+        assert test_island.island_map[(1, 2)].num_animals == 0
+        test_island.add_population([{'loc': (1, 2),
+                                     'pop': [{"species": "Herbivore",
+                                              "age": 5,
+                                              "weight": 40},
+                                             {"species": "Carnivore",
+                                              "age": 10,
+                                              "weight": 14.5}
+                                             ]
+                                     }])
+        for herbivore in test_island.island_map[(1, 2)].herbivores:
+            assert herbivore.age == 5
+            assert herbivore.weight == 40
+        for carnivore in test_island.island_map[(1, 2)].carnivores:
+            assert carnivore.age == 10
+            assert carnivore.weight == 14.5
 
     def test_year(self):
         assert False
