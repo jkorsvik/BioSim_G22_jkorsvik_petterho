@@ -15,9 +15,13 @@ import pandas as pd
 
 def choose_new_location(prob_list):
     probabilities = [x[1] for x in prob_list]
+    cumulative_sum = np.cumsum(probabilities)
+    print(cumulative_sum)
     locations = [x[0] for x in prob_list]
-    index = np.random.choice(len(prob_list), 1, p=probabilities)
-    return locations[index[0]]
+    index = 0
+    while not np.random.binomial(1, cumulative_sum[index]):
+        index += 1
+    return locations[index]
 
 
 class BioSim:
@@ -98,7 +102,7 @@ class BioSim:
                                         option.propensity[species])
                                        )
 
-        prop_sum = sum(dict(propensity_list).values())
+        prop_sum = np.sum(sum(dict(propensity_list).values()))
         prob_list = []
         for loc, prop in propensity_list:
             prob_list.append((loc, prop / prop_sum))
@@ -113,6 +117,7 @@ class BioSim:
 
     def migrate(self):
         for pos, cell in self.island_map.items():
+            deletion_list = []
             if cell.passable and cell.num_animals > 0:
                 if cell.num_herbivores > 0:
                     for herbivore in cell.herbivores:
@@ -123,9 +128,12 @@ class BioSim:
                                 new_loc = choose_new_location(prob_list)
                             except ValueError:
                                 new_loc = pos
-                            cell.remove_migrated_herb(herbivore)
+                            deletion_list.append(herbivore)
                             self.add_herb_to_new_cell(new_loc, herbivore)
+                    for herbivore in deletion_list:
+                        cell.remove_migrated_herb(herbivore)
 
+                deletion_list = []
                 if cell.num_carnivores > 0:
                     for carnivore in cell.carnivores:
                         if not carnivore.has_moved:
@@ -135,9 +143,10 @@ class BioSim:
                                 new_loc = choose_new_location(prob_list)
                             except ValueError:
                                 new_loc = pos
-                            cell.remove_migrated_carn(carnivore)
+                            deletion_list.append(carnivore)
                             self.add_carn_to_new_cell(new_loc, carnivore)
-
+                    for carnivore in deletion_list:
+                        cell.remove_migrated_carn(carnivore)
     def ready_for_new_year(self):
         for cell in self.island_map.values():
             cell.grow()
@@ -189,10 +198,11 @@ def str_to_class(field):
         """
         index = 0
         while index < num_years:
-            index += 1
             self.simulate_one_year()
-            pass
-
+            if index % vis_years:
+                pass
+            if index % img_years:
+                pass
 
 
     def add_population(self, population):
@@ -244,8 +254,10 @@ def str_to_class(field):
     def animal_distribution(self):
         """Pandas DataFrame with animal count per species for each cell
         on island."""
-        ducty
-        df_sim = pd.DataFrame.from_dict(self.island_map, orient='index',
+        dict_for_df = {}
+        for pos, cell in self.island_map.items():
+            dict_for_df[pos] = [cell.num_herbivores, cell.num_carnivores]
+        df_sim = pd.DataFrame.from_dict(dict_for_df, orient='index',
                                         columns=['Herbivore', 'Carnivore'])
         print(df_sim)
 
@@ -292,15 +304,25 @@ def str_to_class(field):
 
 if __name__ == '__main__':
     geogr = """\
-            OOO
-            OJO
-            OOO
+            OOOOOOOOOOOOOOOOOOOOO
+            OOOOOOOOSMMMMJJJJJJJO
+            OSSSSSJJJJMMJJJJJJJOO
+            OSSSSSSSSSMMJJJJJJOOO
+            OSSSSSJJJJJJJJJJJJOOO
+            OSSSSSJJJDDJJJSJJJOOO
+            OSSJJJJJDDDJJJSSSSOOO
+            OOSSSSJJJDDJJJSOOOOOO
+            OSSSJJJJJDDJJJJJJJOOO
+            OSSSSJJJJDDJJJJOOOOOO
+            OOSSSSJJJJJJJJOOOOOOO
+            OOOSSSSJJJJJJJOOOOOOO
+            OOOOOOOOOOOOOOOOOOOOO
             """
     geogr = textwrap.dedent(geogr)
 
     ini_herbs = [
         {
-            "loc": (1, 1),
+            "loc": (2, 1),
             "pop": [
                 {"species": "Herbivore", "age": 5, "weight": 40}
                 for _ in range(100)
@@ -310,7 +332,7 @@ if __name__ == '__main__':
 
     ini_carn = [
         {
-            "loc": (1, 1),
+            "loc": (2, 1),
             "pop": [
                 {"species": "Carnivore", "age": 2, "weight": 20}
                 for _ in range(4)
@@ -320,15 +342,17 @@ if __name__ == '__main__':
 
     sim = BioSim(geogr, ini_herbs, 1)
     sim.add_population(ini_carn)
-    for _ in range(50):
+    for _ in range(100):
         sim.simulate_one_year()
         print(sim.year)
         print(sim.num_animals)
         print(sim.num_animals_per_species)
+        """
         for position in sim.island_map:
             try:
                 print(sim.island_map[position].herbivores[-1], position)
                 print(sim.island_map[position].carnivores[-1], position)
+                print(position)
             except IndexError:
-                pass
+                pass"""
 
