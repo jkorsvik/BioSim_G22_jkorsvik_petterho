@@ -4,6 +4,7 @@
 """
 
 import numpy as np
+import names
 
 
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
@@ -55,6 +56,7 @@ class Animal:
                                 'attribute.')
 
     def __init__(self, age=0, weight=None):
+        self.name = names.get_last_name()
         self._age = age
         self._weight = weight
         self._compute_fitness = True
@@ -70,7 +72,8 @@ class Animal:
         return self.fitness < other.fitness
 
     def __repr__(self):
-        string = f"Animal Type: {type(self).__name__}\n" \
+        string = f"Name: {self.name}\n" \
+                 f"Animal Type: {type(self).__name__}\n" \
                  f"Age: {self.age}\n" \
                  f"Weight: {self.weight}\n" \
                  f"Fitness: {self.fitness}\n"
