@@ -308,9 +308,10 @@ if __name__ == '__main__':
         print(sim.year)
         print(sim.num_animals)
         print(sim.num_animals_per_species)
-        try:
-            print(sim.island_map[(1, 1)].herbivores[-1])
-            print(sim.island_map[(2, 2)].carnivores[-1])
-        except IndexError:
-            pass
+        for position in sim.island_map:
+            try:
+                print(sim.island_map[position].herbivores[-1], position)
+                print(sim.island_map[position].carnivores[-1], position)
+            except IndexError:
+                pass
 
