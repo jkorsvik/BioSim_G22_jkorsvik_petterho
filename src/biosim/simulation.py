@@ -118,7 +118,10 @@ class BioSim:
                         if not herbivore.has_moved:
 
                             prob_list = self.probability_calc(pos, herbivore)
-                            new_loc = choose_new_location(prob_list)
+                            try:
+                                new_loc = choose_new_location(prob_list)
+                            except ValueError:
+                                new_loc = pos
                             cell.remove_migrated_herb(herbivore)
                             self.add_herb_to_new_cell(new_loc, herbivore)
 
@@ -127,7 +130,10 @@ class BioSim:
                         if not carnivore.has_moved:
 
                             prob_list = self.probability_calc(pos, carnivore)
-                            new_loc = choose_new_location(prob_list)
+                            try:
+                                new_loc = choose_new_location(prob_list)
+                            except ValueError:
+                                new_loc = pos
                             cell.remove_migrated_carn(carnivore)
                             self.add_carn_to_new_cell(new_loc, carnivore)
 
@@ -274,10 +280,10 @@ def str_to_class(field):
 
 if __name__ == '__main__':
     geogr = """\
-            OOOOO
-            OJJSO
-            OJSSO
-            OOOOO"""
+            OOO
+            OJO
+            OOO
+            """
     geogr = textwrap.dedent(geogr)
 
     ini_herbs = [
