@@ -8,12 +8,13 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 import pytest
 
+
 @pytest.fixture
+def dont_know():
+    return None
 
 
 class TestSimulation:
-    def test_migrate(self):
-
     def test_set_animal_parameters(self):
         assert False
 
@@ -42,6 +43,9 @@ class TestSimulation:
         assert False
 
     # Tests for the implementation-methods
+    def test_migrate(self):
+        assert False
+
     def test_feed(self):
         assert False
 
