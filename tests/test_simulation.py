@@ -114,6 +114,7 @@ class TestSimulation:
     def test_make_movie(self):
         assert False
 
+
     # Tests for the implementation-methods
     def test_migrate(self, test_island):
         assert test_island.island_map[(1, 2)].num_animals == 0
