@@ -121,8 +121,7 @@ class Island:
                                      f'{self.map_params}')
         return map
 
-    def probability_calc(self, pos, class_type):
-        species = class_type.__name__
+    def probability_calc(self, pos):
         y, x = pos
         loc_1 = (y - 1, x)
         loc_2 = (y + 1, x)
@@ -138,48 +137,26 @@ class Island:
         propensity_list = []
 
         for loc, option in list_:
-            propensity_list.append((loc,
-                                    option.propensity[species])
-                                   )
+            propensity_list.append(loc, option.propensity)
 
-        prop_sum = np.sum(sum(dict(propensity_list).values()))
-        prob_list = []
-        for loc, prop in propensity_list:
-            prob_list.append((loc, (prop / prop_sum)))
+        return propensity_list
 
-        return prob_list
-
-    def add_herb_to_new_cell(self, new_loc, herbivore):
-        self.map[new_loc].add_migrated_herb(herbivore)
-
-    def add_carn_to_new_cell(self, new_loc, carnivore):
-        self.map[new_loc].add_migrated_carn(carnivore)
+    def add_animal_to_new_cell(self, new_loc, animal):
+        self.map[new_loc].add_migrated_animal(animal)
 
     def migrate(self):
-        for pos, cell in self.map.items():
-            deletion_list = []
-            if cell.passable and cell.num_animals > 0:
-                prob_list = self.probability_calc(pos, herbivore)
-                    if not
-                        self.add_herb_to_new_cell(new_loc, herbivore)
-                    for herbivore in deletion_list:
-                        cell.remove_migrated_herb(herbivore)
+        migration_list = []
 
-                deletion_list = []
-                if cell.num_carnivores > 0:
-                    for carnivore in cell.carnivores:
-                        if not carnivore.has_moved:
-                            if not carnivore.will_migrate():
-                                continue
-                            prob_list = self.probability_calc(pos, carnivore)
-                            try:
-                                new_loc = choose_new_location(prob_list)
-                            except ValueError:
-                                new_loc = pos
-                            deletion_list.append(carnivore)
-                            self.add_carn_to_new_cell(new_loc, carnivore)
-                    for carnivore in deletion_list:
-                        cell.remove_migrated_carn(carnivore)
+        for pos, cell in self.map.items():
+            if cell.passable and cell.num_animals > 0:
+                propensity_list = self.probability_calc(pos)
+                migration_list.append((cell.migrate(propensity_list)))
+
+        for tuple_ in migration_list:
+            pos, animal = tuple_
+            self.add_animal_to_new_cell(pos, animal)
+
+
 
     def ready_for_new_year(self):
         for cell in self.map.values():

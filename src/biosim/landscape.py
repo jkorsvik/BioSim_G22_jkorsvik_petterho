@@ -8,6 +8,8 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 from src.biosim.animals import Herbivore, Carnivore
 import numpy as np
+import itertools
+
 
 
 class Cell:
@@ -73,23 +75,39 @@ class Cell:
     def add_migrated_carn(self, carnivore):
         self.carnivores.append(carnivore)
 
+    def add_migrated_animal(self, animal):
+        if animal is Herbivore:
+            self.add_migrated_herb(animal)
+        if animal is Carnivore:
+            self.add_migrated_carn(animal)
+
     def remove_migrated_herb(self, herbivore):
         self.herbivores.remove(herbivore)
 
     def remove_migrated_carn(self, carnivore):
         self.carnivores.remove(carnivore)
 
-    def migrate_animals_in_cell(self, prob_herb, prob_carn):
+    def check_cell_migrate(self):
+        return self.num_animals > 0
+
+    def will_animal_move(self, animal):
+        if not animal.has_moved:
+            if not animal.will_migrate():
+                return True
+        return False
+
+    def chain_lists(self):
+        return itertools.chain(self.herbivores, self.carnivores)
+
+    def migrate(self, propensities):
         migrated_list = []
         if self.num_herbivores > 0:
-            for herbivore in self.herbivores:
+            for animal in :
                 if not herbivore.has_moved:
                     if not herbivore.will_migrate():
                         continue
-                    try:
-                        new_position = herbivore.migrate(prob_herb)
-                    except ValueError
-                        return False
+                    new_position = animal.migrate(propensities)
+
                     migrated_list.append(herbivore)
 
 
@@ -172,22 +190,22 @@ class Cell:
             lambda_ = Herbivore.lambda_
             appetite = Herbivore.F
             dividend = ((self.num_herbivores + 1) * appetite)
-            exponent_herb = (lambda_*(self.fodder / dividend))
+            exponent_herb = (lambda_*(self.fodder
+                                      / dividend))
+
             propensity_herb = np.exp(exponent_herb)
 
             lambda_ = Carnivore.lambda_
             appetite_ = Carnivore.F
-            meat = 0
-            for herbivore in self.herbivores:
-                meat += herbivore.weight
 
             dividend = ((self.num_carnivores + 1) * appetite_)
-            exponent_carn = (lambda_*(meat / dividend))
+            exponent_carn = (lambda_*(self.meat_for_carnivores
+                                      / dividend))
+
             propensity_carn = np.exp(exponent_carn)
+
             self._propensity = {'Carnivore': propensity_carn,
                                 'Herbivore': propensity_herb}
-
-        self._calculate_propensity = False
 
         return self._propensity
 
