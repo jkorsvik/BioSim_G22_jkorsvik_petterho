@@ -65,8 +65,8 @@ class TestIsland:
         for year in range(10):
             test_island.simulate_one_year()
         for cell in test_island.map.values():
-            if isinstance(cell, (cell.Jungle, cell.Savanna,
-                                 cell.Desert)):
+            if isinstance(cell, (Jungle, Savanna,
+                                 Desert)):
                 assert cell.num_animals > 0
             else:
                 assert cell.num_animals == 0
