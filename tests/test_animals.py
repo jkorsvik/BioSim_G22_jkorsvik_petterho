@@ -13,6 +13,17 @@ from pprint import pprint
 
 
 @pytest.fixture
+def carnivore_parameters_right():
+    return {'eta': 0.125, 'phi_age': 0.4, 'DeltaPhiMax': 10.0}
+
+
+@pytest.fixture
+def carnivore_parameters_wrong():
+    return {'zettet': 7}
+
+
+@pytest.fixture
+
 def herbivore_list():
     list_ = []
     for x in range(10):
@@ -175,16 +186,19 @@ class TestAnimal:
         for _ in range(100):
             assert animal_2.death()
 
-    def test_feed(self):
-        test_animal = Animal()
-        assert test_animal.feed(0.1) == 0
-        assert test_animal.feed(1000) > 100
 
-    def test_lose_weight(self):
-        test_animal = Animal()
-        test_animal.weight = 100
-        test_animal.lose_weight()
-        assert test_animal.weight == 100 * 0.95
+    def test_set_parameters(self, carnivore_parameters_right,
+                            carnivore_parameters_wrong):
+        carnivore = Carnivore(30, 10)
+        with pytest.raises(TypeError):
+            carnivore.set_parameters(**carnivore_parameters_wrong)
+        carnivore.set_parameters(eta=1, phi_age=200)
+        assert carnivore.eta == 1
+        assert carnivore.phi_age == 200
+        carnivore.set_parameters(**carnivore_parameters_right)
+        assert carnivore.eta == 0.125
+        assert carnivore.phi_age == 0.4
+
 
 
 class TestHerbivore:

@@ -16,17 +16,36 @@ class Cell:
     alpha = 0
 
     @classmethod
-    def set_parameters(cls, parameters):
-        for key, value in parameters.items():
-            if key in cls.__dict__.keys():
-                if value < 0:
-                    raise ValueError('Parameters must be positive.')
-                else:
-                    setattr(cls, key, value)
+    def set_parameters(cls, passable=None, f_max=None, alpha=None):
+        # By checking all parameters first, set parameters does not change
+        # any parameters before it is sure that all parameters are valid
 
+        bool_passable = False
+        bool_f_max = False
+        bool_alpha = False
+
+        if passable:
+            if type(passable) is bool:
+                bool_passable = True
             else:
-                raise NameError('One the keys in your parameters is not an '
-                                'attribute.')
+                raise ValueError('passable takes bool arguments only')
+        if f_max:
+            if f_max >= 0:
+                bool_f_max = True
+            else:
+                raise ValueError('f_max takes int or float arguments only')
+        if alpha:
+            if alpha >= 0:
+                bool_alpha = True
+            else:
+                raise ValueError('alpha takes int or float arguments only')
+
+        if bool_passable is True:
+            cls.passable = passable
+        if bool_f_max is True:
+            cls.f_max = f_max
+        if bool_alpha is True:
+            cls.alpha = alpha
 
     def __init__(self):
         self.herbivores = []
@@ -194,6 +213,7 @@ class Mountain(Cell):
 
 class Desert(Cell):
     passable = True
+    f_max = 0
 
     def __init__(self):
         super().__init__()
