@@ -9,6 +9,7 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 from src.biosim.island import *
 # from src.biosim.visualization import *
+from pprint import pprint
 import pandas as pd
 
 
@@ -107,10 +108,6 @@ def str_to_class(field):
             self.island.simulate_one_year()
             index += 1
             self.year += 1
-            if index % vis_years:
-                pass
-            if index % img_years:
-                pass
 
     def add_population(self, population):
         """
@@ -202,3 +199,5 @@ if __name__ == '__main__':
     ]
 
     sim = BioSim(geogr, ini_herbs, 1)
+    sim.simulate(50)
+    print(sim.animal_distribution)
