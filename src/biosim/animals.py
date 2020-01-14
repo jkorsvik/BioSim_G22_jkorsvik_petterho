@@ -48,17 +48,160 @@ class Animal:
     F = 10.0
 
     @classmethod
-    def set_parameters(cls, parameters):
-        for key, value in parameters.items():
-            if key in cls.__dict__.keys():
-                if value < 0:
-                    raise ValueError('Parameters must be positive.')
-                else:
-                    setattr(cls, key, value)
+    def set_parameters(cls, w_birth=None, sigma_birth=None, beta=None,
+                       eta= None, a_half=None, phi_age=None, w_half=None,
+                       phi_weight=None, mu=None, lambda_=None, gamma=None,
+                       zeta=None, xi=None, omega=None, F=None,
+                       DeltaPhiMax=None):
+        # By checking all parameters first, set parameters does not change
+        # any parameters before it is sure that all parameters are valid
 
+        bool_w_birth = False
+        bool_sigma_birth = False
+        bool_beta = False
+        bool_eta = False
+        bool_a_half = False
+        bool_phi_age = False
+        bool_w_half = False
+        bool_phi_weight = False
+        bool_mu = False
+        bool_lambda_ = False
+        bool_gamma = False
+        bool_zeta = False
+        bool_xi = False
+        bool_omega = False
+        bool_F = False
+        bool_DeltaPhiMax = False
+
+        if w_birth:
+            if w_birth >= 0:
+                bool_w_birth = True
             else:
-                raise NameError('One the keys in your parameters is not an '
-                                'attribute.')
+                raise ValueError('w_birth takes positive int or float '
+                                 'arguments only')
+        if sigma_birth:
+            if sigma_birth >= 0:
+                bool_sigma_birth = True
+            else:
+                raise ValueError('sigma_birth takes positive int or float '
+                                 'arguments only')
+        if beta:
+            if beta >= 0:
+                bool_beta = True
+            else:
+                raise ValueError('beta takes positive int or float '
+                                 'arguments only')
+        if eta:
+            if eta >= 0:
+                bool_eta = True
+            else:
+                raise ValueError('eta takes positive int or float '
+                                 'arguments only')
+        if a_half:
+            if a_half >= 0:
+                bool_a_half = True
+            else:
+                raise ValueError('a_half takes positive int or float '
+                                 'arguments only')
+        if phi_age:
+            if phi_age >= 0:
+                bool_phi_age = True
+            else:
+                raise ValueError('phi_age takes positive int or float '
+                                 'arguments only')
+        if w_half:
+            if w_half >= 0:
+                bool_w_half = True
+            else:
+                raise ValueError('w_half takes positive int or float '
+                                 'arguments only')
+        if phi_weight:
+            if phi_weight >= 0:
+                bool_phi_weight = True
+            else:
+                raise ValueError('phi_weight takes positive int or float '
+                                 'arguments only')
+        if mu:
+            if mu >= 0:
+                bool_mu = True
+            else:
+                raise ValueError('mu takes positive int or float '
+                                 'arguments only')
+        if lambda_:
+            if lambda_ >= 0:
+                bool_lambda_ = True
+            else:
+                raise ValueError('lambda_ takes positive int or float '
+                                 'arguments only')
+        if gamma:
+            if gamma >= 0:
+                bool_gamma = True
+            else:
+                raise ValueError('gamma takes positive int or float '
+                                 'arguments only')
+        if zeta:
+            if zeta >= 0:
+                bool_zeta = True
+            else:
+                raise ValueError('zeta takes positive int or float '
+                                 'arguments only')
+        if xi:
+            if xi >= 0:
+                bool_xi = True
+            else:
+                raise ValueError('xi takes positive int or float '
+                                 'arguments only')
+        if omega:
+            if omega >= 0:
+                bool_omega = True
+            else:
+                raise ValueError('omega takes positive int or float '
+                                 'arguments only')
+        if F:
+            if F >= 0:
+                bool_F = True
+            else:
+                raise ValueError('F takes positive int or float '
+                                 'arguments only')
+        if DeltaPhiMax:
+            if DeltaPhiMax >= 0:
+                bool_DeltaPhiMax = True
+            else:
+                raise ValueError('DeltaPhiMax takes positive int or float '
+                                 'arguments only')
+
+        if bool_w_birth is True:
+            cls.w_birth = w_birth
+        if bool_sigma_birth is True:
+            cls.sigma_birth = sigma_birth
+        if bool_beta is True:
+            cls.beta = beta
+        if bool_eta is True:
+            cls.eta = eta
+        if bool_a_half is True:
+            cls.a_half = a_half
+        if bool_phi_age is True:
+            cls.phi_age = phi_age
+        if bool_w_half is True:
+            cls.w_half = w_half
+        if bool_phi_weight is True:
+            cls.phi_weight = phi_weight
+        if bool_mu is True:
+            cls.mu = mu
+        if bool_lambda_ is True:
+            cls.lambda_ = lambda_
+        if bool_gamma is True:
+            cls.gamma = gamma
+        if bool_zeta is True:
+            cls.zeta = zeta
+        if bool_xi is True:
+            cls.xi = xi
+        if bool_omega is True:
+            cls.omega = omega
+        if bool_F is True:
+            cls.F = F
+        if bool_DeltaPhiMax is True:
+            cls.DeltaPhiMax = DeltaPhiMax
 
     def __init__(self, age=0, weight=None):
         # self.name = generate_rand_name()
