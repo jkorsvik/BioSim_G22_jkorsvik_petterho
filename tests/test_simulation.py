@@ -79,25 +79,3 @@ class TestSimulation:
     def test_make_movie(self):
         assert False
 
-
-
-    def test_feed(self):
-        assert False
-
-    def test_feed_herbivores(self):
-        assert False
-
-    def test_feed_carnivores(self):
-        assert False
-
-    def test_procreation(self):
-        assert False
-
-    def test_migration(self):
-        assert False
-
-    def test_aging(self):
-        assert False
-
-    def test_simulate_one_year(self):
-        assert False

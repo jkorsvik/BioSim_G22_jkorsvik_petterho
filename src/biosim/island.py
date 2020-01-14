@@ -11,8 +11,8 @@ import textwrap
 from src.biosim.animals import *
 
 
-def check_length(*args):
-    if not all(len(args[0]) == len(_arg) for _arg in args[1:]):
+def check_length(lines):
+    if not all(len(lines[0]) == len(line) for line in lines[1:]):
         return False
     return True
 

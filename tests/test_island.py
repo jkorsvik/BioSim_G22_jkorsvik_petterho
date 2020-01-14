@@ -9,7 +9,8 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 import pytest
 import textwrap
 from src.biosim.simulation import BioSim
-from src.biosim.island import Island
+from src.biosim.island import *
+from src.biosim.landscape import *
 
 @pytest.fixture
 def plain_map_string():
@@ -23,8 +24,8 @@ def test_island():
 
     Returns
     -------
-    test_island: BioSim
-        instance of BioSim class
+    test_island: Island
+        instance of Island class
     """
     geogr = """\
             OOOO
@@ -49,29 +50,50 @@ def test_island():
             ],
         }
     ]
-    test_island = Island(geogr, ini_herbs,)
+    test_island = Island(geogr, ini_herbs)
     test_island.add_population(ini_carn)
 
     return test_island
 
 
-class TestSimulation:
+class TestIsland:
 
     # Tests for the implementation-methods
 
     def test_migrate(self, test_island):
-        assert test_island.island_map[(1, 2)].num_animals == 0
+        assert test_island.map[(1, 2)].num_animals == 0
         for year in range(10):
             test_island.simulate_one_year()
-        for cell in test_island.island_map.values():
-            if isinstance(cell, (simulation.Jungle, simulation.Savanna,
-                                 simulation.Desert)):
+        for cell in test_island.map.values():
+            if isinstance(cell, (cell.Jungle, cell.Savanna,
+                                 cell.Desert)):
                 assert cell.num_animals > 0
             else:
                 assert cell.num_animals == 0
 
         # Uses the fact that the animals should distribute evenly in this map
-        num_animals11 = test_island.island_map[(1, 1)].num_animals
-        num_animals12 = test_island.island_map[(1, 2)].num_animals
+        num_animals11 = test_island.map[(1, 1)].num_animals
+        num_animals12 = test_island.map[(1, 2)].num_animals
         print(num_animals11, num_animals12)
         assert num_animals12 * 0.8 < num_animals11 < num_animals12 * 1.2
+
+    def test_feed(self):
+        assert False
+
+    def test_feed_herbivores(self):
+        assert False
+
+    def test_feed_carnivores(self):
+        assert False
+
+    def test_procreation(self):
+        assert False
+
+    def test_migration(self):
+        assert False
+
+    def test_aging(self):
+        assert False
+
+    def test_simulate_one_year(self):
+        assert False

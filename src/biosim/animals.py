@@ -4,20 +4,14 @@
 """
 
 import numpy as np
-import names
-from numba import jit
 
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-@jit
+
 def sigmoid(value):
     return 1/(1 + np.exp(value))
-
-
-def generate_rand_name():
-    return names.get_last_name()
 
 
 """"
