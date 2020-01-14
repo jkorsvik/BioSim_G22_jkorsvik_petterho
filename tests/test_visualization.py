@@ -19,5 +19,5 @@ def plain_sim():
 
 
 def test_pixel_color(plain_sim):
-    class_ = Visuals(plain_sim.island_map)
-    assert class_.geography[0][0] == ['c']
+    class_ = Visuals(plain_sim.island.map)
+    assert class_.geography[0][0] == 'c'

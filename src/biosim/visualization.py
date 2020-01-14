@@ -7,6 +7,7 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
 
 class Visuals:
@@ -26,13 +27,14 @@ class Visuals:
         self.figure = plt.figure
 
     def draw_geography(self, island_map):
-        pixel_colors = [[]]
+        pixel_colors = [[None for _ in range(num_X)] for _ in range(num_Y)]
         for pos, cell in island_map.items():
             y, x = pos
             name_of_class = cell.__class__.__name__
-            pixel_colors.append([])
-            pixel_colors[y].append([])
-            pixel_colors[y][x].append(self.cell_colors[name_of_class])
+            color_name = self.cell_colors[name_of_class]
+            color_code_rgb = mcolors.to_rgba(colors_name)
+            pixel_colors[y][x].append(color_code_rgb)
+        print(pixel_colors)
         return pixel_colors
 
     def line_graph(self, island_map):
@@ -45,3 +47,4 @@ class Visuals:
         pass
 
 
+if __name__ == '__main__':

@@ -11,6 +11,12 @@ import textwrap
 from src.biosim.animals import *
 
 
+def check_length(*args):
+    if not all(len(args[0]) == len(_arg) for _arg in args[1:]):
+        return False
+    return True
+
+
 def choose_new_location(prob_list):
     probabilities = [x[1] for x in prob_list]
     cumulative_sum = np.cumsum(probabilities)
@@ -56,12 +62,31 @@ class Island:
 
         return num_animals_per_species
 
+    @staticmethod
+    def clean_multi_line_string(island_map_string):
+        island_map_string = island_map_string.strip()
+        lines = island_map_string.split('\n')
+
+        if not check_length(lines):
+            raise ValueError('Each line of the multi line string, '
+                             'shall be equal in length')
+
+        for x in range(len(lines[0])):
+            if lines[0][x] is not 'O' or lines[-1][x] is not 'O':
+                raise ValueError('')
+        for y in range(len(lines)):
+            if lines[y][0] is not 'O' or lines[y][-1] is not 'O':
+                raise ValueError('')
+
+        return lines
+
     def make_map(self, island_map_string):
         map = {}
-        lines = island_map_string.split('\n')
+        lines = self.clean_multi_line_string(island_map_string)
         for y, line in enumerate(lines):
             for x, letter in enumerate(line):
                 map[(y, x)] = self.map_params[letter.upper()]()
+
         return map
 
     def probability_calc(self, pos, animal):
