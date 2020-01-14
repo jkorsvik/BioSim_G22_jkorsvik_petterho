@@ -62,11 +62,15 @@ class TestIsland:
 
     def test_migrate(self, test_island):
         assert test_island.map[(1, 2)].num_animals == 0
-        for year in range(10):
+        test_island.simulate_one_year()
+        assert test_island.map[(1, 2)].num_animals > 10
+        assert test_island.map[(1, 2)].num_animals > 10
+
+        for year in range(9):
             test_island.simulate_one_year()
         for cell in test_island.map.values():
-            if isinstance(cell, (cell.Jungle, cell.Savanna,
-                                 cell.Desert)):
+            if isinstance(cell, (Jungle, Savanna,
+                                 Desert)):
                 assert cell.num_animals > 0
             else:
                 assert cell.num_animals == 0
@@ -74,26 +78,22 @@ class TestIsland:
         # Uses the fact that the animals should distribute evenly in this map
         num_animals11 = test_island.map[(1, 1)].num_animals
         num_animals12 = test_island.map[(1, 2)].num_animals
-        print(num_animals11, num_animals12)
         assert num_animals12 * 0.8 < num_animals11 < num_animals12 * 1.2
 
-    def test_feed(self):
-        assert False
+    def test_feed(self, test_island):
+        test_island.feed()
+        assert test_island.map[(1, 1)].herbivores[-1].weight > 40
+        assert test_island.map[(1, 1)].herbivores[-1].weight > 20
 
-    def test_feed_herbivores(self):
-        assert False
+    def test_procreation(self, test_island):
+        test_island.procreate()
+        assert test_island.num_animals > 110
 
-    def test_feed_carnivores(self):
-        assert False
+    def test_age_animals(self, test_island):
+        test_island.age_animals()
+        assert test_island.map[(1, 1)].herbivores[-1].age == 6
+        assert test_island.map[(1, 1)].carnivores[-1].age == 3
 
-    def test_procreation(self):
-        assert False
-
-    def test_migration(self):
-        assert False
-
-    def test_aging(self):
-        assert False
 
     def test_simulate_one_year(self):
         assert False
