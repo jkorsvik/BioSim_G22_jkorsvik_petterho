@@ -18,6 +18,17 @@ def check_length(*args):
 
 
 def choose_new_location(prob_list):
+    """
+    Draws one out of a list with weights.
+
+    Parameters
+    ----------
+    prob_list - list of tuple(loc, probabilities)
+
+    Returns
+    -------
+    new_location - tuple of (y, x)
+    """
     probabilities = [x[1] for x in prob_list]
     cumulative_sum = np.cumsum(probabilities)
     locations = [x[0] for x in prob_list]
@@ -40,7 +51,13 @@ class Island:
 
     @property
     def num_animals(self):
-        """Total number of animals on island."""
+        """
+        Total number of animals on island.
+
+        Returns
+        -------
+        num_animals - int
+        """
         num_animals = 0
         for num_type in self.num_animals_per_species.values():
             num_animals += num_type
@@ -48,7 +65,13 @@ class Island:
 
     @property
     def num_animals_per_species(self):
-        """Number of animals per species in island, as dictionary."""
+        """
+        Number of animals per species in island, as dictionary.
+
+        Returns
+        -------
+        num_animals_per_species - dictionary
+        """
         num_animals_per_species = {}
         num_herbivores = 0
         num_carnivores = 0
@@ -64,6 +87,19 @@ class Island:
 
     @staticmethod
     def clean_multi_line_string(island_map_string):
+        """
+        Strips and splits a multilinestring and checks for equal length
+        of lines and specific letters at the edges: in this case 'O'.
+        Raises ValueError if criteria are not met.
+
+        Parameters
+        ----------
+        island_map_string - multilinestring
+
+        Returns
+        -------
+        lines - a list of lines of strings (cleaned)
+        """
         island_map_string = island_map_string.strip()
         lines = island_map_string.split('\n')
 
@@ -81,6 +117,19 @@ class Island:
         return lines
 
     def make_map(self, island_map_string):
+        """
+        Creates a dictionary data frame that stores instances of cells
+        by key: a tuple of (y, x)-coordinates
+
+        Parameters
+        ----------
+        island_map_string
+
+        Returns
+        -------
+        map - dictionary
+
+        """
         map = {}
         lines = self.clean_multi_line_string(island_map_string)
         for y, line in enumerate(lines):

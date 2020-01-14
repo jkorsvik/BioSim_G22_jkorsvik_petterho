@@ -28,6 +28,23 @@ class Visuals:
         self.figure = plt.figure
 
     def make_color_pixels(self, island_map, map_string):
+        """
+        Creates a list indexed by [y][x] that represents an color by type of
+        cell. The color is collected from a class variable called color_params
+
+        For example: pixel_colors[0][0] = the color code for cyan in rgba
+                    (since all cell at the edges shall be ocean)
+
+        Parameters
+        ----------
+        island_map - instance of a map
+        map_string - cleaned lines of string
+
+        Returns
+        -------
+        pixel_colors - nested list with quadruplets of rgba-values
+
+        """
         pixel_colors = []
         for y in range(len(map_string)):
             pixel_colors.append([])
@@ -40,7 +57,6 @@ class Visuals:
             color_name = self.cell_colors[name_of_class]
             color_code_rgb = mcolors.to_rgba(color_name)
             pixel_colors[y][x] = color_code_rgb
-        print(pixel_colors)
         return pixel_colors
 
     def line_graph(self, island_map):
