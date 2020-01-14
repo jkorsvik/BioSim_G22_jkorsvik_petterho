@@ -92,11 +92,11 @@ class Animal:
                 raise ValueError('beta takes positive int or float '
                                  'arguments only')
         if eta:
-            if eta >= 0:
+            if 1 >= eta >= 0:
                 bool_eta = True
             else:
-                raise ValueError('eta takes positive int or float '
-                                 'arguments only')
+                raise ValueError('eta takes int or float '
+                                 'arguments 0 <= eta <= 1 only')
         if a_half:
             if a_half >= 0:
                 bool_a_half = True
@@ -164,11 +164,11 @@ class Animal:
                 raise ValueError('F takes positive int or float '
                                  'arguments only')
         if DeltaPhiMax:
-            if DeltaPhiMax >= 0:
+            if DeltaPhiMax > 0:
                 bool_DeltaPhiMax = True
             else:
-                raise ValueError('DeltaPhiMax takes positive int or float '
-                                 'arguments only')
+                raise ValueError('DeltaPhiMax takes  strictly positive int or '
+                                 'float arguments only')
 
         if bool_w_birth is True:
             cls.w_birth = w_birth
