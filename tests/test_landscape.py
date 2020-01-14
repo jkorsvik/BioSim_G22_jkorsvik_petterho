@@ -14,7 +14,8 @@ import pytest
 
 @pytest.fixture
 def parameters_savanna():
-    return {'f_max': 100,
+    return {'passable': False,
+            'f_max': 100,
             'alpha': 1
             }
 
@@ -143,17 +144,17 @@ class TestCell:
             type(jungle.meat_for_carnivores) is int
         assert jungle.meat_for_carnivores == 100
 
-
-
     def test_set_parameters(self, parameters_savanna,
                             default_parameters_savanna):
         savanna = ls.Savanna()
-        savanna.set_parameters(parameters_savanna)
+        savanna.set_parameters(**parameters_savanna)
         assert savanna.f_max == parameters_savanna['f_max']
         assert savanna.alpha == parameters_savanna['alpha']
-        savanna.set_parameters(default_parameters_savanna)
+        savanna.set_parameters(**default_parameters_savanna)
         assert savanna.f_max == default_parameters_savanna['f_max']
         assert savanna.alpha == default_parameters_savanna['alpha']
+        with pytest.raises(TypeError):
+            savanna.set_parameters(sun=0)
 
     def test_add_animals(self, animal_list):
         jungle = ls.Jungle()

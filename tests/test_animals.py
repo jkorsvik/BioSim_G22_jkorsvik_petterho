@@ -14,7 +14,7 @@ from pprint import pprint
 
 @pytest.fixture
 def carnivore_parameters_right():
-    return {'eta': 0.03, 'phi_age': 0.3, 'DeltaPhiMax': 8.0}
+    return {'eta': 0.125, 'phi_age': 0.4, 'DeltaPhiMax': 10.0}
 
 
 @pytest.fixture
@@ -112,11 +112,17 @@ class TestAnimal:
         for _ in range(100):
             assert animal_2.death()
 
-    def test_set_param(self, carnivore_parameters_right):
-        animal = Carnivore(30, 10)
-        animal.set_parameters(carnivore_parameters_right)
-        assert animal.eta == 0.03
-        assert animal.phi_age == 0.3
+    def test_set_parameters(self, carnivore_parameters_right,
+                            carnivore_parameters_wrong):
+        carnivore = Carnivore(30, 10)
+        with pytest.raises(TypeError):
+            carnivore.set_parameters(**carnivore_parameters_wrong)
+        carnivore.set_parameters(eta=1, phi_age=200)
+        assert carnivore.eta == 1
+        assert carnivore.phi_age == 200
+        carnivore.set_parameters(**carnivore_parameters_right)
+        assert carnivore.eta == 0.125
+        assert carnivore.phi_age == 0.4
 
 
 class TestHerbivore:
