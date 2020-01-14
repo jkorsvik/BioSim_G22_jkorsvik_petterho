@@ -220,47 +220,6 @@ class Animal:
                  f"Fitness: {self.fitness}\n"
         return string
 
-    def reset_has_moved(self):
-        self._has_moved = False
-
-    def will_migrate(self):
-        prob_to_move = self.fitness * self.mu
-        return bool(np.random.binomial(1, prob_to_move))
-
-    def birth(self, num_same_species):
-        mates = num_same_species - 1
-        prob_to_birth = np.minimum(1, (self.gamma * self.fitness * mates))
-        if self.weight < self.zeta*(self.w_birth + self.phi_weight):
-            return 0
-
-        if np.random.binomial(1, prob_to_birth):
-            offspring = type(self)()
-            weight_loss = self.xi * offspring.weight
-
-            if self.weight >= weight_loss:
-                self.weight -= weight_loss
-                return offspring
-
-        return 0
-
-    def lose_weight(self):
-        self.weight -= self.eta*self.weight
-
-    def death(self):
-        prob_to_die = self.omega*(1-self.fitness)
-        dies = np.random.binomial(1, prob_to_die)
-        return bool(dies) or self.fitness <= 0
-
-    def feed(self, available_food):  # Will be overwritten by the subclasses
-        if self.F <= available_food:
-            self.weight += self.beta * self.F
-            return available_food - self.F
-
-        if 0 < available_food:
-            self.weight += self.beta * available_food
-
-        return 0
-
     @property
     def fitness(self):
         if self._compute_fitness is True:
@@ -298,16 +257,58 @@ class Animal:
 
     @property
     def has_moved(self):
+        # Farlig kode! Hvis du vil sjekke mer enn en gang så er den alltid True
         moved = self._has_moved
         self._has_moved = True
         return moved
+
+    def reset_has_moved(self):
+        self._has_moved = False
+
+    def will_migrate(self):
+        prob_to_move = self.fitness * self.mu
+        return bool(np.random.binomial(1, prob_to_move))
+
+    def birth(self, num_same_species):
+        mates = num_same_species - 1
+        prob_to_birth = np.minimum(1, (self.gamma * self.fitness * mates))
+        if self.weight < self.zeta*(self.w_birth + self.phi_weight):
+            return 0
+
+        if np.random.binomial(1, prob_to_birth):
+            offspring = type(self)()
+            weight_loss = self.xi * offspring.weight
+
+            if self.weight >= weight_loss:
+                self.weight -= weight_loss
+                return offspring
+
+        return 0
+
+    def death(self):
+        prob_to_die = self.omega*(1-self.fitness)
+        dies = np.random.binomial(1, prob_to_die)
+        return bool(dies) or self.fitness <= 0
+
+    def feed(self, available_food):  # Will be overwritten by the subclasses
+        if self.F <= available_food:
+            self.weight += self.beta * self.F
+            return available_food - self.F
+
+        if 0 < available_food:
+            self.weight += self.beta * available_food
+
+        return 0
+
+    def lose_weight(self):
+        self.weight -= self.eta*self.weight
 
 
 class Herbivore(Animal):
     w_birth = 8.0
     sigma_birth = 1.5
     beta = 0.9
-    eta = 0.05  # sjekker med lavere eta
+    eta = 0.05
     a_half = 40
     phi_age = 0.2
     w_half = 10
