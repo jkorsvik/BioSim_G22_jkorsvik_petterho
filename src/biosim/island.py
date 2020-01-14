@@ -80,8 +80,8 @@ class Island:
             num_herbivores += cell.num_herbivores
             num_carnivores += cell.num_carnivores
 
-        num_animals_per_species['Herbivores'] = num_herbivores
-        num_animals_per_species['Carnivores'] = num_carnivores
+        num_animals_per_species['Herbivore'] = num_herbivores
+        num_animals_per_species['Carnivore'] = num_carnivores
 
         return num_animals_per_species
 
@@ -303,7 +303,7 @@ if __name__ == '__main__':
     ]
 
     sim = Island(geogr, ini_herbs)
-    for x in range(1000):
+    for x in range(200):
         sim.simulate_one_year()
         if x == 50:
             sim.add_population(ini_carn)
