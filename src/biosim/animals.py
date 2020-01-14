@@ -50,6 +50,8 @@ class Animal:
         # By checking all parameters first, set parameters does not change
         # any parameters before it is sure that all parameters are valid
 
+        # If I can, I should make this smaler.
+
         bool_w_birth = False
         bool_sigma_birth = False
         bool_beta = False
