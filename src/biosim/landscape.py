@@ -11,6 +11,19 @@ import numpy as np
 import itertools
 
 
+def calculate_probabilities(animal, propensities):
+    propensities_by_animal = []
+    for loc, prop in propensities:
+        prop = prop[animal.__name__]
+        propensities_by_animal.append((loc, prop))
+
+    prop_sum = sum(x[1] for x in propensities_by_animal)
+
+    prob_list = []
+    for loc, prop in propensities_by_animal:
+        prob_list.append((loc, (prop / prop_sum)))
+    return prob_list
+
 
 class Cell:
     passable = True
@@ -69,46 +82,39 @@ class Cell:
                 self.carnivores.append(Carnivore(
                     age=animal['age'], weight=animal['weight']))
 
-    def add_migrated_herb(self, herbivore):
-        self.herbivores.append(herbivore)
-
-    def add_migrated_carn(self, carnivore):
-        self.carnivores.append(carnivore)
-
     def add_migrated_animal(self, animal):
-        if animal is Herbivore:
-            self.add_migrated_herb(animal)
-        if animal is Carnivore:
-            self.add_migrated_carn(animal)
+        if animal.__class__ is Herbivore:
+            self.herbivores.append(animal)
+        if animal.__class__ is Carnivore:
+            self.carnivores.append(animal)
 
-    def remove_migrated_herb(self, herbivore):
-        self.herbivores.remove(herbivore)
-
-    def remove_migrated_carn(self, carnivore):
-        self.carnivores.remove(carnivore)
-
-    def check_cell_migrate(self):
-        return self.num_animals > 0
-
-    def will_animal_move(self, animal):
-        if not animal.has_moved:
-            if not animal.will_migrate():
-                return True
-        return False
+    def remove_migrated_animal(self, animal):
+        if animal.__class__ is Herbivore:
+            self.herbivores.remove(animal)
+        if animal.__class__ is Carnivore:
+            self.carnivores.remove(animal)
 
     def chain_lists(self):
         return itertools.chain(self.herbivores, self.carnivores)
 
     def migrate(self, propensities):
         migrated_list = []
-        if self.num_herbivores > 0:
-            for animal in :
-                if not herbivore.has_moved:
-                    if not herbivore.will_migrate():
-                        continue
-                    new_position = animal.migrate(propensities)
+        herb_prob = calculate_probabilities(Herbivore, propensities)
+        carn_prob = calculate_probabilities(Carnivore, propensities)
+        for animal in self.chain_lists():
+            if animal.will_move():
+                if animal.__class__ is Herbivore:
+                    new_position = animal.migrate(herb_prob)
+                else:
+                    new_position = animal.migrate(carn_prob)
+                if new_position is None:
+                    continue
+                migrated_list.append((new_position, animal))
 
-                    migrated_list.append(herbivore)
+        for _, animal in migrated_list:
+            self.remove_migrated_animal(animal)
+
+        return migrated_list
 
 
     def procreate(self):

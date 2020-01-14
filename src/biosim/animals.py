@@ -25,23 +25,16 @@ def choose_new_location(prob_list):
     -------
     new_location - tuple of (y, x)
     """
-    probabilities = [x[1] for x in prob_list]
+
+    sorted_list = sorted(prob_list, key=lambda x: x[1])
+    probabilities = [x[1] for x in sorted_list]
     cumulative_sum = np.cumsum(probabilities)
-    locations = [x[0] for x in prob_list]
+    locations = [x[0] for x in sorted_list]
     index = 0
     while not np.random.binomial(1, cumulative_sum[index]):
         index += 1
-    return locations[index]
-
-
-""""
-def probability_for_moving(list_for_moving):
-    sum_propensity = 0
-    for fodder, same_species, F in list_for_moving:
-        sum_propensity += propensity(fodder, same_species, F)
-    probability = propensity(fodder, same_species, F) / sum_propensity
-    return probability
-    """
+    new_position = locations[index]
+    return new_position
 
 
 class Animal:
@@ -285,12 +278,22 @@ class Animal:
     def reset_has_moved(self):
         self._has_moved = False
 
-    def will_migrate(self):
+    def rand_move(self):
         prob_to_move = self.fitness * self.mu
         return bool(np.random.binomial(1, prob_to_move))
 
-    def migrate(self):
-        raise NotImplementedError
+    def will_move(self):
+        if not self.has_moved:
+            if not self.rand_move():
+                return True
+        return False
+
+    def migrate(self, prob_list):
+        try:
+            new_position = choose_new_location(prob_list)
+        except ValueError:
+            new_position = None
+        return new_position
 
     def birth(self, num_same_species):
         mates = num_same_species - 1
