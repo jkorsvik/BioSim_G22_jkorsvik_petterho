@@ -21,7 +21,7 @@ class Visuals:
 
     def __init__(self, island_map, map_string):
         self.pixel_colors = self.make_color_pixels(island_map, map_string)
-        self.geography = self.draw_geograph()
+        self.geography = self.draw_geography()
         self.tot_num_ani_by_species = self.line_graph(island_map)
         self.population_map_herb = self.heatmap_herb(island_map)
         self.population_map_carn = self.heatmap_carn(island_map)
@@ -58,6 +58,9 @@ class Visuals:
             color_code_rgb = mcolors.to_rgba(color_name)
             pixel_colors[y][x] = color_code_rgb
         return pixel_colors
+
+    def draw_geography(self):
+        pass
 
     def line_graph(self, island_map):
         pass

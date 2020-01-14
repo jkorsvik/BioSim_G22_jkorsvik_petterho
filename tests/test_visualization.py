@@ -26,4 +26,4 @@ def plain_sim():
 
 def test_pixel_color(plain_sim, plain_map_string):
     class_ = Visuals(plain_sim.island.map, plain_map_string)
-    assert class_.geography[0][0] == (0.0, 1.0, 1.0, 1.0)
+    assert class_.pixel_colors[0][0] == (0.0, 1.0, 1.0, 1.0)
