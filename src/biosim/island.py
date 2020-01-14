@@ -85,8 +85,12 @@ class Island:
         lines = self.clean_multi_line_string(island_map_string)
         for y, line in enumerate(lines):
             for x, letter in enumerate(line):
-                map[(y, x)] = self.map_params[letter.upper()]()
-
+                if letter in self.map_params.keys():
+                    map[(y, x)] = self.map_params[letter]()
+                else:
+                    raise ValueError(f'String must consist of uppercase'
+                                     f'letters like these:\n'
+                                     f'{self.map_params}')
         return map
 
     def probability_calc(self, pos, animal):
