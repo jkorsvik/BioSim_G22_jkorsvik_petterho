@@ -268,8 +268,10 @@ class Animal:
         self._has_moved = False
 
     def will_migrate(self):
-        prob_to_move = self.fitness * self.mu
-        return bool(np.random.binomial(1, prob_to_move))
+        if not self.has_moved:
+            prob_to_move = self.fitness * self.mu
+            return bool(np.random.binomial(1, prob_to_move))
+        return False
 
     def birth(self, num_same_species):
         mates = num_same_species - 1
