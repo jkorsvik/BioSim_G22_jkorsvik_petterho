@@ -10,6 +10,12 @@ import pytest
 import textwrap
 from src.biosim.visualization import Visuals
 from src.biosim.simulation import BioSim
+from src.biosim.island import Island
+
+
+@pytest.fixture
+def plain_map_string():
+    return Island.clean_multi_line_string("OOOO\nOJSO\nOOOO")
 
 
 @pytest.fixture
@@ -18,6 +24,6 @@ def plain_sim():
     return BioSim(island_map="OOOO\nOJSO\nOOOO", ini_pop=[], seed=1)
 
 
-def test_pixel_color(plain_sim):
-    class_ = Visuals(plain_sim.island.map)
-    assert class_.geography[0][0] == 'c'
+def test_pixel_color(plain_sim, plain_map_string):
+    class_ = Visuals(plain_sim.island.map, plain_map_string)
+    assert class_.geography[0][0] == (0.0, 1.0, 1.0, 1.0)
