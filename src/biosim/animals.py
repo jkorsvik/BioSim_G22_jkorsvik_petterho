@@ -246,6 +246,7 @@ class Animal:
             self._fitness = (sigmoid(pos_q_age)
                              * sigmoid(neg_q_weight)
                              )
+
             return self._fitness
 
         return self._fitness

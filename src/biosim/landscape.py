@@ -213,7 +213,12 @@ class Cell:
             self._propensity = {'Carnivore': propensity_carn,
                                 'Herbivore': propensity_herb}
 
+            self._calculate_propensity = False
+
         return self._propensity
+
+    def reset_calculate_propensity(self):
+        self._calculate_propensity = True
 
     @property
     def num_carnivores(self):

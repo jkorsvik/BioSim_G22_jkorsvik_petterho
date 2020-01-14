@@ -162,6 +162,7 @@ class Island:
                 herbivore.reset_has_moved()
             for carnivore in cell.carnivores:
                 carnivore.reset_has_moved()
+            cell.reset_calculate_propensity()
 
     def add_population(self, population):
         """
