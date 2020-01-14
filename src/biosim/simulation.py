@@ -80,7 +80,7 @@ def str_to_class(field):
     if isinstance(identifier, (types.ClassType, types.TypeType)):
         return identifier
     raise TypeError("%s is not a class." % field)"""
-        globals()[species].set_parameters(params)
+        globals()[species].set_parameters(**params)
 
     @staticmethod
     def set_landscape_parameters(landscape, params):
@@ -90,7 +90,7 @@ def str_to_class(field):
         :param landscape: String, code letter for landscape
         :param params: Dict with valid parameter specification for landscape
         """
-        globals()[landscape].set_parameters(params)
+        globals()[landscape].set_parameters(**params)
 
     def simulate(self, num_years, vis_years=1, img_years=None):
         """
