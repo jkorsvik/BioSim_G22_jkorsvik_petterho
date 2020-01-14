@@ -25,7 +25,11 @@ class Visuals:
         self.tot_num_ani_by_species = self.line_graph(island_map)
         self.population_map_herb = self.heatmap_herb(island_map)
         self.population_map_carn = self.heatmap_carn(island_map)
-        self.figure = plt.figure
+
+        # For setup in setup_graphics
+        self.figure = None
+        self.map_ax = None
+        self.img_ax = None
 
     def make_color_pixels(self, island_map, map_string):
         """
@@ -58,6 +62,21 @@ class Visuals:
             color_code_rgb = mcolors.to_rgba(color_name)
             pixel_colors[y][x] = color_code_rgb
         return pixel_colors
+
+    def setup_graphics(self):
+        if self.figure is None:
+            self.figure = plt.figure()
+
+        if self.map_ax is None:
+            self.map_ax = self.figure.add_subplot(2, 2, 1)
+            self.img_ax = None
+
+     def update_map(self):
+         if self.img_ax is not None:
+             self.img_ax.set_data()
+
+
+
 
     def draw_geography(self):
         pass
