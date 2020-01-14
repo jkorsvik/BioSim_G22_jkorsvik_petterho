@@ -183,7 +183,8 @@ class Island:
                 if cell.num_herbivores > 0:
                     for herbivore in cell.herbivores:
                         if not herbivore.has_moved:
-
+                            if not herbivore.will_migrate():
+                                continue
                             prob_list = self.probability_calc(pos, herbivore)
                             try:
                                 new_loc = choose_new_location(prob_list)
@@ -198,7 +199,8 @@ class Island:
                 if cell.num_carnivores > 0:
                     for carnivore in cell.carnivores:
                         if not carnivore.has_moved:
-
+                            if not carnivore.will_migrate():
+                                continue
                             prob_list = self.probability_calc(pos, carnivore)
                             try:
                                 new_loc = choose_new_location(prob_list)
