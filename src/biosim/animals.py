@@ -9,9 +9,29 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-
 def sigmoid(value):
     return 1/(1 + np.exp(value))
+
+
+def choose_new_location(prob_list):
+    """
+    Draws one out of a list with weights.
+
+    Parameters
+    ----------
+    prob_list - list of tuple(loc, probabilities)
+
+    Returns
+    -------
+    new_location - tuple of (y, x)
+    """
+    probabilities = [x[1] for x in prob_list]
+    cumulative_sum = np.cumsum(probabilities)
+    locations = [x[0] for x in prob_list]
+    index = 0
+    while not np.random.binomial(1, cumulative_sum[index]):
+        index += 1
+    return locations[index]
 
 
 """"
@@ -268,6 +288,9 @@ class Animal:
     def will_migrate(self):
         prob_to_move = self.fitness * self.mu
         return bool(np.random.binomial(1, prob_to_move))
+
+    def migrate(self):
+        raise NotImplementedError
 
     def birth(self, num_same_species):
         mates = num_same_species - 1

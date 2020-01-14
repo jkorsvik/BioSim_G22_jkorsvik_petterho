@@ -79,6 +79,20 @@ class Cell:
     def remove_migrated_carn(self, carnivore):
         self.carnivores.remove(carnivore)
 
+    def migrate_animals_in_cell(self, prob_herb, prob_carn):
+        migrated_list = []
+        if self.num_herbivores > 0:
+            for herbivore in self.herbivores:
+                if not herbivore.has_moved:
+                    if not herbivore.will_migrate():
+                        continue
+                    try:
+                        new_position = herbivore.migrate(prob_herb)
+                    except ValueError
+                        return False
+                    migrated_list.append(herbivore)
+
+
     def procreate(self):
         number_of_adult_herbivores = self.num_herbivores
         if number_of_adult_herbivores > 1:

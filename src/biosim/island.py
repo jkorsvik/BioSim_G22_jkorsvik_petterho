@@ -17,27 +17,6 @@ def check_length(lines):
     return True
 
 
-def choose_new_location(prob_list):
-    """
-    Draws one out of a list with weights.
-
-    Parameters
-    ----------
-    prob_list - list of tuple(loc, probabilities)
-
-    Returns
-    -------
-    new_location - tuple of (y, x)
-    """
-    probabilities = [x[1] for x in prob_list]
-    cumulative_sum = np.cumsum(probabilities)
-    locations = [x[0] for x in prob_list]
-    index = 0
-    while not np.random.binomial(1, cumulative_sum[index]):
-        index += 1
-    return locations[index]
-
-
 class Island:
     map_params = {'O': Ocean,
                   'M': Mountain,
@@ -142,8 +121,8 @@ class Island:
                                      f'{self.map_params}')
         return map
 
-    def probability_calc(self, pos, animal):
-        species = animal.__class__.__name__
+    def probability_calc(self, pos, class_type):
+        species = class_type.__name__
         y, x = pos
         loc_1 = (y - 1, x)
         loc_2 = (y + 1, x)
@@ -180,18 +159,9 @@ class Island:
         for pos, cell in self.map.items():
             deletion_list = []
             if cell.passable and cell.num_animals > 0:
-                if cell.num_herbivores > 0:
-                    for herbivore in cell.herbivores:
-                        if not herbivore.has_moved:
-                            if not herbivore.will_migrate():
-                                continue
-                            prob_list = self.probability_calc(pos, herbivore)
-                            try:
-                                new_loc = choose_new_location(prob_list)
-                            except ValueError:
-                                new_loc = pos
-                            deletion_list.append(herbivore)
-                            self.add_herb_to_new_cell(new_loc, herbivore)
+                prob_list = self.probability_calc(pos, herbivore)
+                    if not
+                        self.add_herb_to_new_cell(new_loc, herbivore)
                     for herbivore in deletion_list:
                         cell.remove_migrated_herb(herbivore)
 
