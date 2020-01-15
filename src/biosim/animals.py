@@ -50,6 +50,8 @@ class Animal:
         # By checking all parameters first, set parameters does not change
         # any parameters before it is sure that all parameters are valid
 
+        # If I can, I should make this smaler.
+
         bool_w_birth = False
         bool_sigma_birth = False
         bool_beta = False
@@ -266,8 +268,10 @@ class Animal:
         self._has_moved = False
 
     def will_migrate(self):
-        prob_to_move = self.fitness * self.mu
-        return bool(np.random.binomial(1, prob_to_move))
+        if not self.has_moved:
+            prob_to_move = self.fitness * self.mu
+            return bool(np.random.binomial(1, prob_to_move))
+        return False
 
     def birth(self, num_same_species):
         mates = num_same_species - 1

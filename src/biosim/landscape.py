@@ -10,6 +10,27 @@ from src.biosim.animals import Herbivore, Carnivore
 import numpy as np
 
 
+def choose_new_location(prob_list):
+    """
+    Draws one out of a list with weights.
+
+    Parameters
+    ----------
+    prob_list - list of tuple(loc, probabilities)
+
+    Returns
+    -------
+    new_location - tuple of (y, x)
+    """
+    probabilities = [x[1] for x in prob_list]
+    cumulative_sum = np.cumsum(probabilities)
+    locations = [x[0] for x in prob_list]
+    index = 0
+    while not np.random.binomial(1, cumulative_sum[index]):
+        index += 1
+    return locations[index]
+
+
 class Cell:
     passable = True
     f_max = 0
@@ -78,6 +99,27 @@ class Cell:
 
     def remove_migrated_carn(self, carnivore):
         self.carnivores.remove(carnivore)
+
+    def migrate(self, prob_herb, prob_carn):
+        moved_herb = []
+        moved_carn = []
+        for herb in self.herbivores:
+            if herb.will_migrate():
+                loc = choose_new_location(prob_herb)
+                moved_herb.append((loc, herb))
+        for carn in self.carnivores:
+            if carn.will_migrate():
+                loc = choose_new_location(prob_carn)
+                moved_carn.append((loc, carn))
+
+        for loc, herb in moved_herb:
+            self.remove_migrated_herb(herb)
+        for loc, carn in moved_carn:
+            self.remove_migrated_carn(carn)
+
+        return moved_herb, moved_carn
+
+
 
     def procreate(self):
         number_of_adult_herbivores = self.num_herbivores
