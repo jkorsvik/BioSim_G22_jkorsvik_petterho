@@ -30,6 +30,7 @@ def test_island():
     geogr = """\
             OOOO
             OJJO
+            OJJO
             OOOO"""
     geogr = textwrap.dedent(geogr)
     ini_herbs = [
@@ -62,12 +63,18 @@ class TestIsland:
 
     def test_migrate(self, test_island):
         assert test_island.map[(1, 2)].num_animals == 0
+        assert test_island.map[(2, 1)].num_animals == 0
+        assert test_island.map[(2, 2)].num_animals == 0
         test_island.simulate_one_year()
+        for loc, cell in test_island.map.items():
+            print(loc, cell.num_animals)
         assert test_island.map[(1, 2)].num_animals > 10
-        assert test_island.map[(1, 2)].num_animals > 10
+        assert test_island.map[(2, 1)].num_animals > 10
 
-        for year in range(9):
+        for year in range(20):
             test_island.simulate_one_year()
+        for loc, cell in test_island.map.items():
+            print(loc, cell.num_animals)
         for cell in test_island.map.values():
             if isinstance(cell, (Jungle, Savanna,
                                  Desert)):
