@@ -34,7 +34,7 @@ class Visuals:
         self.figure_2 = None
         self.figure_3 = None
         self.map_ax = None
-        self.img_ax = None
+        self.axim = None
         self.graph_ax = None
         self.heatmap = None
 
@@ -49,11 +49,10 @@ class Visuals:
 
         if self.map_ax is None:
             self.map_ax = self.figure.add_subplot(2, 2, 1)
-            self.img_ax = None
 
     def update_map(self):
-        if self.img_ax is not None:
-            self.img_ax.set_data()
+        if self.axim is not None:
+            self.axim.set_data()
 
     def make_color_pixels(self, island, map_string):
         """
@@ -88,8 +87,23 @@ class Visuals:
         return pixel_colors
 
     def draw_geography(self):
-        self.img_ax = self.figure.add_axes([0])
+        axim = self.map_ax.add_axes([0.1, 0.1, 0.7, 0.8])
         plt.imshow(self.pixel_colors)
+        axim.set_xticks(range(len(self.pixel_colors[0])))
+        axim.set_xticklabels(range(1, 1 + len(self.pixel_colors[0])))
+        axim.set_yticks(range(len(self.pixel_colors)))
+        axim.set_yticklabels(range(1, 1 + len(self.pixel_colors)))
+        """
+        axlg = self.map_ax.add_axes([0.85, 0.1, 0.1, 0.8])
+        axlg.axis('off')
+        for ix, name in enumerate(('Ocean', 'Mountain', 'Jungle',
+                                   'Savannah', 'Desert')):
+            axlg.add_patch(plt.Rectangle((0., ix * 0.2), 0.3, 0.1,
+                                         edgecolor=(0, 0, 0),
+                                         facecolor=rgb_value[name[0]]))
+            axlg.text(0.35, ix * 0.2, name, transform=axlg.transAxes)
+        """
+
 
     def line_graph(self, island_map):
         pass
