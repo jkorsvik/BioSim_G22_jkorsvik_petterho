@@ -11,6 +11,19 @@ import textwrap
 
 
 def check_length(lines):
+    """
+    Compares length of all lines in a list of lines to the first
+
+    Parameters
+    ----------
+    lines : list of lines
+
+    Returns
+    -------
+    bool
+        False if not equal length, True if length is equal
+
+    """
     if not all(len(lines[0]) == len(line) for line in lines[1:]):
         return False
     return True
@@ -24,6 +37,21 @@ class Island:
                   'J': Jungle}
 
     def __init__(self, island_map_string, ini_pop):
+        """
+        Initiates the Island class: holds method for updating the map
+        Class attribute map_params holds information of which letter relates
+        to which class of landscape.py
+
+        Parameters
+        ----------
+        island_map_string
+        ini_pop
+
+        Attributes
+        --------
+        self.map : method
+            map creation from a multilinestring
+        """
         self.map = self.make_map(island_map_string)
         self.add_population(ini_pop)
 
@@ -34,7 +62,7 @@ class Island:
 
         Returns
         -------
-        num_animals - int
+        num_animals : int
         """
         num_animals = 0
         for num_type in self.num_animals_per_species.values():
@@ -48,7 +76,7 @@ class Island:
 
         Returns
         -------
-        num_animals_per_species - dictionary
+        num_animals_per_species : dictionary
         """
         num_animals_per_species = {}
         num_herbivores = 0
@@ -72,11 +100,12 @@ class Island:
 
         Parameters
         ----------
-        island_map_string - multilinestring
+        island_map_string : multilinestring
 
         Returns
         -------
-        lines - a list of lines of strings (cleaned)
+        lines : list
+            Lines of strings (cleaned)
         """
         island_map_string = island_map_string.strip()
         lines = island_map_string.split('\n')
@@ -101,11 +130,13 @@ class Island:
 
         Parameters
         ----------
-        island_map_string
+        island_map_string : multilinestring
 
         Returns
         -------
-        map - dictionary
+        map : dictionary
+            key : tuple
+                value : instance of subclass of BaseCell
 
         """
         island_map = {}
@@ -122,6 +153,24 @@ class Island:
         return island_map
 
     def probability_calc(self, pos, animal):
+        """
+        Finds the preposition for all neighbouring cells
+        within dx +- 1 and dy +-1. This means we have the positions
+        North, West, South and East of the current position.
+
+        Then calculates the probability for the type of animal.
+        Parameters
+        ----------
+        pos : tuple
+            Position of current cell
+        animal : object
+            Class or subclass of BaseAnimal
+
+        Returns
+        -------
+        prob_list : list of tuples
+            (Coordinate(y, x), and probabilities)
+        """
         species = animal.__name__
         y, x = pos
         loc_1 = (y - 1, x)
@@ -150,12 +199,30 @@ class Island:
         return prob_list
 
     def add_herb_to_new_cell(self, new_loc, herbivore):
+        """ Add herbivore to cell in new location """
         self.map[new_loc].add_migrated_herb(herbivore)
 
     def add_carn_to_new_cell(self, new_loc, carnivore):
+        """ Add herbivore to cell in new location """
         self.map[new_loc].add_migrated_carn(carnivore)
 
     def migrate(self):
+        """
+        Goes through the map attribute of Island and calculates
+        probabilities for herbivores and carnivores, with position and
+        name of class.
+
+        calls migrate method in instance of subclass of BaseCell
+        Methods
+        -------
+        BaseCell.migrate()
+        Island.probability_calc(pos, animal)
+
+
+        Notes
+        ------
+         Adds herbivores and carnivores that has migrated to new cells
+        """
         for pos, cell in self.map.items():
             if cell.passable and cell.num_animals > 0:
                 prob_herb = self.probability_calc(pos, Herbivore)
@@ -167,9 +234,17 @@ class Island:
                     self.add_carn_to_new_cell(loc, carn)
 
     def ready_for_new_year(self):
+        """
+        Resets each cell in Island.map
+        Methods
+        -------
+        BaseCell.grow
+        BaseCell.reset_calculate_propensity
+        BaseAnimal.reset_has_moved
+        """
         for cell in self.map.values():
             cell.grow()
-            cell.reset_propensity()
+            cell.reset_calculate_propensity()
             for herbivore in cell.herbivores:
                 herbivore.reset_has_moved()
             for carnivore in cell.carnivores:
@@ -177,13 +252,18 @@ class Island:
 
     def add_population(self, population):
         """
-        Add a population to the island
-
-        :param population: List of dictionaries specifying population
+        Feeds a dictionary of population to cell by position.
 
         Parameters
         ----------
-        self
+        population: dict
+            loc: tuple
+            pop: dict
+
+        Methods
+        -------
+        BaseCell.add_animals()
+
         """
         # map_location is a dictionary with loc
         for map_location in population:
@@ -192,26 +272,37 @@ class Island:
             self.map[loc].add_animals(pop)
 
     def feed(self):
+        """Calls feed_all in all cells of Island.map"""
         for cell in self.map.values():
             cell.feed_all()
 
     def procreate(self):
+        """Calls procreate in all cells of Island.map"""
         for cell in self.map.values():
             cell.procreate()
 
     def age_animals(self):
+        """Calls age_pop in all cells of Island.map"""
         for cell in self.map.values():
             cell.age_pop()
 
     def lose_weight(self):
+        """Calls lose_weight in all cells of Island.map"""
         for cell in self.map.values():
             cell.lose_weight()
 
     def die(self):
+        """Calls die in all cells of Island.map"""
         for cell in self.map.values():
             cell.die()
 
     def simulate_one_year(self):
+        """
+        Simulates a whole year by the following sequence
+        Returns
+        -------
+
+        """
         self.ready_for_new_year()
         self.feed()
         self.procreate()

@@ -7,10 +7,14 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-from src.biosim.island import *
-# from src.biosim.visualization import *
-from pprint import pprint
+from src.biosim.island import Island
+from src.biosim.visualization import Visuals
+from src.biosim.landscape import (
+    Jungle, Ocean, Savanna, Mountain, Desert
+)
+import textwrap
 import pandas as pd
+import numpy as np
 
 
 class BioSim:
@@ -59,6 +63,9 @@ class BioSim:
         self.cmax_animals = cmax_animals
         self.img_base = img_base
         self.img_fmt = img_fmt
+        self.visuals = Visuals(
+            self.island, island_map, img_base, img_fmt
+        )
 
     @staticmethod
     def set_animal_parameters(species, params):
@@ -68,18 +75,6 @@ class BioSim:
         :param species: String, name of animal species
         :param params: Dict with valid parameter specification for species
         """
-        """
-import sys
-import types
-
-def str_to_class(field):
-    try:
-        identifier = getattr(sys.modules[__name__], field)
-    except AttributeError:
-        raise NameError("%s doesn't exist." % field)
-    if isinstance(identifier, (types.ClassType, types.TypeType)):
-        return identifier
-    raise TypeError("%s is not a class." % field)"""
         globals()[species].set_parameters(**params)
 
     @staticmethod
@@ -95,6 +90,7 @@ def str_to_class(field):
                       'D': Desert,
                       'S': Savanna,
                       'J': Jungle}
+
         map_params[landscape].set_parameters(**params)
 
     def simulate(self, num_years, vis_years=1, img_years=None):
@@ -117,6 +113,7 @@ def str_to_class(field):
     def add_population(self, population):
         """
         Add a population to the island
+        Calls function from Island.py
 
         :param population: List of dictionaries specifying population
 
