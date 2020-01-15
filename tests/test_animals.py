@@ -7,7 +7,7 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-from src.biosim.animals import Animal, Carnivore, Herbivore
+from src.biosim.animals import BaseAnimal, Carnivore, Herbivore
 import pytest
 from pprint import pprint
 
@@ -91,7 +91,7 @@ class TestAnimal:
         assert animal.eta == 0.125
 
     def test_init(self):
-        test_animal = Animal(10, 20)
+        test_animal = BaseAnimal(10, 20)
         assert hasattr(test_animal, 'age')
         assert test_animal.age is not None
         assert hasattr(test_animal, 'weight')
@@ -118,21 +118,21 @@ class TestAnimal:
     def test_fitness(self):
         """ Checks if calling fitness without updating weight
             or age will produce the same result."""
-        test_animal = Animal()
+        test_animal = BaseAnimal()
         old = test_animal.fitness
         test_animal.feed(200)
         new = test_animal.fitness
         print(old, new)
         assert new > old
 
-        test_animal = Animal()
+        test_animal = BaseAnimal()
         old = test_animal.fitness
         new = test_animal.fitness
         print(old, new)
         assert old == new
 
     def test_age(self):
-        test_animal = Animal()
+        test_animal = BaseAnimal()
         test_animal.age = 20
         assert test_animal.weight == 20
         test_animal.weight += 20
@@ -140,7 +140,7 @@ class TestAnimal:
         assert test_animal._compute_fitness
 
     def test_weight(self):
-        test_animal = Animal()
+        test_animal = BaseAnimal()
         test_animal.weight = 20
         assert test_animal.weight == 20
         test_animal.weight += 20
@@ -148,12 +148,12 @@ class TestAnimal:
         assert test_animal._compute_fitness
 
     def test_has_moved(self):
-        test_animal = Animal()
+        test_animal = BaseAnimal()
         assert test_animal.has_moved is False
         assert test_animal.has_moved is True
 
     def test_reset_has_moved(self):
-        test_animal = Animal()
+        test_animal = BaseAnimal()
         has_moved = test_animal.has_moved
         assert not has_moved
         assert test_animal._has_moved
@@ -163,7 +163,7 @@ class TestAnimal:
     def test_will_migrate(self):
         will_migrate = 0
         for _ in range(1000):
-            test_animal = Animal()
+            test_animal = BaseAnimal()
             test_animal._compute_fitness = False
             test_animal._fitness = 1.0
             if test_animal.will_migrate():
@@ -171,18 +171,18 @@ class TestAnimal:
         assert 200 < will_migrate < 300
 
     def test_birth(self):
-        animal = Animal(10, 60)
+        animal = BaseAnimal(10, 60)
         birth = animal.birth(10000)
-        assert isinstance(birth, Animal)
+        assert isinstance(birth, BaseAnimal)
 
     def test_death(self):
-        animal = Animal(50, 1.4)
+        animal = BaseAnimal(50, 1.4)
         list_ = []
         for _ in range(100):
             list_.append(animal.death())
         assert True in list_
 
-        animal_2 = Animal(50, 0)
+        animal_2 = BaseAnimal(50, 0)
         for _ in range(100):
             assert animal_2.death()
 

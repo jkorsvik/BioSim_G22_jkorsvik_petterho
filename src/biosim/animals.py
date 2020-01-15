@@ -13,7 +13,7 @@ def sigmoid(value):
     return 1/(1 + np.exp(value))
 
 
-class Animal:
+class BaseAnimal:
     w_birth = 8.0
     sigma_birth = 1.5
     beta = 0.9
@@ -201,9 +201,6 @@ class Animal:
             if normal < 0:
                 self.weight = 0  # newborns with <= 0 will die end of year
 
-    def __lt__(self, other):
-        return self.fitness < other.fitness
-
     def __repr__(self):
         string = f"Animal Type: {type(self).__name__}\n" \
                  f"Age: {self.age}\n" \
@@ -298,7 +295,7 @@ class Animal:
         self.weight -= self.eta*self.weight
 
 
-class Herbivore(Animal):
+class Herbivore(BaseAnimal):
     w_birth = 8.0
     sigma_birth = 1.5
     beta = 0.9
@@ -319,7 +316,7 @@ class Herbivore(Animal):
         super().__init__(age, weight)
 
 
-class Carnivore(Animal):
+class Carnivore(BaseAnimal):
     w_birth = 6.0
     sigma_birth = 1.0
     beta = 0.75
@@ -377,7 +374,7 @@ class Carnivore(Animal):
 
 if __name__ == '__main__':
     
-    test_animal = Animal()
+    test_animal = BaseAnimal()
     test_herb = Herbivore()
     test_carn = Carnivore()
 

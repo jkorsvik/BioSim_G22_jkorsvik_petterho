@@ -73,7 +73,7 @@ def jungle_with_animals(animal_list):
 
 class TestCell:
     def test_init(self):
-        cell = ls.Cell()
+        cell = ls.BaseCell()
         assert type(cell.herbivores) is list
         assert type(cell.carnivores) is list
         assert cell.fodder == 0
@@ -123,15 +123,15 @@ class TestCell:
         assert carnivore1 in jungle.carnivores
 
     def test_num_carnivore(self):
-        cell = ls.Cell()
+        cell = ls.BaseCell()
         assert cell.num_carnivores == 0
 
     def test_num_herbivore(self):
-        cell = ls.Cell()
+        cell = ls.BaseCell()
         assert cell.num_herbivores == 0
 
     def test_num_animals(self):
-        cell = ls.Cell()
+        cell = ls.BaseCell()
         carnivores = cell.num_carnivores
         herbivores = cell.num_herbivores
         assert cell.num_animals == carnivores + herbivores

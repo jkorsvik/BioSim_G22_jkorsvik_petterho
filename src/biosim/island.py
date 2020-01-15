@@ -16,7 +16,8 @@ def check_length(lines):
 
     Parameters
     ----------
-    lines : list of lines
+    lines : list
+        lines
 
     Returns
     -------
@@ -172,11 +173,11 @@ class Island:
             (Coordinate(y, x), and probabilities)
         """
         species = animal.__name__
-        y, x = pos
-        loc_1 = (y - 1, x)
-        loc_2 = (y + 1, x)
-        loc_3 = (y, x - 1)
-        loc_4 = (y, x + 1)
+        y_cord, x_cord = pos
+        loc_1 = (y_cord - 1, x_cord)
+        loc_2 = (y_cord + 1, x_cord)
+        loc_3 = (y_cord, x_cord - 1)
+        loc_4 = (y_cord, x_cord + 1)
         option_1 = self.map[loc_1]
         option_2 = self.map[loc_2]
         option_3 = self.map[loc_3]
@@ -256,7 +257,7 @@ class Island:
 
         Parameters
         ----------
-        population: dict
+        population: list
             loc: tuple
             pop: dict
 

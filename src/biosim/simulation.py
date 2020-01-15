@@ -8,7 +8,7 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 from src.biosim.island import Island
-from src.biosim.visualization import Visuals
+#from src.biosim.visualization import Visuals
 from src.biosim.landscape import (
     Jungle, Ocean, Savanna, Mountain, Desert
 )
@@ -63,9 +63,9 @@ class BioSim:
         self.cmax_animals = cmax_animals
         self.img_base = img_base
         self.img_fmt = img_fmt
-        self.visuals = Visuals(
-            self.island, island_map, img_base, img_fmt
-        )
+       # self.visuals = Visuals(
+     #       self.island, island_map, img_base, img_fmt
+     #   )
 
     @staticmethod
     def set_animal_parameters(species, params):
