@@ -33,7 +33,8 @@ def choose_new_location(prob_list):
     cumulative_sum = np.cumsum(probabilities)
     locations = [x[0] for x in prob_list]
     index = 0
-    while not np.random.binomial(1, cumulative_sum[index]):
+    random_number = np.random.random()
+    while random_number > cumulative_sum[index]:
         index += 1
     return locations[index]
 
@@ -214,6 +215,7 @@ class Island:
     def ready_for_new_year(self):
         for cell in self.map.values():
             cell.grow()
+            cell.reset_propensity()
             for herbivore in cell.herbivores:
                 herbivore.reset_has_moved()
             for carnivore in cell.carnivores:
