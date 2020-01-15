@@ -143,6 +143,9 @@ class Island:
             propensity_list.append((loc, option.propensity))
         return propensity_list
 
+    def add_herb_to_new_cell(self, new_loc, herbivore):
+        self.map[new_loc].add_migrated_animal(animal)
+
     def add_animal_to_new_cell(self, new_loc, animal):
         self.map[new_loc].add_migrated_animal(animal)
 
