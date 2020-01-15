@@ -12,6 +12,8 @@ import src.biosim.simulation as sim
 import textwrap
 
 
+
+
 class Visuals:
     cell_colors = {
         "Ocean": 'cyan',
@@ -22,29 +24,37 @@ class Visuals:
     }
 
     def __init__(self, island, map_string):
+        self.x_len = len(map_string[0])
+        self.y_len = len(map_string)
         # For setup in setup_graphics
         self.figure = None
-        self.map_ax = None
-        self.axim = None
-        self.graph_ax = None
-        self.heatmap = None
+        self.ax1 = [0.35, 0.55, 0.45, 0.45]
+        self.ax2 = [0.85, 0.60, 0.1, 0.35]
+        self.ax3 = [0.1, 0.1, 0.8, 0.45]
+        self.ax4 = [0.85, 0.1, 0.1, 0.35]
 
         self.setup_graphics()
         self.pixel_colors = self.make_color_pixels(island, map_string)
+        self.heatmap = self.get_data_heatmap_all_animals(island)
         self.draw_geography()
+        self.draw_heatmap()
 
         #self.tot_num_ani_by_species = self.line_graph(island_map)
         #self.population_map_herb = self.heatmap_herb(island_map)
         #self.population_map_carn = self.heatmap_carn(island_map)
         #self.figure = plt.figure
 
+    def empty_nested_list(self):
+        empty_nested_list = []
+        for y in range(self.y_len):
+            empty_nested_list.append([])
+            for x in range(self.x_len):
+                empty_nested_list[y].append(None)
+        return empty_nested_list
+
     def setup_graphics(self):
         if self.figure is None:
             self.figure = plt.figure()
-
-    def update_map(self):
-        if self.axim is not None:
-            self.axim.set_data()
 
     def make_color_pixels(self, island, map_string):
         """
@@ -64,11 +74,7 @@ class Visuals:
         pixel_colors - nested list with quadruplets of rgba-values
 
         """
-        pixel_colors = []
-        for y in range(len(map_string)):
-            pixel_colors.append([])
-            for x in range(len(map_string[0])):
-                pixel_colors[y].append(None)
+        pixel_colors = self.empty_nested_list()
 
         for pos, cell in island.map.items():
             y, x = pos
@@ -78,15 +84,39 @@ class Visuals:
             pixel_colors[y][x] = color_code_rgb
         return pixel_colors
 
+    def get_data_heatmap_all_animals(self, island):
+        heat_map = self.empty_nested_list()
+        for pos, cell in island.map.items():
+            y, x = pos
+            heat_map[y][x] = cell.num_animals
+        self.heatmap = heat_map
+        return heat_map
+
+    def draw_heatmap(self):
+        axim = self.figure.add_axes(self.ax3)
+        plt.imshow(self.heatmap, cmap='inferno')
+        axim.set_xticks(range(len(self.heatmap[0])))
+        axim.set_xticklabels(range(1, 1 + len(self.heatmap[0])))
+        axim.set_yticks(range(len(self.heatmap)))
+        axim.set_yticklabels(range(1, 1 + len(self.heatmap)))
+        axim.axis('off')
+        axim.set_title('Heatmap all animals')
+        colorbar = plt.colorbar()
+
+    def update_heatmap_all_animals(self, island):
+        self.ax3.set_data(self.get_data_heatmap_all_animals(island))
+
+
     def draw_geography(self):
-        axim = self.figure.add_axes([0.1, 0.1, 0.7, 0.8])
+        axim = self.figure.add_axes(self.ax1)
         plt.imshow(self.pixel_colors)
         axim.set_xticks(range(len(self.pixel_colors[0])))
         axim.set_xticklabels(range(1, 1 + len(self.pixel_colors[0])))
         axim.set_yticks(range(len(self.pixel_colors)))
         axim.set_yticklabels(range(1, 1 + len(self.pixel_colors)))
+        axim.axis('off')
 
-        axlg = self.figure.add_axes([0.85, 0.35, 0.1, 0.4])
+        axlg = self.figure.add_axes(self.ax2)
         axlg.axis('off')
         for ix, name in enumerate(self.cell_colors.keys()):
             axlg.add_patch(plt.Rectangle((0., 0.05 + ix * 0.2), 0.3, 0.1,
@@ -124,11 +154,26 @@ if __name__ == '__main__':
             OOOOOOOOOOOOOOOOOOOOO
             """
     string = textwrap.dedent(geogr)
-    plain = sim.BioSim(island_map=string, ini_pop=[], seed=1)
+    ini_herbs = [
+        {
+            "loc": (2, 1),
+            "pop": [
+                {"species": "Herbivore", "age": 5, "weight": 40}
+                for _ in range(200)
+            ],
+        }
+    ]
+    plain = sim.BioSim(island_map=string, ini_pop=ini_herbs, seed=1)
     lines = plain.island.clean_multi_line_string(string)
 
     island = plain.island
-
+    for _ in range(30):
+        island.simulate_one_year()
     visual = Visuals(island, lines)
+    plt.show()
+    plt.pause(10)
+    for _ in range(30):
+        island.simulate_one_year()
+    visual.get_data_heatmap_all_animals(island)
     plt.show()
 
