@@ -118,14 +118,17 @@ class Island:
                     raise ValueError(f'String must consist of uppercase'
                                      f'letters like these:\n'
                                      f'{self.map_params}')
-        return island_map
 
-    def propensity_of_neighbour_cells(self, pos):
-        y_cord, x_cord = pos
-        loc_1 = (y_cord - 1, x_cord)
-        loc_2 = (y_cord + 1, x_cord)
-        loc_3 = (y_cord, x_cord - 1)
-        loc_4 = (y_cord, x_cord + 1)
+        return map
+
+    def probability_calc(self, pos, animal):
+        species = animal.__name__
+        y, x = pos
+        loc_1 = (y - 1, x)
+        loc_2 = (y + 1, x)
+        loc_3 = (y, x - 1)
+        loc_4 = (y, x + 1)
+
         option_1 = self.map[loc_1]
         option_2 = self.map[loc_2]
         option_3 = self.map[loc_3]
@@ -148,16 +151,20 @@ class Island:
 
         for pos, cell in self.map.items():
             if cell.passable and cell.num_animals > 0:
-                propensity_list = self.propensity_of_neighbour_cells(pos)
-                migration_by_cells.append((cell.migrate(propensity_list)))
 
-        for list_cell in migration_by_cells:
-            for pos, animal in list_cell:
-                self.add_animal_to_new_cell(pos, animal)
+                prob_herb = self.probability_calc(pos, Herbivore)
+                prob_carn = self.probability_calc(pos, Carnivore)
+                moved_herb, moved_carn = cell.migrate(prob_herb, prob_carn)
+                for loc, herb in moved_herb:
+                    self.add_herb_to_new_cell(loc, herb)
+                for loc, carn in moved_carn:
+                    self.add_carn_to_new_cell(loc, carn)
+
 
     def ready_for_new_year(self):
         for cell in self.map.values():
             cell.grow()
+            cell.reset_propensity()
             for herbivore in cell.herbivores:
                 herbivore.reset_has_moved()
             for carnivore in cell.carnivores:

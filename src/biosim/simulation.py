@@ -158,6 +158,7 @@ def str_to_class(field):
             dict_for_df["Carnivore"].append(cell.num_carnivores)
 
         df_sim = pd.DataFrame.from_dict(dict_for_df)
+        df_sim.to_csv(r'C:\Users\pbmar\Documents\NMBU\INF200\data.csv')
         return df_sim
 
     def make_movie(self):

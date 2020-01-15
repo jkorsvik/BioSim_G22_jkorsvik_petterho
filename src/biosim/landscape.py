@@ -25,6 +25,28 @@ def calculate_probabilities(animal, propensities):
     return prob_list
 
 
+def choose_new_location(prob_list):
+    """
+    Draws one out of a list with weights.
+
+    Parameters
+    ----------
+    prob_list - list of tuple(loc, probabilities)
+
+    Returns
+    -------
+    new_location - tuple of (y, x)
+    """
+    probabilities = [x[1] for x in prob_list]
+    cumulative_sum = np.cumsum(probabilities)
+    locations = [x[0] for x in prob_list]
+    index = 0
+    random_number = np.random.random()
+    while random_number > cumulative_sum[index]:
+        index += 1
+    return locations[index]
+
+
 class Cell:
     passable = True
     f_max = 0
@@ -115,6 +137,27 @@ class Cell:
             self.remove_migrated_animal(animal)
 
         return migrated_list
+
+
+    def migrate(self, prob_herb, prob_carn):
+        moved_herb = []
+        moved_carn = []
+        for herb in self.herbivores:
+            if herb.will_migrate():
+                loc = choose_new_location(prob_herb)
+                moved_herb.append((loc, herb))
+        for carn in self.carnivores:
+            if carn.will_migrate():
+                loc = choose_new_location(prob_carn)
+                moved_carn.append((loc, carn))
+
+        for loc, herb in moved_herb:
+            self.remove_migrated_herb(herb)
+        for loc, carn in moved_carn:
+            self.remove_migrated_carn(carn)
+
+        return moved_herb, moved_carn
+
 
 
     def procreate(self):
@@ -217,7 +260,9 @@ class Cell:
 
         return self._propensity
 
-    def reset_calculate_propensity(self):
+
+    def reset_propensity(self):
+
         self._calculate_propensity = True
 
     @property

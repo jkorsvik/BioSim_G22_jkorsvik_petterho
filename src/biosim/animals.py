@@ -281,22 +281,11 @@ class Animal:
     def reset_has_moved(self):
         self._has_moved = False
 
-    def rand_move(self):
-        prob_to_move = self.fitness * self.mu
-        return bool(np.random.binomial(1, prob_to_move))
-
-    def will_move(self):
+    def will_migrate(self):
         if not self.has_moved:
-            if not self.rand_move():
-                return True
+            prob_to_move = self.fitness * self.mu
+            return bool(np.random.binomial(1, prob_to_move))
         return False
-
-    def migrate(self, prob_list):
-        try:
-            new_position = choose_new_location(prob_list)
-        except ValueError:
-            new_position = None
-        return new_position
 
     def birth(self, num_same_species):
         mates = num_same_species - 1
