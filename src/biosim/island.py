@@ -8,34 +8,12 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 from src.biosim.landscape import *
 import textwrap
-from src.biosim.animals import *
 
 
 def check_length(lines):
     if not all(len(lines[0]) == len(line) for line in lines[1:]):
         return False
     return True
-
-
-def choose_new_location(prob_list):
-    """
-    Draws one out of a list with weights.
-
-    Parameters
-    ----------
-    prob_list - list of tuple(loc, probabilities)
-
-    Returns
-    -------
-    new_location - tuple of (y, x)
-    """
-    probabilities = [x[1] for x in prob_list]
-    cumulative_sum = np.cumsum(probabilities)
-    locations = [x[0] for x in prob_list]
-    index = 0
-    while not np.random.binomial(1, cumulative_sum[index]):
-        index += 1
-    return locations[index]
 
 
 class Island:
@@ -107,11 +85,11 @@ class Island:
             raise ValueError('Each line of the multi line string, '
                              'shall be equal in length')
 
-        for x in range(len(lines[0])):
-            if lines[0][x] is not 'O' or lines[-1][x] is not 'O':
+        for index in range(len(lines[0])):
+            if lines[0][index] is not 'O' or lines[-1][index] is not 'O':
                 raise ValueError('')
-        for y in range(len(lines)):
-            if lines[y][0] is not 'O' or lines[y][-1] is not 'O':
+        for index in range(len(lines)):
+            if lines[index][0] is not 'O' or lines[index][-1] is not 'O':
                 raise ValueError('')
 
         return lines
@@ -130,25 +108,24 @@ class Island:
         map - dictionary
 
         """
-        map = {}
+        island_map = {}
         lines = self.clean_multi_line_string(island_map_string)
-        for y, line in enumerate(lines):
-            for x, letter in enumerate(line):
+        for y_cord, line in enumerate(lines):
+            for x_cord, letter in enumerate(line):
                 if letter in self.map_params.keys():
-                    map[(y, x)] = self.map_params[letter]()
+                    island_map[(y_cord, x_cord)] = self.map_params[letter]()
                 else:
                     raise ValueError(f'String must consist of uppercase'
                                      f'letters like these:\n'
                                      f'{self.map_params}')
-        return map
+        return island_map
 
-    def probability_calc(self, pos, animal):
-        species = animal.__class__.__name__
-        y, x = pos
-        loc_1 = (y - 1, x)
-        loc_2 = (y + 1, x)
-        loc_3 = (y, x - 1)
-        loc_4 = (y, x + 1)
+    def propensity_of_neighbour_cells(self, pos):
+        y_cord, x_cord = pos
+        loc_1 = (y_cord - 1, x_cord)
+        loc_2 = (y_cord + 1, x_cord)
+        loc_3 = (y_cord, x_cord - 1)
+        loc_4 = (y_cord, x_cord + 1)
         option_1 = self.map[loc_1]
         option_2 = self.map[loc_2]
         option_3 = self.map[loc_3]
@@ -156,60 +133,27 @@ class Island:
 
         list_ = [(loc_1, option_1), (loc_2, option_2),
                  (loc_3, option_3), (loc_4, option_4)]
+
         propensity_list = []
 
         for loc, option in list_:
-            propensity_list.append((loc,
-                                    option.propensity[species])
-                                   )
+            propensity_list.append((loc, option.propensity))
+        return propensity_list
 
-        prop_sum = np.sum(sum(dict(propensity_list).values()))
-        prob_list = []
-        for loc, prop in propensity_list:
-            prob_list.append((loc, (prop / prop_sum)))
-
-        return prob_list
-
-    def add_herb_to_new_cell(self, new_loc, herbivore):
-        self.map[new_loc].add_migrated_herb(herbivore)
-
-    def add_carn_to_new_cell(self, new_loc, carnivore):
-        self.map[new_loc].add_migrated_carn(carnivore)
+    def add_animal_to_new_cell(self, new_loc, animal):
+        self.map[new_loc].add_migrated_animal(animal)
 
     def migrate(self):
-        for pos, cell in self.map.items():
-            deletion_list = []
-            if cell.passable and cell.num_animals > 0:
-                if cell.num_herbivores > 0:
-                    for herbivore in cell.herbivores:
-                        if not herbivore.has_moved:
-                            if not herbivore.will_migrate():
-                                continue
-                            prob_list = self.probability_calc(pos, herbivore)
-                            try:
-                                new_loc = choose_new_location(prob_list)
-                            except ValueError:
-                                new_loc = pos
-                            deletion_list.append(herbivore)
-                            self.add_herb_to_new_cell(new_loc, herbivore)
-                    for herbivore in deletion_list:
-                        cell.remove_migrated_herb(herbivore)
+        migration_by_cells = []
 
-                deletion_list = []
-                if cell.num_carnivores > 0:
-                    for carnivore in cell.carnivores:
-                        if not carnivore.has_moved:
-                            if not carnivore.will_migrate():
-                                continue
-                            prob_list = self.probability_calc(pos, carnivore)
-                            try:
-                                new_loc = choose_new_location(prob_list)
-                            except ValueError:
-                                new_loc = pos
-                            deletion_list.append(carnivore)
-                            self.add_carn_to_new_cell(new_loc, carnivore)
-                    for carnivore in deletion_list:
-                        cell.remove_migrated_carn(carnivore)
+        for pos, cell in self.map.items():
+            if cell.passable and cell.num_animals > 0:
+                propensity_list = self.propensity_of_neighbour_cells(pos)
+                migration_by_cells.append((cell.migrate(propensity_list)))
+
+        for list_cell in migration_by_cells:
+            for pos, animal in list_cell:
+                self.add_animal_to_new_cell(pos, animal)
 
     def ready_for_new_year(self):
         for cell in self.map.values():
@@ -218,6 +162,7 @@ class Island:
                 herbivore.reset_has_moved()
             for carnivore in cell.carnivores:
                 carnivore.reset_has_moved()
+            cell.reset_calculate_propensity()
 
     def add_population(self, population):
         """
@@ -263,6 +208,7 @@ class Island:
         self.age_animals()
         self.lose_weight()
         self.die()
+
 
 if __name__ == '__main__':
     geogr = """\

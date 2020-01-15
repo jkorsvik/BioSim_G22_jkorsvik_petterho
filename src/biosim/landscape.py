@@ -8,6 +8,21 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 from src.biosim.animals import Herbivore, Carnivore
 import numpy as np
+import itertools
+
+
+def calculate_probabilities(animal, propensities):
+    propensities_by_animal = []
+    for loc, prop in propensities:
+        prop = prop[animal.__name__]
+        propensities_by_animal.append((loc, prop))
+
+    prop_sum = sum(x[1] for x in propensities_by_animal)
+
+    prob_list = []
+    for loc, prop in propensities_by_animal:
+        prob_list.append((loc, (prop / prop_sum)))
+    return prob_list
 
 
 class Cell:
@@ -67,17 +82,40 @@ class Cell:
                 self.carnivores.append(Carnivore(
                     age=animal['age'], weight=animal['weight']))
 
-    def add_migrated_herb(self, herbivore):
-        self.herbivores.append(herbivore)
+    def add_migrated_animal(self, animal):
+        if animal.__class__ is Herbivore:
+            self.herbivores.append(animal)
+        if animal.__class__ is Carnivore:
+            self.carnivores.append(animal)
 
-    def add_migrated_carn(self, carnivore):
-        self.carnivores.append(carnivore)
+    def remove_migrated_animal(self, animal):
+        if animal.__class__ is Herbivore:
+            self.herbivores.remove(animal)
+        if animal.__class__ is Carnivore:
+            self.carnivores.remove(animal)
 
-    def remove_migrated_herb(self, herbivore):
-        self.herbivores.remove(herbivore)
+    def chain_lists(self):
+        return itertools.chain(self.herbivores, self.carnivores)
 
-    def remove_migrated_carn(self, carnivore):
-        self.carnivores.remove(carnivore)
+    def migrate(self, propensities):
+        migrated_list = []
+        herb_prob = calculate_probabilities(Herbivore, propensities)
+        carn_prob = calculate_probabilities(Carnivore, propensities)
+        for animal in self.chain_lists():
+            if animal.will_move():
+                if animal.__class__ is Herbivore:
+                    new_position = animal.migrate(herb_prob)
+                else:
+                    new_position = animal.migrate(carn_prob)
+                if new_position is None:
+                    continue
+                migrated_list.append((new_position, animal))
+
+        for _, animal in migrated_list:
+            self.remove_migrated_animal(animal)
+
+        return migrated_list
+
 
     def procreate(self):
         number_of_adult_herbivores = self.num_herbivores
@@ -158,24 +196,29 @@ class Cell:
             lambda_ = Herbivore.lambda_
             appetite = Herbivore.F
             dividend = ((self.num_herbivores + 1) * appetite)
-            exponent_herb = (lambda_*(self.fodder / dividend))
+            exponent_herb = (lambda_*(self.fodder
+                                      / dividend))
+
             propensity_herb = np.exp(exponent_herb)
 
             lambda_ = Carnivore.lambda_
             appetite_ = Carnivore.F
-            meat = 0
-            for herbivore in self.herbivores:
-                meat += herbivore.weight
 
             dividend = ((self.num_carnivores + 1) * appetite_)
-            exponent_carn = (lambda_*(meat / dividend))
+            exponent_carn = (lambda_*(self.meat_for_carnivores
+                                      / dividend))
+
             propensity_carn = np.exp(exponent_carn)
+
             self._propensity = {'Carnivore': propensity_carn,
                                 'Herbivore': propensity_herb}
 
-        self._calculate_propensity = False
+            self._calculate_propensity = False
 
         return self._propensity
+
+    def reset_calculate_propensity(self):
+        self._calculate_propensity = True
 
     @property
     def num_carnivores(self):

@@ -64,12 +64,12 @@ class TestIsland:
         assert test_island.map[(1, 2)].num_animals == 0
         for year in range(10):
             test_island.simulate_one_year()
-        for cell in test_island.map.values():
-            if isinstance(cell, (cell.Jungle, cell.Savanna,
-                                 cell.Desert)):
-                assert cell.num_animals > 0
-            else:
-                assert cell.num_animals == 0
+            for cell in test_island.map.values():
+                if isinstance(cell, (Jungle, Savanna,
+                                     Desert)):
+                    assert cell.num_animals > 0
+                else:
+                    assert cell.num_animals == 0
 
         # Uses the fact that the animals should distribute evenly in this map
         num_animals11 = test_island.map[(1, 1)].num_animals
