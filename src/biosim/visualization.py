@@ -21,13 +21,6 @@ class Visuals:
     }
 
     def __init__(self, island, map_string):
-        self.pixel_colors = self.make_color_pixels(island, map_string)
-        self.geography = self.draw_geography()
-
-        self.tot_num_ani_by_species = self.line_graph(island_map)
-        self.population_map_herb = self.heatmap_herb(island_map)
-        self.population_map_carn = self.heatmap_carn(island_map)
-
         # For setup in setup_graphics
         self.figure = None
         self.figure_1 = None
@@ -37,6 +30,10 @@ class Visuals:
         self.axim = None
         self.graph_ax = None
         self.heatmap = None
+
+        self.setup_graphics()
+        self.pixel_colors = self.make_color_pixels(island, map_string)
+        self.draw_geography()
 
         #self.tot_num_ani_by_species = self.line_graph(island_map)
         #self.population_map_herb = self.heatmap_herb(island_map)
@@ -87,7 +84,7 @@ class Visuals:
         return pixel_colors
 
     def draw_geography(self):
-        axim = self.map_ax.add_axes([0.1, 0.1, 0.7, 0.8])
+        axim = self.figure.add_axes([0.1, 0.1, 0.7, 0.8])
         plt.imshow(self.pixel_colors)
         axim.set_xticks(range(len(self.pixel_colors[0])))
         axim.set_xticklabels(range(1, 1 + len(self.pixel_colors[0])))
