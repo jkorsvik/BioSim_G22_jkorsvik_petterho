@@ -26,12 +26,12 @@ def choose_new_location(prob_list):
     new_location - tuple of (y, x)
     """
 
-    sorted_list = sorted(prob_list, key=lambda x: x[1])
-    probabilities = [x[1] for x in sorted_list]
+    probabilities = [x[1] for x in prob_list]
     cumulative_sum = np.cumsum(probabilities)
-    locations = [x[0] for x in sorted_list]
+    locations = [x[0] for x in prob_list]
+    random_number = np.random.random()
     index = 0
-    while not np.random.binomial(1, cumulative_sum[index]):
+    while random_number >= cumulative_sum[index]:
         index += 1
     new_position = locations[index]
     return new_position
