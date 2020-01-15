@@ -239,7 +239,6 @@ class Cell:
 
         return self._propensity
 
-
     def reset_calculate_propensity(self):
         self._calculate_propensity = True
 
