@@ -88,8 +88,7 @@ class Visuals:
 
         axlg = self.figure.add_axes([0.85, 0.35, 0.1, 0.4])
         axlg.axis('off')
-        for ix, name in enumerate(('Ocean', 'Mountain', 'Jungle',
-                                   'Savanna', 'Desert')):
+        for ix, name in enumerate(self.cell_colors.keys()):
             axlg.add_patch(plt.Rectangle((0., 0.05 + ix * 0.2), 0.3, 0.1,
                                          edgecolor=(0, 0, 0),
                                          facecolor=self.cell_colors[name]))
