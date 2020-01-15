@@ -9,6 +9,7 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import src.biosim.simulation as sim
+import textwrap
 
 
 class Visuals:
@@ -40,9 +41,6 @@ class Visuals:
     def setup_graphics(self):
         if self.figure is None:
             self.figure = plt.figure()
-
-        if self.map_ax is None:
-            self.map_ax = self.figure.add_subplot(2, 2, 1)
 
     def update_map(self):
         if self.axim is not None:
@@ -87,15 +85,15 @@ class Visuals:
         axim.set_xticklabels(range(1, 1 + len(self.pixel_colors[0])))
         axim.set_yticks(range(len(self.pixel_colors)))
         axim.set_yticklabels(range(1, 1 + len(self.pixel_colors)))
-        """
-        axlg = self.map_ax.add_axes([0.85, 0.1, 0.1, 0.8])
+
+        axlg = self.figure.add_axes([0.85, 0.35, 0.1, 0.4])
         axlg.axis('off')
         for ix, name in enumerate(('Ocean', 'Mountain', 'Jungle',
-                                   'Savannah', 'Desert')):
-            axlg.add_patch(plt.Rectangle((0., ix * 0.2), 0.3, 0.1,
+                                   'Savanna', 'Desert')):
+            axlg.add_patch(plt.Rectangle((0., 0.05 + ix * 0.2), 0.3, 0.1,
                                          edgecolor=(0, 0, 0),
-                                         facecolor=rgb_value[name[0]]))
-            axlg.text(0.35, ix * 0.2, name, transform=axlg.transAxes)
+                                         facecolor=self.cell_colors[name]))
+            axlg.text(0.35, 0.05 + ix * 0.2, name, transform=axlg.transAxes)
         """
 
 
@@ -107,12 +105,27 @@ class Visuals:
 
     def heatmap_carn(self, island_map):
         pass
+    """
 
 
 if __name__ == '__main__':
-
-    string = ("OOOO\nOJSO\nOOOO")
-    plain = sim.BioSim(island_map="OOOO\nOJSO\nOOOO", ini_pop=[], seed=1)
+    geogr = """\
+            OOOOOOOOOOOOOOOOOOOOO
+            OOOOOOOOSMMMMJJJJJJJO
+            OSSSSSJJJJMMJJJJJJJOO
+            OSSSSSSSSSMMJJJJJJOOO
+            OSSSSSJJJJJJJJJJJJOOO
+            OSSSSSJJJDDJJJSJJJOOO
+            OSSJJJJJDDDJJJSSSSOOO
+            OOSSSSJJJDDJJJSOOOOOO
+            OSSSJJJJJDDJJJJJJJOOO
+            OSSSSJJJJDDJJJJOOOOOO
+            OOSSSSJJJJJJJJOOOOOOO
+            OOOSSSSJJJJJJJOOOOOOO
+            OOOOOOOOOOOOOOOOOOOOO
+            """
+    string = textwrap.dedent(geogr)
+    plain = sim.BioSim(island_map=string, ini_pop=[], seed=1)
     lines = plain.island.clean_multi_line_string(string)
 
     island = plain.island
