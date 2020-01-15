@@ -26,7 +26,8 @@ def choose_new_location(prob_list):
     cumulative_sum = np.cumsum(probabilities)
     locations = [x[0] for x in prob_list]
     index = 0
-    while not np.random.binomial(1, cumulative_sum[index]):
+    random_number = np.random.random()
+    while random_number > cumulative_sum[index]:
         index += 1
     return locations[index]
 
