@@ -119,7 +119,7 @@ class Island:
                                      f'letters like these:\n'
                                      f'{self.map_params}')
 
-        return map
+        return island_map
 
     def probability_calc(self, pos, animal):
         species = animal.__name__
@@ -128,7 +128,6 @@ class Island:
         loc_2 = (y + 1, x)
         loc_3 = (y, x - 1)
         loc_4 = (y, x + 1)
-
         option_1 = self.map[loc_1]
         option_2 = self.map[loc_2]
         option_3 = self.map[loc_3]
@@ -136,25 +135,29 @@ class Island:
 
         list_ = [(loc_1, option_1), (loc_2, option_2),
                  (loc_3, option_3), (loc_4, option_4)]
-
         propensity_list = []
 
         for loc, option in list_:
-            propensity_list.append((loc, option.propensity))
-        return propensity_list
+            propensity_list.append((loc,
+                                    option.propensity[species])
+                                   )
+
+        prop_sum = np.sum(sum(dict(propensity_list).values()))
+        prob_list = []
+        for loc, prop in propensity_list:
+            prob_list.append((loc, (prop / prop_sum)))
+
+        return prob_list
 
     def add_herb_to_new_cell(self, new_loc, herbivore):
-        self.map[new_loc].add_migrated_animal(animal)
+        self.map[new_loc].add_migrated_herb(herbivore)
 
-    def add_animal_to_new_cell(self, new_loc, animal):
-        self.map[new_loc].add_migrated_animal(animal)
+    def add_carn_to_new_cell(self, new_loc, carnivore):
+        self.map[new_loc].add_migrated_carn(carnivore)
 
     def migrate(self):
-        migration_by_cells = []
-
         for pos, cell in self.map.items():
             if cell.passable and cell.num_animals > 0:
-
                 prob_herb = self.probability_calc(pos, Herbivore)
                 prob_carn = self.probability_calc(pos, Carnivore)
                 moved_herb, moved_carn = cell.migrate(prob_herb, prob_carn)
@@ -162,7 +165,6 @@ class Island:
                     self.add_herb_to_new_cell(loc, herb)
                 for loc, carn in moved_carn:
                     self.add_carn_to_new_cell(loc, carn)
-
 
     def ready_for_new_year(self):
         for cell in self.map.values():
@@ -172,7 +174,6 @@ class Island:
                 herbivore.reset_has_moved()
             for carnivore in cell.carnivores:
                 carnivore.reset_has_moved()
-            cell.reset_calculate_propensity()
 
     def add_population(self, population):
         """

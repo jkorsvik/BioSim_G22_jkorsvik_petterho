@@ -13,30 +13,6 @@ def sigmoid(value):
     return 1/(1 + np.exp(value))
 
 
-def choose_new_location(prob_list):
-    """
-    Draws one out of a list with weights.
-
-    Parameters
-    ----------
-    prob_list - list of tuple(loc, probabilities)
-
-    Returns
-    -------
-    new_location - tuple of (y, x)
-    """
-
-    probabilities = [x[1] for x in prob_list]
-    cumulative_sum = np.cumsum(probabilities)
-    locations = [x[0] for x in prob_list]
-    random_number = np.random.random()
-    index = 0
-    while random_number >= cumulative_sum[index]:
-        index += 1
-    new_position = locations[index]
-    return new_position
-
-
 class Animal:
     w_birth = 8.0
     sigma_birth = 1.5

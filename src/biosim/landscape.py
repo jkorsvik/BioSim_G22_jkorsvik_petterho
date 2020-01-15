@@ -11,20 +11,6 @@ import numpy as np
 import itertools
 
 
-def calculate_probabilities(animal, propensities):
-    propensities_by_animal = []
-    for loc, prop in propensities:
-        prop = prop[animal.__name__]
-        propensities_by_animal.append((loc, prop))
-
-    prop_sum = sum(x[1] for x in propensities_by_animal)
-
-    prob_list = []
-    for loc, prop in propensities_by_animal:
-        prob_list.append((loc, (prop / prop_sum)))
-    return prob_list
-
-
 def choose_new_location(prob_list):
     """
     Draws one out of a list with weights.
@@ -104,39 +90,20 @@ class Cell:
                 self.carnivores.append(Carnivore(
                     age=animal['age'], weight=animal['weight']))
 
-    def add_migrated_animal(self, animal):
-        if animal.__class__ is Herbivore:
-            self.herbivores.append(animal)
-        if animal.__class__ is Carnivore:
-            self.carnivores.append(animal)
+    def add_migrated_herb(self, herbivore):
+        self.herbivores.append(herbivore)
 
-    def remove_migrated_animal(self, animal):
-        if animal.__class__ is Herbivore:
-            self.herbivores.remove(animal)
-        if animal.__class__ is Carnivore:
-            self.carnivores.remove(animal)
+    def add_migrated_carn(self, carnivore):
+        self.carnivores.append(carnivore)
+
+    def remove_migrated_herb(self, herbivore):
+        self.herbivores.remove(herbivore)
+
+    def remove_migrated_carn(self, carnivore):
+        self.carnivores.remove(carnivore)
 
     def chain_lists(self):
         return itertools.chain(self.herbivores, self.carnivores)
-
-    def migrate(self, propensities):
-        migrated_list = []
-        herb_prob = calculate_probabilities(Herbivore, propensities)
-        carn_prob = calculate_probabilities(Carnivore, propensities)
-        for animal in self.chain_lists():
-            if animal.will_move():
-                if animal.__class__ is Herbivore:
-                    new_position = animal.migrate(herb_prob)
-                else:
-                    new_position = animal.migrate(carn_prob)
-                if new_position is None:
-                    continue
-                migrated_list.append((new_position, animal))
-
-        for _, animal in migrated_list:
-            self.remove_migrated_animal(animal)
-
-        return migrated_list
 
 
     def migrate(self, prob_herb, prob_carn):
