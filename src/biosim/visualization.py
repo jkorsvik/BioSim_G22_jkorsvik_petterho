@@ -30,14 +30,30 @@ class Visuals:
 
         # For setup in setup_graphics
         self.figure = None
+        self.figure_1 = None
+        self.figure_2 = None
+        self.figure_3 = None
         self.map_ax = None
         self.img_ax = None
+        self.graph_ax = None
+        self.heatmap = None
 
         #self.tot_num_ani_by_species = self.line_graph(island_map)
         #self.population_map_herb = self.heatmap_herb(island_map)
         #self.population_map_carn = self.heatmap_carn(island_map)
         #self.figure = plt.figure
 
+    def setup_graphics(self):
+        if self.figure is None:
+            self.figure = plt.figure()
+
+        if self.map_ax is None:
+            self.map_ax = self.figure.add_subplot(2, 2, 1)
+            self.img_ax = None
+
+    def update_map(self):
+        if self.img_ax is not None:
+            self.img_ax.set_data()
 
     def make_color_pixels(self, island, map_string):
         """
@@ -67,27 +83,13 @@ class Visuals:
             y, x = pos
             name_of_class = cell.__class__.__name__
             color_name = self.cell_colors[name_of_class]
-            color_code_rgb = mcolors.to_rgba(color_name)
+            color_code_rgb = mcolors.to_rgb(color_name)
             pixel_colors[y][x] = color_code_rgb
         return pixel_colors
 
-    def setup_graphics(self):
-        if self.figure is None:
-            self.figure = plt.figure()
-
-        if self.map_ax is None:
-            self.map_ax = self.figure.add_subplot(2, 2, 1)
-            self.img_ax = None
-
-     def update_map(self):
-         if self.img_ax is not None:
-             self.img_ax.set_data()
-
-
-
-
     def draw_geography(self):
-        return plt.imshow(self.pixel_colors)
+        self.img_ax = self.figure.add_axes([0])
+        plt.imshow(self.pixel_colors)
 
     def line_graph(self, island_map):
         pass
