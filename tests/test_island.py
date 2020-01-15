@@ -73,6 +73,7 @@ class TestIsland:
 
         for year in range(20):
             test_island.simulate_one_year()
+
         for loc, cell in test_island.map.items():
             print(loc, cell.num_animals)
         for cell in test_island.map.values():
@@ -81,6 +82,7 @@ class TestIsland:
                 assert cell.num_animals > 0
             else:
                 assert cell.num_animals == 0
+
 
         # Uses the fact that the animals should distribute evenly in this map
         num_animals11 = test_island.map[(1, 1)].num_animals

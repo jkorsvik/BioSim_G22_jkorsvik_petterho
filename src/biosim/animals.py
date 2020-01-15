@@ -9,19 +9,32 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-
 def sigmoid(value):
     return 1/(1 + np.exp(value))
 
 
-""""
-def probability_for_moving(list_for_moving):
-    sum_propensity = 0
-    for fodder, same_species, F in list_for_moving:
-        sum_propensity += propensity(fodder, same_species, F)
-    probability = propensity(fodder, same_species, F) / sum_propensity
-    return probability
+def choose_new_location(prob_list):
     """
+    Draws one out of a list with weights.
+
+    Parameters
+    ----------
+    prob_list - list of tuple(loc, probabilities)
+
+    Returns
+    -------
+    new_location - tuple of (y, x)
+    """
+
+    probabilities = [x[1] for x in prob_list]
+    cumulative_sum = np.cumsum(probabilities)
+    locations = [x[0] for x in prob_list]
+    random_number = np.random.random()
+    index = 0
+    while random_number >= cumulative_sum[index]:
+        index += 1
+    new_position = locations[index]
+    return new_position
 
 
 class Animal:
@@ -235,6 +248,7 @@ class Animal:
             self._fitness = (sigmoid(pos_q_age)
                              * sigmoid(neg_q_weight)
                              )
+
             return self._fitness
 
         return self._fitness
@@ -267,11 +281,23 @@ class Animal:
     def reset_has_moved(self):
         self._has_moved = False
 
-    def will_migrate(self):
+
+    def rand_move(self):
+        prob_to_move = self.fitness * self.mu
+        return bool(np.random.binomial(1, prob_to_move))
+
+    def will_move(self):
         if not self.has_moved:
-            prob_to_move = self.fitness * self.mu
-            return bool(np.random.binomial(1, prob_to_move))
+            if not self.rand_move():
+                return True
         return False
+
+    def migrate(self, prob_list):
+        try:
+            new_position = choose_new_location(prob_list)
+        except ValueError:
+            new_position = None
+        return new_position
 
     def birth(self, num_same_species):
         mates = num_same_species - 1

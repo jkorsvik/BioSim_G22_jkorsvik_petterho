@@ -8,6 +8,7 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+import src.biosim.simulation as sim
 
 
 class Visuals:
@@ -19,9 +20,10 @@ class Visuals:
         "Jungle": 'darkgreen'
     }
 
-    def __init__(self, island_map, map_string):
-        self.pixel_colors = self.make_color_pixels(island_map, map_string)
+    def __init__(self, island, map_string):
+        self.pixel_colors = self.make_color_pixels(island, map_string)
         self.geography = self.draw_geography()
+
         self.tot_num_ani_by_species = self.line_graph(island_map)
         self.population_map_herb = self.heatmap_herb(island_map)
         self.population_map_carn = self.heatmap_carn(island_map)
@@ -31,7 +33,13 @@ class Visuals:
         self.map_ax = None
         self.img_ax = None
 
-    def make_color_pixels(self, island_map, map_string):
+        #self.tot_num_ani_by_species = self.line_graph(island_map)
+        #self.population_map_herb = self.heatmap_herb(island_map)
+        #self.population_map_carn = self.heatmap_carn(island_map)
+        #self.figure = plt.figure
+
+
+    def make_color_pixels(self, island, map_string):
         """
         Creates a list indexed by [y][x] that represents an color by type of
         cell. The color is collected from a class variable called color_params
@@ -55,7 +63,7 @@ class Visuals:
             for x in range(len(map_string[0])):
                 pixel_colors[y].append(None)
 
-        for pos, cell in island_map.items():
+        for pos, cell in island.map.items():
             y, x = pos
             name_of_class = cell.__class__.__name__
             color_name = self.cell_colors[name_of_class]
@@ -79,7 +87,7 @@ class Visuals:
 
 
     def draw_geography(self):
-        pass
+        return plt.imshow(self.pixel_colors)
 
     def line_graph(self, island_map):
         pass
@@ -92,4 +100,12 @@ class Visuals:
 
 
 if __name__ == '__main__':
-    pass
+
+    string = ("OOOO\nOJSO\nOOOO")
+    plain = sim.BioSim(island_map="OOOO\nOJSO\nOOOO", ini_pop=[], seed=1)
+
+    island = plain.island
+
+    visual = Visuals(island, string)
+
+    plt.show()
