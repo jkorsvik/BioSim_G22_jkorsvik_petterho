@@ -17,9 +17,6 @@ def check_length(lines):
     return True
 
 
-
-
-
 class Island:
     map_params = {'O': Ocean,
                   'M': Mountain,
@@ -172,6 +169,7 @@ class Island:
     def ready_for_new_year(self):
         for cell in self.map.values():
             cell.grow()
+            cell.reset_propensity()
             for herbivore in cell.herbivores:
                 herbivore.reset_has_moved()
             for carnivore in cell.carnivores:
