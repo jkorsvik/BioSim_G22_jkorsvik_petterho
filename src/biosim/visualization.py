@@ -23,9 +23,6 @@ class Visuals:
     def __init__(self, island, map_string):
         # For setup in setup_graphics
         self.figure = None
-        self.figure_1 = None
-        self.figure_2 = None
-        self.figure_3 = None
         self.map_ax = None
         self.axim = None
         self.graph_ax = None
@@ -116,10 +113,10 @@ if __name__ == '__main__':
 
     string = ("OOOO\nOJSO\nOOOO")
     plain = sim.BioSim(island_map="OOOO\nOJSO\nOOOO", ini_pop=[], seed=1)
+    lines = plain.island.clean_multi_line_string(string)
 
     island = plain.island
 
-    visual = Visuals(island, string)
-
+    visual = Visuals(island, lines)
     plt.show()
 
