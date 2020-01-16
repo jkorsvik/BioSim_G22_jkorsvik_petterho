@@ -40,9 +40,9 @@ class Visuals:
 
         self.setup_graphics()
         self.pixel_colors = self.make_color_pixels(island)
-        self.heatmap = self.get_data_heatmap_all_animals(island)
+        self.heat_map = self.get_data_heat_map_all_animals(island)
         self.draw_geography()
-        self.draw_heatmap()
+        self.draw_heat_map()
 
         #self.tot_num_ani_by_species = self.line_graph(island_map)
         #self.population_map_herb = self.heatmap_herb(island_map)
@@ -102,28 +102,28 @@ class Visuals:
             pixel_colors[y][x] = color_code_rgb
         return pixel_colors
 
-    def get_data_heatmap_all_animals(self, island):
+    def get_data_heat_map_all_animals(self, island):
         heat_map = self.empty_nested_list()
         for pos, cell in island.map.items():
             y, x = pos
             heat_map[y][x] = cell.num_animals
-        self.heatmap = heat_map
+        self.heat_map = heat_map
         return heat_map
 
-    def draw_heatmap(self):
+    def draw_heat_map(self):
         axim = self.figure.add_axes(self.ax3)
-        plt.imshow(self.heatmap, cmap='inferno')
+        self.ax31 = axim.imshow(self.heat_map, cmap='inferno')
+        plt.colorbar(self.ax31)
         # axim.set_xticks(range(len(self.heatmap[0])))
         # axim.set_xticklabels(range(1, 1 + len(self.heatmap[0])))
         # axim.set_yticks(range(len(self.heatmap)))
         # axim.set_yticklabels(range(1, 1 + len(self.heatmap)))
         axim.axis('off')
         axim.set_title('Heatmap all animals')
-        colorbar = plt.colorbar()
 
-    def update_heatmap_all_animals(self, island):
-        self.get_data_heatmap_all_animals(island)
-        plt.imshow(self.heatmap, cmap='inferno')
+    def update_heat_map_all_animals(self, island):
+        self.get_data_heat_map_all_animals(island)
+        self.ax31.set_data(self.heat_map)
 
 
     def draw_geography(self):
@@ -186,12 +186,11 @@ if __name__ == '__main__':
     lines = plain.island.clean_multi_line_string(string)
 
     island = plain.island
-    # visual = Visuals(island, lines)
-    for _ in range(30):
-        island.simulate_one_year()
-        #visual.update_heatmap_all_animals()
-        #plt.pause(0.05)
     visual = Visuals(island, lines)
+    for _ in range(70):
+        island.simulate_one_year()
+        visual.update_heat_map_all_animals(island)
+        plt.pause(0.05)
 
     plt.show()
 
