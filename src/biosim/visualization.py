@@ -27,14 +27,19 @@ class Visuals:
         self.x_len = len(map_string[0])
         self.y_len = len(map_string)
         # For setup in setup_graphics
+        # Plan on using subplots
         self.figure = None
         self.ax1 = [0.35, 0.55, 0.45, 0.45]
+        self.ax11 = None
         self.ax2 = [0.85, 0.60, 0.1, 0.35]
+        self.ax21 = None
         self.ax3 = [0.1, 0.1, 0.8, 0.45]
+        self.ax31 = None
         self.ax4 = [0.85, 0.1, 0.1, 0.35]
+        self.ax41 = None
 
         self.setup_graphics()
-        self.pixel_colors = self.make_color_pixels(island, map_string)
+        self.pixel_colors = self.make_color_pixels(island)
         self.heatmap = self.get_data_heatmap_all_animals(island)
         self.draw_geography()
         self.draw_heatmap()
@@ -56,7 +61,20 @@ class Visuals:
         if self.figure is None:
             self.figure = plt.figure()
 
-    def make_color_pixels(self, island, map_string):
+        # The map
+        if self.ax1 is None:
+            self.ax1 = self.figure.add_subplot()
+            self.ax11 = None
+        # The color explanation
+        if self.ax2 is None:
+            self.ax2 = self.figure.add_subplot()
+            self.ax21 = None
+        # The heat map
+        if self.ax2 is None:
+            self.ax2 = self.figure.add_subplot()
+            self.ax21 = None
+
+    def make_color_pixels(self, island):
         """
         Creates a list indexed by [y][x] that represents an color by type of
         cell. The color is collected from a class variable called color_params
@@ -95,16 +113,17 @@ class Visuals:
     def draw_heatmap(self):
         axim = self.figure.add_axes(self.ax3)
         plt.imshow(self.heatmap, cmap='inferno')
-        axim.set_xticks(range(len(self.heatmap[0])))
-        axim.set_xticklabels(range(1, 1 + len(self.heatmap[0])))
-        axim.set_yticks(range(len(self.heatmap)))
-        axim.set_yticklabels(range(1, 1 + len(self.heatmap)))
+        # axim.set_xticks(range(len(self.heatmap[0])))
+        # axim.set_xticklabels(range(1, 1 + len(self.heatmap[0])))
+        # axim.set_yticks(range(len(self.heatmap)))
+        # axim.set_yticklabels(range(1, 1 + len(self.heatmap)))
         axim.axis('off')
         axim.set_title('Heatmap all animals')
         colorbar = plt.colorbar()
 
     def update_heatmap_all_animals(self, island):
-        self.ax3.set_data(self.get_data_heatmap_all_animals(island))
+        self.get_data_heatmap_all_animals(island)
+        plt.imshow(self.heatmap, cmap='inferno')
 
 
     def draw_geography(self):
@@ -167,13 +186,12 @@ if __name__ == '__main__':
     lines = plain.island.clean_multi_line_string(string)
 
     island = plain.island
+    # visual = Visuals(island, lines)
     for _ in range(30):
         island.simulate_one_year()
+        #visual.update_heatmap_all_animals()
+        #plt.pause(0.05)
     visual = Visuals(island, lines)
-    plt.show()
-    plt.pause(10)
-    for _ in range(30):
-        island.simulate_one_year()
-    visual.get_data_heatmap_all_animals(island)
+
     plt.show()
 
