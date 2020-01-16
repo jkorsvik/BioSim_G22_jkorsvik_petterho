@@ -274,53 +274,55 @@ class Visuals:
 
 
 if __name__ == '__main__':
-    geogr = """\
-            OOOOOOOOOOOOOOOOOOOOO
-            OOOOOOOOSMMMMJJJJJJJO
-            OSSSSSJJJJMMJJJJJJJOO
-            OSSSSSSSSSMMJJJJJJOOO
-            OSSSSSJJJJJJJJJJJJOOO
-            OSSSSSJJJDDJJJSJJJOOO
-            OSSJJJJJDDDJJJSSSSOOO
-            OOSSSSJJJDDJJJSOOOOOO
-            OSSSJJJJJDDJJJJJJJOOO
-            OSSSSJJJJDDJJJJOOOOOO
-            OOSSSSJJJJJJJJOOOOOOO
-            OOOSSSSJJJJJJJOOOOOOO
-            OOOOOOOOOOOOOOOOOOOOO
-            """
-    string = textwrap.dedent(geogr)
-    ini_herbs = [
-        {
-            "loc": (2, 1),
-            "pop": [
-                {"species": "Herbivore", "age": 5, "weight": 40}
-                for _ in range(200)
-            ],
-        }
-    ]
+    pass
+"""geogr = """\
+        """OOOOOOOOOOOOOOOOOOOOO
+        OOOOOOOOSMMMMJJJJJJJO
+        OSSSSSJJJJMMJJJJJJJOO
+        OSSSSSSSSSMMJJJJJJOOO
+        OSSSSSJJJJJJJJJJJJOOO
+        OSSSSSJJJDDJJJSJJJOOO
+        OSSJJJJJDDDJJJSSSSOOO
+        OOSSSSJJJDDJJJSOOOOOO
+        OSSSJJJJJDDJJJJJJJOOO
+        OSSSSJJJJDDJJJJOOOOOO
+        OOSSSSJJJJJJJJOOOOOOO
+        OOOSSSSJJJJJJJOOOOOOO
+        OOOOOOOOOOOOOOOOOOOOO"""
+        """
+string = textwrap.dedent(geogr)
+ini_herbs = [
+    {
+        "loc": (2, 1),
+        "pop": [
+            {"species": "Herbivore", "age": 5, "weight": 40}
+            for _ in range(200)
+        ],
+    }
+]
 
-    ini_carn = [
-        {
-            "loc": (4, 6),
-            "pop": [
-                {"species": "Carnivore", "age": 2, "weight": 40}
-                for _ in range(50)
-            ],
-        }
-    ]
+ini_carn = [
+    {
+        "loc": (4, 6),
+        "pop": [
+            {"species": "Carnivore", "age": 2, "weight": 40}
+            for _ in range(50)
+        ],
+    }
+]
 
-    plain = sim.BioSim(island_map=string, ini_pop=ini_herbs, seed=2)
-    lines = plain.island.clean_multi_line_string(string)
+plain = sim.BioSim(island_map=string, ini_pop=ini_herbs, seed=2)
+lines = plain.island.clean_multi_line_string(string)
 
-    island_instance = plain.island
-    visual = Visuals(island_instance, lines, 20_000, 200)
-    for x in range(150):
-        island_instance.simulate_one_year()
-        visual.update_heat_maps(island_instance)
-        if x == 50:
-            island_instance.add_population(ini_carn)
-        visual.update_animals_over_time(island_instance)
-        plt.pause(0.05)
+island_instance = plain.island
+visual = Visuals(island_instance, lines, 20_000, 200)
+for x in range(150):
+    island_instance.simulate_one_year()
+    visual.update_heat_maps(island_instance)
+    if x == 50:
+        island_instance.add_population(ini_carn)
+    visual.update_animals_over_time(island_instance)
+    plt.pause(0.05)
 
-    plt.show()
+plt.show()"""
+
