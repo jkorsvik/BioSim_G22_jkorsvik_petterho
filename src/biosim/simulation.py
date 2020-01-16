@@ -219,15 +219,16 @@ if __name__ == '__main__':
 
     ini_carn = [
         {
-            "loc": (4, 6),
+            "loc": (2, 1),
             "pop": [
                 {"species": "Carnivore", "age": 2, "weight": 40}
-                for _ in range(4)
+                for _ in range(10)
             ],
         }
     ]
 
     sim = BioSim(geogr, ini_herbs, img_base=r'C:\Users\pbmar\Documents\NMBU\INF200\island')
-    sim.simulate(150)
+    sim.add_population(ini_carn)
+    sim.simulate(100)
     sim.make_movie()
 

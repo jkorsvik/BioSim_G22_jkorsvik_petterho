@@ -29,6 +29,7 @@ class Visuals:
             img_base=None,
             img_fmt='png'
     ):
+        self.img_num = -1
         self.x_len = island.len_map_x  # Double code
         self.y_len = island.len_map_y  # Double code
         self.num_years_sim = num_years_sim
@@ -268,7 +269,8 @@ class Visuals:
         plt.pause(1e-6)
 
     def save_fig(self):
-        self.figure.savefig(self.img_base+f'{self.years:03d}',
+        self.img_num += 1
+        self.figure.savefig(f'{self.img_base}{self.img_num:03d}',
                             format=self.img_fmt)
 
 
