@@ -341,7 +341,8 @@ class BaseCell:
 
             \pi_k = e^{\gamma\epsilon_j}
 
-            \pi_j = \frac{\pi_j}{\sum\epsilon_C(i) }
+            \pi_j = \frac{\pi_j}{\sum\epsilon_C(i)}
+
 
 
         sets self.calculate_propensity to False when propensity is calculated
@@ -386,18 +387,22 @@ class BaseCell:
         return self._propensity
 
     def reset_calculate_propensity(self):
+        """Sets _calculate_propensity to True"""
         self._calculate_propensity = True
 
     @property
     def num_carnivores(self):
+        """Property: number of carnivores derived from len of list"""
         return len(self.carnivores)
 
     @property
     def num_herbivores(self):
+        """Property: number of herbivores derived from len of list"""
         return len(self.herbivores)
 
     @property
     def meat_for_carnivores(self):
+        """Property: Sum the weight of all herbivores in cell"""
         meat = 0
         for herbivore in self.herbivores:
             meat += herbivore.weight
@@ -405,10 +410,12 @@ class BaseCell:
 
     @property
     def num_animals(self):
+        """Property: sum of all num_carnivores and num_herbivores"""
         return self.num_carnivores + self.num_herbivores
 
 
 class Ocean(BaseCell):
+    """Subclass of cell"""
     passable = False
 
     def __init__(self):
@@ -416,6 +423,7 @@ class Ocean(BaseCell):
 
 
 class Mountain(BaseCell):
+    """Subclass of cell"""
     passable = False
 
     def __init__(self):
@@ -423,6 +431,9 @@ class Mountain(BaseCell):
 
 
 class Desert(BaseCell):
+    """
+    Subclass of cell, is passable but contains no food
+    """
     passable = True
     f_max = 0
 
@@ -431,6 +442,18 @@ class Desert(BaseCell):
 
 
 class Savanna(BaseCell):
+    """
+    Subclass of cell
+
+    Attributes
+    ------
+    self.f_max:  max amount of fodder(food) in the cell
+    self.alpha: value used for grow method
+
+    Methods
+    ------
+    grow: updates amount of fodder in cell
+    """
     passable = True
     f_max = 300.0
     alpha = 0.3
@@ -444,6 +467,17 @@ class Savanna(BaseCell):
 
 
 class Jungle(BaseCell):
+    """
+    Subclass of cell
+
+    Attributes
+    ------
+    self.f_max: max amount of fodder(food) in the cell
+
+    Methods
+    ------
+    grow: updates amount of fodder in cell
+    """
     passable = True
     f_max = 800.0
 
