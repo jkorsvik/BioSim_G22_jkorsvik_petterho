@@ -55,6 +55,7 @@ class Island:
         """
         self.map = self.make_map(island_map_string)
         self.add_population(ini_pop)
+        self._year = 0
 
     @property
     def num_animals(self):
@@ -297,6 +298,15 @@ class Island:
         for cell in self.map.values():
             cell.die()
 
+    @property
+    def year(self):
+        """Last year simulated."""
+        return self._year
+
+    @year.setter
+    def year(self, new_value):
+        self._year = new_value
+
     def simulate_one_year(self):
         """
         Simulates a whole year by the following sequence
@@ -311,6 +321,7 @@ class Island:
         self.age_animals()
         self.lose_weight()
         self.die()
+        self.year += 1
 
 
 if __name__ == '__main__':

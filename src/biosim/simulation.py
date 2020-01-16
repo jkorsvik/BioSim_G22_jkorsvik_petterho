@@ -55,7 +55,6 @@ class BioSim:
         where img_no are consecutive image numbers starting from 0.
         img_base should contain a path and beginning of a file name.
         """
-        self._year = 0
         self.island = Island(island_map, ini_pop)
         if seed is not None:
             np.random.seed(seed)
@@ -122,15 +121,6 @@ class BioSim:
         self
         """
         self.island.add_population(population)
-
-    @property
-    def year(self):
-        """Last year simulated."""
-        return self._year
-
-    @year.setter
-    def year(self, new_value):
-        self._year = new_value
 
     @property
     def num_animals(self):
