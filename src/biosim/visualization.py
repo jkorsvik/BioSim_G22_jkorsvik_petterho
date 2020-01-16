@@ -34,8 +34,8 @@ class Visuals:
         self.island_map_exp_img_ax = None  # Might not be needed
         self.heat_map_all_animals_ax = None  # [0.1, 0.1, 0.8, 0.45]
         self.heat_map_all_animals_img_ax = None
+        self.colorbar_ax = None
         self.animals_over_time_ax = None  # [0.85, 0.1, 0.1, 0.35]
-        self.animals_over_time_img_ax = None  # Might not be needed
 
         self.herbivores_over_time = None
         self.carnivores_over_time = None
@@ -72,16 +72,18 @@ class Visuals:
             self.island_map_img_ax = None
         # The color explanation
         if self.island_map_exp_ax is None:
-            self.island_map_exp_ax = self.figure.add_subplot(222)
+            self.island_map_exp_ax = self.figure.add_subplot(243)
             self.island_map_exp_img_ax = None
         # The heat map
         if self.heat_map_all_animals_ax is None:
             self.heat_map_all_animals_ax = self.figure.add_subplot(223)
-            self.island_map_exp_img_ax = None
+            self.heat_map_all_animals_img_ax = None
+        # The colorbar
+        if self.colorbar_ax is None:
+            self.colorbar_ax = self.figure.add_subplot(244)
         # The animals over time graph
         if self.animals_over_time_ax is None:
             self.animals_over_time_ax = self.figure.add_subplot(224)
-            self.animals_over_time_img_ax = None
 
     def make_color_pixels(self, island):
         """
@@ -122,8 +124,8 @@ class Visuals:
         # Island has property or attribute year
         self.herbivores_over_time.append(
             island.num_animals_per_species['Herbivore'])
-        self.herbivores_over_time.append(
-            island.num_animals_per_species['Herbivore'])
+        self.carnivores_over_time.append(
+            island.num_animals_per_species['Carnivore'])
         self.years.append(island.year)
         self.animals_over_time_ax.plot(self.years, self.carnivores_over_time)
         self.animals_over_time_ax.plot(self.years, self.herbivores_over_time)
@@ -153,7 +155,7 @@ class Visuals:
         self.heat_map_all_animals_ax.set_title('Heat map all animals')
         self.heat_map_all_animals_img_ax = self.heat_map_all_animals_ax.imshow(
             heat_map, cmap='inferno')
-        plt.colorbar(self.heat_map_all_animals_img_ax)
+        plt.colorbar(self.heat_map_all_animals_img_ax, cax=self.colorbar_ax)
 
     def update_heat_map(self, island):
         self.get_data_heat_map(island, 'num_animals')
@@ -213,9 +215,10 @@ if __name__ == '__main__':
 
     island_instance = plain.island
     visual = Visuals(island_instance, lines)
-    for _ in range(70):
+    for _ in range(150):
         island_instance.simulate_one_year()
         visual.update_heat_map(island_instance)
+        visual.update_animals_over_time(island_instance)
         plt.pause(0.05)
 
     plt.show()
