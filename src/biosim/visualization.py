@@ -180,8 +180,9 @@ class Visuals:
                 plt.Rectangle((0., 0.05 + ix * 0.2), 0.3, 0.1,
                               edgecolor=(0, 0, 0),
                               facecolor=self.cell_colors[name]))
-            self.island_map_exp_ax.text(0.35, 0.05 + ix * 0.2,
-                                        name, transform=self.island_map_exp_ax.transAxes)
+            self.island_map_exp_ax.text(
+                0.35, 0.05 + ix * 0.2, name,
+                transform=self.island_map_exp_ax.transAxes)
 
 
 if __name__ == '__main__':
