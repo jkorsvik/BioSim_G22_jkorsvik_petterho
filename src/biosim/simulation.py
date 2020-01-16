@@ -8,7 +8,7 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 from src.biosim.island import Island
-#from src.biosim.visualization import Visuals
+from src.biosim.visualization import Visuals
 from src.biosim.landscape import (
     Jungle, Ocean, Savanna, Mountain, Desert
 )
@@ -62,9 +62,6 @@ class BioSim:
         self.cmax_animals = cmax_animals
         self.img_base = img_base
         self.img_fmt = img_fmt
-       # self.visuals = Visuals(
-     #       self.island, island_map, img_base, img_fmt
-     #   )
 
     @staticmethod
     def set_animal_parameters(species, params):
@@ -103,11 +100,24 @@ class BioSim:
 
         Image files will be numbered consecutively.
         """
-        index = 0
-        while index < num_years:
+        visuals = Visuals(self.island, num_years, self.ymax_animals,
+                          self.cmax_animals, self.img_base, self.img_fmt)
+
+        if img_years is None:
+            img_years = vis_years
+
+        index = 1
+
+        visuals.save_fig()
+
+        while index <= num_years:
             self.island.simulate_one_year()
+            if index % vis_years == 0:
+                visuals.update_fig(self.island)
+            if index % img_years == 0:
+                visuals.save_fig()
             index += 1
-            self.year += 1
+
 
     def add_population(self, population):
         """
@@ -121,6 +131,11 @@ class BioSim:
         self
         """
         self.island.add_population(population)
+
+    @property
+    def year(self):
+        """Last year simulated."""
+        return self.island.year
 
     @property
     def num_animals(self):
@@ -150,7 +165,7 @@ class BioSim:
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
-        raise NotImplementedError
+        ffmpeg -framerate 24 -i img%03d.png -t 30 output.mp4
 
 
 if __name__ == '__main__':
