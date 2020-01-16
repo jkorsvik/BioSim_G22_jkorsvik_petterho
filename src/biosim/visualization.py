@@ -268,6 +268,7 @@ class Visuals:
     def update_fig(self, island):
         self.update_animals_over_time(island)
         self.update_heat_maps(island)
+        plt.pause(1e-6)
 
     def save_fig(self):
         self.figure.savefig(self.img_base,  format=self.img_fmt)
