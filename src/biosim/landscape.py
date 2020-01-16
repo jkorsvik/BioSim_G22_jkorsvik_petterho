@@ -50,9 +50,12 @@ class BaseCell:
 
         Parameters
         ----------
-        passable - float
-        f_max - float
-        alpha - float
+        passable : bool
+            If Animals can enter cell
+        f_max : float
+            Maximum amount of fodder in cell
+        alpha : float
+            Growth rate for fodder
 
         Returns
         -------
@@ -116,8 +119,8 @@ class BaseCell:
 
         Parameters
         ----------
-        animal_list: list
-            dict
+        animal_list : list
+            List of Dictionaries
 
         Returns
         -------
@@ -161,18 +164,18 @@ class BaseCell:
 
         Parameters
         ----------
-        prob_herb: list of tuples
+        prob_herb : list of tuples
             Location (y, x) and Probability
 
-        prob_carn: list of tuples
+        prob_carn : list of tuples
             Location (y, x) and Probability
 
         Returns
         -------
-        moved_herb: list of tuples
+        moved_herb : list of tuples
             New position (y, x) and animal instance
 
-        moved_carn: list of tuples
+        moved_carn : list of tuples
             New position (y, x) and animal instance
 
         """
@@ -204,7 +207,7 @@ class BaseCell:
 
         Methods
         -------
-        BaseAnimal.birth(num_of_same_species)
+        birth(num_of_same_species)
 
 
         Returns
@@ -250,11 +253,11 @@ class BaseCell:
         Herbivores is sorted by fitness thereafter goes through the updated
         list in reverse. This makes the most fit animals first to feed.
 
-        Updated the cells amount of food(fooder) after each animal has fed.
+        Updated the cells amount of food(fodder) after each animal has fed.
 
         Methods
         -------
-        BaseAnimal.feed()
+        feed()
 
         """
         self.herbivores = self.sort_by_fitness(self.herbivores)
@@ -273,12 +276,10 @@ class BaseCell:
 
         Methods
         ------
-        Carnivore.feed(least_fit_herbivores)
-            Returns list
-                Animals that are still living
+        feed(least_fit_herbivores)
+            Returns list of herbivores that are still living
 
-        Returns
-        -------
+
 
         """
         self.herbivores = self.sort_by_fitness(self.herbivores)
@@ -288,7 +289,6 @@ class BaseCell:
 
     def age_pop(self):
         """Adds a increment of 1 to the animals age attribute"""
-        #### Spør om dette, sjekk om det endrer animal._calculate_fitness
         for herbivore in self.herbivores:
             herbivore.age_one_year()
         for carnivore in self.carnivores:
@@ -336,12 +336,12 @@ class BaseCell:
         if cell is not passable propensities will be zero
 
         Propensity is calculated by:
-        .. math::
-            \epsilon_k = \frac{f_k}{(n_k + 1)F'}
 
-            \pi_k = e^{\gamma\epsilon_j}
+        .. math::   \epsilon_k = \frac{f_k}{(n_k + 1)F'}
 
-            \pi_j = \frac{\pi_j}{\sum\epsilon_C(i)}
+        .. math::   \pi_k = e^{\gamma\epsilon_j}
+
+        .. math::   \pi_j = \frac{\pi_j}{\sum\epsilon_C(i)}
 
 
 
@@ -472,7 +472,7 @@ class Jungle(BaseCell):
 
     Attributes
     ------
-    self.f_max: max amount of fodder(food) in the cell
+    self.f_max : max amount of fodder(food) in the cell
 
     Methods
     ------
