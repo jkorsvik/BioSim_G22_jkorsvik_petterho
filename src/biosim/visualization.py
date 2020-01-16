@@ -8,7 +8,6 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-import src.biosim.simulation as sim
 import textwrap
 
 
