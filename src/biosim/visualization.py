@@ -12,8 +12,6 @@ import src.biosim.simulation as sim
 import textwrap
 
 
-
-
 class Visuals:
     cell_colors = {
         "Ocean": 'cyan',
@@ -29,25 +27,27 @@ class Visuals:
         # For setup in setup_graphics
         # Plan on using subplots
         self.figure = None
-        self.ax1 = [0.35, 0.55, 0.45, 0.45]
-        self.ax11 = None
-        self.ax2 = [0.85, 0.60, 0.1, 0.35]
-        self.ax21 = None
-        self.ax3 = [0.1, 0.1, 0.8, 0.45]
-        self.ax31 = None
-        self.ax4 = [0.85, 0.1, 0.1, 0.35]
+        self.island_map_ax = None  # [0.35, 0.55, 0.45, 0.45]
+        self.island_map_img_ax = None
+        self.island_map_exp_ax = None  # [0.85, 0.60, 0.1, 0.35]
+        self.island_map_exp_img_ax = None
+        self.heat_map_all_animals_ax = None  # [0.1, 0.1, 0.8, 0.45]
+        self.heat_map_all_animals_img_ax = None
+        self.ax4 = None  # [0.85, 0.1, 0.1, 0.35]
         self.ax41 = None
 
         self.setup_graphics()
         self.pixel_colors = self.make_color_pixels(island)
         self.heat_map = self.get_data_heat_map_all_animals(island)
         self.draw_geography()
+        self.draw_geography_exp()
         self.draw_heat_map()
 
-        #self.tot_num_ani_by_species = self.line_graph(island_map)
-        #self.population_map_herb = self.heatmap_herb(island_map)
-        #self.population_map_carn = self.heatmap_carn(island_map)
-        #self.figure = plt.figure
+        """
+        self.tot_num_ani_by_species = self.line_graph(island_map)
+        self.population_map_herb = self.heatmap_herb(island_map)
+        self.population_map_carn = self.heatmap_carn(island_map)
+        """
 
     def empty_nested_list(self):
         empty_nested_list = []
@@ -62,17 +62,17 @@ class Visuals:
             self.figure = plt.figure()
 
         # The map
-        if self.ax1 is None:
-            self.ax1 = self.figure.add_subplot()
-            self.ax11 = None
+        if self.island_map_ax is None:
+            self.island_map_ax = self.figure.add_subplot(221)
+            self.island_map_img_ax = None
         # The color explanation
-        if self.ax2 is None:
-            self.ax2 = self.figure.add_subplot()
-            self.ax21 = None
+        if self.island_map_exp_ax is None:
+            self.island_map_exp_ax = self.figure.add_subplot(222)
+            self.island_map_exp_img_ax = None
         # The heat map
-        if self.ax2 is None:
-            self.ax2 = self.figure.add_subplot()
-            self.ax21 = None
+        if self.heat_map_all_animals_ax is None:
+            self.heat_map_all_animals_ax = self.figure.add_subplot(223)
+            self.island_map_exp_img_ax = None
 
     def make_color_pixels(self, island):
         """
@@ -111,37 +111,37 @@ class Visuals:
         return heat_map
 
     def draw_heat_map(self):
-        axim = self.figure.add_axes(self.ax3)
-        self.ax31 = axim.imshow(self.heat_map, cmap='inferno')
-        plt.colorbar(self.ax31)
-        # axim.set_xticks(range(len(self.heatmap[0])))
-        # axim.set_xticklabels(range(1, 1 + len(self.heatmap[0])))
-        # axim.set_yticks(range(len(self.heatmap)))
-        # axim.set_yticklabels(range(1, 1 + len(self.heatmap)))
-        axim.axis('off')
-        axim.set_title('Heatmap all animals')
+        self.heat_map_all_animals_ax.axis('off')
+        self.heat_map_all_animals_ax.set_title('Heatmap all animals')
+        self.heat_map_all_animals_img_ax = self.heat_map_all_animals_ax.imshow(
+            self.heat_map, cmap='inferno')
+        plt.colorbar(self.heat_map_all_animals_img_ax)
 
     def update_heat_map_all_animals(self, island):
         self.get_data_heat_map_all_animals(island)
-        self.ax31.set_data(self.heat_map)
-
+        self.heat_map_all_animals_img_ax.set_data(self.heat_map)
 
     def draw_geography(self):
-        axim = self.figure.add_axes(self.ax1)
-        plt.imshow(self.pixel_colors)
-        axim.set_xticks(range(len(self.pixel_colors[0])))
-        axim.set_xticklabels(range(1, 1 + len(self.pixel_colors[0])))
-        axim.set_yticks(range(len(self.pixel_colors)))
-        axim.set_yticklabels(range(1, 1 + len(self.pixel_colors)))
-        axim.axis('off')
+        self.island_map_ax.axis('off')
+        self.island_map_ax.set_title('Map')
+        self.island_map_img_ax = self.island_map_ax.imshow(
+            self.pixel_colors)
+        """
+        self.island_map_ax.set_xticks(range(len(self.pixel_colors[0])))
+        self.island_map_ax.set_xticklabels(range(1, 1 + len(self.pixel_colors[0])))
+        self.island_map_ax.set_yticks(range(len(self.pixel_colors)))
+        self.island_map_ax.set_yticklabels(range(1, 1 + len(self.pixel_colors)))
+        """
 
-        axlg = self.figure.add_axes(self.ax2)
-        axlg.axis('off')
+    def draw_geography_exp(self):
+        self.island_map_exp_ax.axis('off')
         for ix, name in enumerate(self.cell_colors.keys()):
-            axlg.add_patch(plt.Rectangle((0., 0.05 + ix * 0.2), 0.3, 0.1,
-                                         edgecolor=(0, 0, 0),
-                                         facecolor=self.cell_colors[name]))
-            axlg.text(0.35, 0.05 + ix * 0.2, name, transform=axlg.transAxes)
+            self.island_map_exp_ax.add_patch(
+                plt.Rectangle((0., 0.05 + ix * 0.2), 0.3, 0.1,
+                              edgecolor=(0, 0, 0),
+                              facecolor=self.cell_colors[name]))
+            self.island_map_exp_ax.text(0.35, 0.05 + ix * 0.2,
+                                        name, transform=self.island_map_exp_ax.transAxes)
         """
 
 
@@ -185,12 +185,11 @@ if __name__ == '__main__':
     plain = sim.BioSim(island_map=string, ini_pop=ini_herbs, seed=1)
     lines = plain.island.clean_multi_line_string(string)
 
-    island = plain.island
-    visual = Visuals(island, lines)
+    island_instance = plain.island
+    visual = Visuals(island_instance, lines)
     for _ in range(70):
-        island.simulate_one_year()
-        visual.update_heat_map_all_animals(island)
+        island_instance.simulate_one_year()
+        visual.update_heat_map_all_animals(island_instance)
         plt.pause(0.05)
 
     plt.show()
-
