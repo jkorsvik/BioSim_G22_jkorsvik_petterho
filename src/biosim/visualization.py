@@ -25,7 +25,7 @@ class Visuals:
         self.x_len = len(map_string[0])
         self.y_len = len(map_string)
         # For setup in setup_graphics
-        # Plan on using subplots
+        # Old placement using add_axis in comments
         self.figure = None
         self.island_map_ax = None  # [0.35, 0.55, 0.45, 0.45]
         self.island_map_img_ax = None
@@ -33,12 +33,12 @@ class Visuals:
         self.island_map_exp_img_ax = None
         self.heat_map_all_animals_ax = None  # [0.1, 0.1, 0.8, 0.45]
         self.heat_map_all_animals_img_ax = None
-        self.ax4 = None  # [0.85, 0.1, 0.1, 0.35]
-        self.ax41 = None
+        self.animals_over_time_ax = None  # [0.85, 0.1, 0.1, 0.35]
+        self.animals_over_time_img_ax = None
 
         self.setup_graphics()
         self.pixel_colors = self.make_color_pixels(island)
-        self.heat_map = self.get_data_heat_map_all_animals(island)
+        self.heat_map = self.get_data_heat_map(island, 'num_animals')
         self.draw_geography()
         self.draw_geography_exp()
         self.draw_heat_map()
@@ -102,11 +102,23 @@ class Visuals:
             pixel_colors[y][x] = color_code_rgb
         return pixel_colors
 
-    def get_data_heat_map_all_animals(self, island):
+    def get_data_heat_map(self, island, data_type):
+        """
+
+        Parameters
+        ----------
+        island : class instance of Island
+        data_type: str
+            num_animals, num_herbivores or num_carnivores
+
+        Returns
+        -------
+
+        """
         heat_map = self.empty_nested_list()
         for pos, cell in island.map.items():
             y, x = pos
-            heat_map[y][x] = cell.num_animals
+            heat_map[y][x] = getattr(cell, data_type)
         self.heat_map = heat_map
         return heat_map
 
@@ -117,8 +129,8 @@ class Visuals:
             self.heat_map, cmap='inferno')
         plt.colorbar(self.heat_map_all_animals_img_ax)
 
-    def update_heat_map_all_animals(self, island):
-        self.get_data_heat_map_all_animals(island)
+    def update_heat_map(self, island):
+        self.get_data_heat_map(island, 'num_animals')
         self.heat_map_all_animals_img_ax.set_data(self.heat_map)
 
     def draw_geography(self):
@@ -189,7 +201,7 @@ if __name__ == '__main__':
     visual = Visuals(island_instance, lines)
     for _ in range(70):
         island_instance.simulate_one_year()
-        visual.update_heat_map_all_animals(island_instance)
+        visual.update_heat_map(island_instance)
         plt.pause(0.05)
 
     plt.show()
