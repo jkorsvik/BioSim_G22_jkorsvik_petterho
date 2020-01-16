@@ -226,6 +226,9 @@ class BaseAnimal:
 
         return self._fitness
 
+    def age_one_year(self):
+        self.age += 1
+
     @property
     def age(self):
         return self._age

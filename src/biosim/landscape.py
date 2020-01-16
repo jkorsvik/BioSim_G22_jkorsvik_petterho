@@ -288,11 +288,11 @@ class BaseCell:
 
     def age_pop(self):
         """Adds a increment of 1 to the animals age attribute"""
-        #### Spør om dette
+        #### Spør om dette, sjekk om det endrer animal._calculate_fitness
         for herbivore in self.herbivores:
-            herbivore.age += 1
+            herbivore.age_one_year()
         for carnivore in self.carnivores:
-            carnivore.age += 1
+            carnivore.age_one_year()
 
     def die(self):
         """
