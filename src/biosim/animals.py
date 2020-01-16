@@ -10,10 +10,27 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
 def sigmoid(value):
+    """Sigmoid calculation"""
     return 1/(1 + np.exp(value))
 
 
 class BaseAnimal:
+    """
+    Baseclass for all animals
+
+    Methods
+    -------
+    set_parameters: class method
+    __init__
+    __repr__
+    age_one_year
+    reset_has_moved
+    will_migrate
+    birth
+    death
+    feed
+    lose_weight
+    """
     w_birth = 8.0
     sigma_birth = 1.5
     beta = 0.9
@@ -36,6 +53,52 @@ class BaseAnimal:
                        phi_weight=None, mu=None, lambda_=None, gamma=None,
                        zeta=None, xi=None, omega=None, F=None,
                        DeltaPhiMax=None):
+        """
+        Method for changing one or all parameters with a dictionary for
+        subclass of BaseAnimal class
+        Does not change any parameters before it is sure that all
+        parameters are valid.
+
+        Parameters
+        ----------
+        w_birth : float
+            Average birth weight
+        sigma_birth : float
+            STD of birth weight
+        beta : float
+            Fodder to weight conversion
+        eta : float
+            Weight loss scalar
+        a_half : float
+            Half age of Animals
+        phi_age : float
+            Scalar of age for fitness
+        w_half : float
+            Half weight of Animals
+        phi_weight : float
+            Scalar of weight for fitness
+        mu : float
+            Scalar for moving is multiplied with fitness
+        lambda_ : float
+            Scalar for propensity calculation
+        gamma : float
+            Scalar for birth
+        zeta : float
+             Scalar if birth will happen
+        xi : float
+            Scalar for weight loss after birth
+        omega : float
+            Scalar for death
+        F : float
+            Appetite of Animal
+        DeltaPhiMax : float
+            Parameter used by Carnivore when calculating if they can kill
+            an Animal
+
+        Returns
+        -------
+
+        """
         # By checking all parameters first, set parameters does not change
         # any parameters before it is sure that all parameters are valid
 
@@ -189,7 +252,13 @@ class BaseAnimal:
             cls.DeltaPhiMax = DeltaPhiMax
 
     def __init__(self, age=0, weight=None):
-        # self.name = generate_rand_name()
+        """
+
+        Parameters
+        ----------
+        age: float
+        weight: float
+        """
         self._age = age
         self._weight = weight
         self._compute_fitness = True
