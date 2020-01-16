@@ -50,8 +50,8 @@ class Island:
 
         Attributes
         --------
-        self.map : method
-            map creation from a multilinestring
+        self.map : dict
+            calls method make_map, map creation from a multilinestring
         """
         self._len_map_x = None
         self._len_map_y = None
@@ -227,7 +227,7 @@ class Island:
         Methods
         -------
         BaseCell.migrate()
-        Island.probability_calc(pos, animal)
+        probability_calc(pos, animal)
 
 
         Notes
