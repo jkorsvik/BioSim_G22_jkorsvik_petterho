@@ -147,7 +147,6 @@ class Visuals:
         for pos, cell in island.map.items():
             y, x = pos
             heat_map[y][x] = getattr(cell, data_type)
-        self.heat_map = heat_map
         return heat_map
 
     def draw_heat_map(self, heat_map):
@@ -158,8 +157,8 @@ class Visuals:
         plt.colorbar(self.heat_map_all_animals_img_ax, cax=self.colorbar_ax)
 
     def update_heat_map(self, island):
-        self.get_data_heat_map(island, 'num_animals')
-        self.heat_map_all_animals_img_ax.set_data(self.heat_map)
+        heat_map = self.get_data_heat_map(island, 'num_animals')
+        self.heat_map_all_animals_img_ax.set_data(heat_map)
 
     def draw_geography(self):
         self.island_map_ax.axis('off')
