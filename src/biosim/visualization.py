@@ -8,7 +8,6 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-import textwrap
 
 
 class Visuals:
@@ -180,7 +179,6 @@ class Visuals:
         )
         self.animals_over_time_ax.legend(loc='upper left')
 
-
     def update_animals_over_time(self, island):
         # Island has property or attribute year
         self.herbivores_over_time.append(
@@ -275,54 +273,3 @@ class Visuals:
 
 if __name__ == '__main__':
     pass
-"""geogr = """\
-        """OOOOOOOOOOOOOOOOOOOOO
-        OOOOOOOOSMMMMJJJJJJJO
-        OSSSSSJJJJMMJJJJJJJOO
-        OSSSSSSSSSMMJJJJJJOOO
-        OSSSSSJJJJJJJJJJJJOOO
-        OSSSSSJJJDDJJJSJJJOOO
-        OSSJJJJJDDDJJJSSSSOOO
-        OOSSSSJJJDDJJJSOOOOOO
-        OSSSJJJJJDDJJJJJJJOOO
-        OSSSSJJJJDDJJJJOOOOOO
-        OOSSSSJJJJJJJJOOOOOOO
-        OOOSSSSJJJJJJJOOOOOOO
-        OOOOOOOOOOOOOOOOOOOOO"""
-        """
-string = textwrap.dedent(geogr)
-ini_herbs = [
-    {
-        "loc": (2, 1),
-        "pop": [
-            {"species": "Herbivore", "age": 5, "weight": 40}
-            for _ in range(200)
-        ],
-    }
-]
-
-ini_carn = [
-    {
-        "loc": (4, 6),
-        "pop": [
-            {"species": "Carnivore", "age": 2, "weight": 40}
-            for _ in range(50)
-        ],
-    }
-]
-
-plain = sim.BioSim(island_map=string, ini_pop=ini_herbs, seed=2)
-lines = plain.island.clean_multi_line_string(string)
-
-island_instance = plain.island
-visual = Visuals(island_instance, lines, 20_000, 200)
-for x in range(150):
-    island_instance.simulate_one_year()
-    visual.update_heat_maps(island_instance)
-    if x == 50:
-        island_instance.add_population(ini_carn)
-    visual.update_animals_over_time(island_instance)
-    plt.pause(0.05)
-
-plt.show()"""
-
