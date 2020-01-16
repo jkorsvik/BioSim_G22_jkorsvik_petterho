@@ -268,7 +268,8 @@ class Visuals:
         plt.pause(1e-6)
 
     def save_fig(self):
-        self.figure.savefig(self.img_base,  format=self.img_fmt)
+        self.figure.savefig(self.img_base+f'{self.years:03d}',
+                            format=self.img_fmt)
 
 
 if __name__ == '__main__':
