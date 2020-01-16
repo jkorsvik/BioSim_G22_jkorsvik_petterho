@@ -17,7 +17,10 @@ import pandas as pd
 import numpy as np
 import subprocess
 
-FFMPEG = r'C:\Users\pbmar\Documents\NMBU\INF200\ffmpeg.exe'
+
+FFMPEG = r'C:\Users\pbmar\Documents\NMBU\INF200\BioSim_G22_jkorsvik_petterho' \
+         r'\FFMPEG\ffmpeg.exe'
+
 
 class BioSim:
     def __init__(
@@ -175,7 +178,7 @@ class BioSim:
 
         if self.movie_fmt == 'mp4':
             try:
-                subprocess.check_call(f'{FFMPEG} -y -r 1/5 -i '
+                subprocess.check_call(f'{FFMPEG} -y -r 1 -i '
                                       f'{self.img_base}%03d.{self.img_fmt}'
                                       f' -c:v libx264 -vf fps=25 -pix_fmt '
                                       f'yuv420p '
@@ -224,6 +227,7 @@ if __name__ == '__main__':
         }
     ]
 
-    sim = BioSim(geogr, ini_herbs, img_base=r'C:\Users\pbmar\Documents\NMBU\INF200\img')
+    sim = BioSim(geogr, ini_herbs, img_base=r'C:\Users\pbmar\Documents\NMBU\INF200\island')
+    sim.simulate(150)
     sim.make_movie()
 

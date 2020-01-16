@@ -29,8 +29,8 @@ class Visuals:
             img_base=None,
             img_fmt='png'
     ):
-        self.x_len = len(map_string[0])
-        self.y_len = len(map_string)
+        self.x_len = island.len_map_x  # Double code
+        self.y_len = island.len_map_y  # Double code
         self.num_years_sim = num_years_sim
         self.ymax_animals = ymax_animals
         self.cmax_animals = cmax_animals

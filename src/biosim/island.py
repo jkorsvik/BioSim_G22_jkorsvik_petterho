@@ -53,8 +53,8 @@ class Island:
         self.map : dict
             calls method make_map, map creation from a multilinestring
         """
-        self._len_map_x = None
-        self._len_map_y = None
+        self.len_map_x = None
+        self.len_map_y = None
 
         self.map = self.make_map(island_map_string)
         self.add_population(ini_pop)
@@ -149,8 +149,8 @@ class Island:
         island_map = {}
         lines = self.clean_multi_line_string(island_map_string)
 
-        self._len_map_x = len(lines[0])
-        self._len_map_y = len(lines)
+        self.len_map_x = len(lines[0])
+        self.len_map_y = len(lines)
 
         for y_cord, line in enumerate(lines):
             for x_cord, letter in enumerate(line):
