@@ -15,7 +15,9 @@ from src.biosim.landscape import (
 import textwrap
 import pandas as pd
 import numpy as np
+import subprocess
 
+FFMPEG = r'C:\Users\pbmar\Documents\NMBU\INF200.ffmpeg.exe'
 
 class BioSim:
     def __init__(
@@ -27,6 +29,7 @@ class BioSim:
         cmax_animals=None,
         img_base=None,
         img_fmt="png",
+        movie_fmt="mp4"
     ):
         """
         :param island_map: Multi-line string specifying island geography
@@ -62,6 +65,7 @@ class BioSim:
         self.cmax_animals = cmax_animals
         self.img_base = img_base
         self.img_fmt = img_fmt
+        self.movie_fmt = movie_fmt
 
     @staticmethod
     def set_animal_parameters(species, params):
@@ -165,10 +169,31 @@ class BioSim:
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""
-        ffmpeg -framerate 24 -i img%03d.png -t 30 output.mp4
+
+        if self.img_base is None:
+            raise RuntimeError("No filename defined.")
+
+        if self.movie_fmt == 'mp4':
+            try:
+                # Parameters chosen according to http://trac.ffmpeg.org/wiki/Encode/H.264,
+                # section "Compatibility"
+                subprocess.check_call([FFMPEG,
+                                       '-i',
+                                       f'{self.img_base}%03d.png',
+                                       '-y',
+                                       '-profile:v', 'baseline',
+                                       '-level', '3.0',
+                                       '-pix_fmt', 'yuv420p',
+                                       '{}.{}'.format(self.img_base,
+                                                      self.movie_fmt)])
+            except subprocess.CalledProcessError as err:
+                raise RuntimeError('ERROR: ffmpeg failed with: {}'.format(err))
+        else:
+            raise ValueError('Unknown movie format: ' + self.movie_fmt)
 
 
 if __name__ == '__main__':
+
     geogr = """\
             OOOOOOOOOOOOOOOOOOOOO
             OOOOOOOOSMMMMJJJJJJJO
@@ -206,6 +231,5 @@ if __name__ == '__main__':
         }
     ]
 
-    sim = BioSim(geogr, ini_herbs, 1)
-    sim.simulate(50)
-    print(sim.animal_distribution)
+    sim = BioSim(geogr, ini_herbs, img_base=r'C:\Users\pbmar\Documents\NMBU\INF200\img')
+    sim.make_movie()
