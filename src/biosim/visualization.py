@@ -18,6 +18,8 @@ class Visuals:
         "Desert": 'darkkhaki',
         "Jungle": 'darkgreen'
     }
+    density_heatmap = {'Herbivore': 275,
+                       'Carnivore': 150}
 
     def __init__(
             self,
@@ -28,7 +30,7 @@ class Visuals:
             img_base=None,
             img_fmt='png'
     ):
-        self.img_num = -1
+        self.img_num = 0
         self.x_len = island.len_map_x  # Double code
         self.y_len = island.len_map_y  # Double code
         self.num_years_sim = num_years_sim
@@ -36,6 +38,10 @@ class Visuals:
         self.cmax_animals = cmax_animals
         self.img_base = img_base
         self.img_fmt = img_fmt
+        if ymax_animals is None:
+            self.ymax_animals = 17000
+        if cmax_animals is None:
+            self.cmax_animals = self.density_heatmap
 
         # For setup in setup_graphics
         # Possibly dont need img_ax for those who are not pictures
@@ -71,7 +77,7 @@ class Visuals:
         self.draw_heat_map_carnivore(self.get_data_heat_map(
             island, 'num_carnivores')
         )
-        self.draw_animals_over_time()
+        self.draw_animals_over_time(island)
 
         """
         self.tot_num_ani_by_species = self.line_graph(island_map)
@@ -111,6 +117,10 @@ class Visuals:
             self.animals_over_time_ax = self.figure.add_subplot(
                 self.grid[0, 12:]
             )
+            self.animals_over_time_ax.set_ylim(self.ymax_animals)
+            self.animals_over_time_ax.set_xlim(self.num_years_sim)
+            self.animals_over_time_ax.invert_xaxis()
+            self.animals_over_time_ax.invert_yaxis()
 
         # The heat maps
         if self.heat_map_herbivores_ax is None:
@@ -163,10 +173,39 @@ class Visuals:
             pixel_colors[y][x] = color_code_rgb
         return pixel_colors
 
-    def draw_animals_over_time(self):
-        self.herbivores_over_time = []
-        self.carnivores_over_time = []
-        self.years = []
+    def draw_geography(self):
+        self.island_map_ax.axis('off')
+        self.island_map_ax.set_title('Map')
+        self.island_map_img_ax = self.island_map_ax.imshow(
+            self.pixel_colors)
+        """
+        self.island_map_ax.set_xticks(range(len(self.pixel_colors[0])))
+        self.island_map_ax.set_xticklabels(range(1, 
+        1 + len(self.pixel_colors[0])))
+        self.island_map_ax.set_yticks(range(len(self.pixel_colors)))
+        self.island_map_ax.set_yticklabels(range(1, 
+        1 + len(self.pixel_colors)))
+        """
+
+    def draw_geography_exp(self):
+        self.island_map_exp_ax.axis('off')
+        for ix, name in enumerate(self.cell_colors.keys()):
+            self.island_map_exp_ax.add_patch(
+                plt.Rectangle((0., 0.05 + ix * 0.2), 0.3, 0.1,
+                              edgecolor=(0, 0, 0),
+                              facecolor=self.cell_colors[name]))
+            self.island_map_exp_ax.text(
+                0.35, 0.05 + ix * 0.2, name,
+                transform=self.island_map_exp_ax.transAxes)
+
+    def draw_animals_over_time(self, island):
+        self.herbivores_over_time = [
+            island.num_animals_per_species['Herbivore']
+        ]
+        self.carnivores_over_time = [
+            island.num_animals_per_species['Carnivore']
+        ]
+        self.years = [island.year]
         self.animals_over_time_ax.plot(
             self.years, self.carnivores_over_time, color='r', label='Carnivore'
         )
@@ -175,7 +214,7 @@ class Visuals:
             self.years, self.herbivores_over_time, color='b', label='Herbivore'
         )
         self.animals_over_time_ax.set(
-            xlabel='Year', ylabel='Number of Animals'
+            xlabel='Years', ylabel='Number of Animals'
         )
         self.animals_over_time_ax.legend(loc='upper left')
 
@@ -216,7 +255,7 @@ class Visuals:
         self.heat_map_herbivores_ax.axis('off')
         self.heat_map_herbivores_ax.set_title('Heat Map of Herbivores')
         self.heat_map_herb_img_ax = self.heat_map_herbivores_ax.imshow(
-            heat_map, cmap='inferno', vmax=300)
+            heat_map, cmap='inferno', vmax=self.cmax_animals['Herbivore'])
         plt.colorbar(
             self.heat_map_herb_img_ax, cax=self.colorbar_herb_ax
         )
@@ -225,7 +264,7 @@ class Visuals:
         self.heat_map_carnivores_ax.axis('off')
         self.heat_map_carnivores_ax.set_title('Heat Map of Carnivores')
         self.heat_map_carn_img_ax = self.heat_map_carnivores_ax.imshow(
-            heat_map, cmap='inferno', vmax=150)
+            heat_map, cmap='inferno', vmax=self.cmax_animals['Carnivore'])
         plt.colorbar(
             self.heat_map_carn_img_ax, cax=self.colorbar_carn_ax
         )
@@ -236,31 +275,6 @@ class Visuals:
 
         heat_map_carn = self.get_data_heat_map(island, 'num_carnivores')
         self.heat_map_carn_img_ax.set_data(heat_map_carn)
-
-    def draw_geography(self):
-        self.island_map_ax.axis('off')
-        self.island_map_ax.set_title('Map')
-        self.island_map_img_ax = self.island_map_ax.imshow(
-            self.pixel_colors)
-        """
-        self.island_map_ax.set_xticks(range(len(self.pixel_colors[0])))
-        self.island_map_ax.set_xticklabels(range(1, 
-        1 + len(self.pixel_colors[0])))
-        self.island_map_ax.set_yticks(range(len(self.pixel_colors)))
-        self.island_map_ax.set_yticklabels(range(1, 
-        1 + len(self.pixel_colors)))
-        """
-
-    def draw_geography_exp(self):
-        self.island_map_exp_ax.axis('off')
-        for ix, name in enumerate(self.cell_colors.keys()):
-            self.island_map_exp_ax.add_patch(
-                plt.Rectangle((0., 0.05 + ix * 0.2), 0.3, 0.1,
-                              edgecolor=(0, 0, 0),
-                              facecolor=self.cell_colors[name]))
-            self.island_map_exp_ax.text(
-                0.35, 0.05 + ix * 0.2, name,
-                transform=self.island_map_exp_ax.transAxes)
 
     def update_fig(self, island):
         self.update_animals_over_time(island)

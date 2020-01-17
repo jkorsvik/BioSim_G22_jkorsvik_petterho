@@ -19,8 +19,10 @@ import subprocess
 
 
 # Needs to be updated to the filepath in your directory
-FFMPEG = r'C:\Users\pbmar\Documents\NMBU\INF200\BioSim_G22_jkorsvik_petterho' \
-         r'\FFMPEG\ffmpeg.exe'
+
+FFMPEG = r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt' \
+         r'\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho' \
+         r'\FFMPEG\ffmpeg.exe' \
 
 
 class BioSim:
@@ -194,7 +196,7 @@ class BioSim:
 
         if self.movie_fmt == 'mp4':
             try:
-                subprocess.check_call(f'{FFMPEG} -y -r 2 -i '
+                subprocess.check_call(f'{FFMPEG} -y -r 24 -i '
                                       f'{self.img_base}%03d.{self.img_fmt}'
                                       f' -c:v libx264 -vf fps=25 -pix_fmt '
                                       f'yuv420p '
@@ -243,10 +245,9 @@ if __name__ == '__main__':
         }
     ]
 
+
     sim = BioSim(geography, ini_herbs,
-                 img_base=(r'C:\Users\pbmar\Documents'
-                           r'\NMBU\INF200\BioSim_G22_jkorsvik_petterho'
-                           r'\images_and_movies\sim_island'))
+                 img_base=(r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island'))
     sim.add_population(ini_carn)
-    sim.simulate(10)
+    sim.simulate(2)
     sim.make_movie()
