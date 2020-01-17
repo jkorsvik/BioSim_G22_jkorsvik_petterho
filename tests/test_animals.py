@@ -9,7 +9,6 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 from src.biosim.animals import BaseAnimal, Carnivore, Herbivore
 import pytest
-from pprint import pprint
 
 
 @pytest.fixture
@@ -23,7 +22,6 @@ def carnivore_parameters_wrong():
 
 
 @pytest.fixture
-
 def herbivore_list():
     list_ = []
     for x in range(10):
@@ -68,28 +66,11 @@ def reset_parameters():
                                   'omega': 0.9,
                                   'F': 50.0,
                                   'DeltaPhiMax': 10.0}
-    Carnivore.set_parameters(carnivore_parameters_right)
-    Herbivore.set_parameters(herbivore_parameters_right)
+    Carnivore.set_parameters(**carnivore_parameters_right)
+    Herbivore.set_parameters(**herbivore_parameters_right)
 
 
 class TestAnimal:
-    def test_set_parameters(self):
-        animal = Carnivore(30, 10)
-        animal.set_parameters({'eta': 0.03,
-                               'phi_age': 0.3,
-                               'DeltaPhiMax': 8.0})
-        assert animal.eta == 0.03
-        assert animal.phi_age == 0.3
-
-        with pytest.raises(NameError):
-            animal.set_parameters({'zettet': 0.5})
-
-        with pytest.raises(ValueError):
-            animal.set_parameters({'eta': 4})
-
-        reset_parameters()
-        assert animal.eta == 0.125
-
     def test_set_parameters(self, carnivore_parameters_right,
                             carnivore_parameters_wrong):
         carnivore = Carnivore(30, 10)
@@ -101,6 +82,8 @@ class TestAnimal:
         carnivore.set_parameters(**carnivore_parameters_right)
         assert carnivore.eta == 0.125
         assert carnivore.phi_age == 0.4
+        reset_parameters()
+        # Will fail if parameters are given as a dictionary and not unpacked
 
     def test_init(self):
         test_animal = BaseAnimal(10, 20)
@@ -112,21 +95,6 @@ class TestAnimal:
         assert test_animal.fitness is not None
         assert 0 <= test_animal.fitness <= 1
 
-    def test_migration(self):
-        """
-        Test if location has not changed more than by a increment of 1. will
-        fail if location has changed by one in x- and in y-direction.
-
-        """
-        """
-        test_animal = Animal(10, 20, (1, 3))
-        old = test_animal.position
-        test_animal.migrate()
-        new = test_animal.position
-        delta = [a - b for a, b in zip(new, old)]
-        assert abs(sum(delta)) == 1 or sum(delta) == 0"""
-        pass
-
     def test_fitness(self):
         """ Checks if calling fitness without updating weight
             or age will produce the same result."""
@@ -134,22 +102,25 @@ class TestAnimal:
         old = test_animal.fitness
         test_animal.feed(200)
         new = test_animal.fitness
-        print(old, new)
         assert new > old
 
         test_animal = BaseAnimal()
         old = test_animal.fitness
         new = test_animal.fitness
-        print(old, new)
         assert old == new
 
     def test_age(self):
         test_animal = BaseAnimal()
         test_animal.age = 20
-        assert test_animal.weight == 20
-        test_animal.weight += 20
-        assert test_animal.weight == 40
+        assert test_animal.age == 20
+        test_animal.age += 20
+        assert test_animal.age == 40
         assert test_animal._compute_fitness
+
+    def test_age_one_year(self):
+        test_animal = BaseAnimal()
+        test_animal.age_one_year()
+        assert test_animal.age == 1
 
     def test_weight(self):
         test_animal = BaseAnimal()
@@ -184,8 +155,25 @@ class TestAnimal:
 
     def test_birth(self):
         animal = BaseAnimal(10, 60)
+        weight = animal.weight
         birth = animal.birth(10000)
         assert isinstance(birth, BaseAnimal)
+        assert animal.weight == weight - birth.weight * birth.xi
+
+        animal = BaseAnimal(10, 8.2)
+        birth = animal.birth(10000)
+        assert birth == 0
+
+        animal.set_parameters(zeta=0.5)
+        for _ in range(1000):
+            animal = BaseAnimal(10, 60)
+            birth = animal.birth(10000)
+            try:
+                baby_baby = birth.birth(10000)
+                assert baby_baby == 0
+            except AttributeError:
+                pass
+        reset_parameters()
 
     def test_death(self):
         animal = BaseAnimal(50, 1.4)
@@ -193,10 +181,17 @@ class TestAnimal:
         for _ in range(100):
             list_.append(animal.death())
         assert True in list_
+        assert False in list_
 
         animal_2 = BaseAnimal(50, 0)
         for _ in range(100):
             assert animal_2.death()
+
+    def test_lose_weight(self):
+        animal = BaseAnimal()
+        weight = animal.weight
+        animal.lose_weight()
+        assert animal.weight == weight - animal.eta * weight
 
 
 class TestHerbivore:
@@ -212,12 +207,27 @@ class TestHerbivore:
 
     def test_feed(self):
         herb = Herbivore()
-        a = herb.weight
+        weight_start = herb.weight
         food = herb.feed(15)
-        b = herb.weight
+        weights_end = herb.weight
         assert food == 5
-        assert a < b
-        assert b - a <= herb.beta * herb.F
+        assert weight_start < weights_end
+        assert weights_end - weight_start == herb.beta * herb.F
+
+        herb = Herbivore()
+        weight_start = herb.weight
+        food = herb.feed(5)
+        weights_end = herb.weight
+        assert food == 0
+        assert weight_start < weights_end
+        assert weights_end - weight_start == herb.beta * 5
+
+        herb = Herbivore()
+        weight_start = herb.weight
+        food = herb.feed(0)
+        weights_end = herb.weight
+        assert food == 0
+        assert weight_start == weights_end
 
 
 class TestCarnivore:
@@ -264,9 +274,24 @@ class TestCarnivore:
         new_list = carnivore.feed(sorted_list)
         length_b = len(new_list)
         weight_b = carnivore.weight
-        print(length_a, length_b, weight_a, weight_b)
         assert length_b < length_a
         assert weight_a < weight_b
-        assert weight_b - weight_a <= carnivore.F*carnivore.beta
+        assert weight_b - weight_a <= carnivore.F * carnivore.beta
         # Should add tests that changes DeltaPhiMax and checks
         # that part of the code
+        carnivore.set_parameters(DeltaPhiMax=0.5)
+        carnivore = Carnivore(5, 100)
+        assert carnivore.fitness > 0.5
+        sorted_list = sorted(herbivore_list, key=lambda var: var.fitness)
+        for herbivore in sorted_list:
+            herbivore.weight = 200
+            herbivore._compute_fitness = False
+            herbivore._fitness = 0.0
+        times_to_eat = len(sorted_list)
+        herbivores_eaten = 0
+        while len(sorted_list) > 0:
+            carnivore.feed(sorted_list)
+            herbivores_eaten += 1
+        assert herbivores_eaten == times_to_eat
+        reset_parameters()
+
