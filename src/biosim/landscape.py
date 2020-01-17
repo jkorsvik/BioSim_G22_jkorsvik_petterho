@@ -151,6 +151,7 @@ class BaseCell:
         """Remove carnivore from list of carnivores"""
         self.carnivores.remove(carnivore)
 
+    # Remove if not used
     def chain_lists(self):
         """Chains list of cell.herbivores with cell.carnivores lists"""
         return itertools.chain(self.herbivores, self.carnivores)
