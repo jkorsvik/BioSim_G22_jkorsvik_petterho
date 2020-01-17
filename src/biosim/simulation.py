@@ -231,5 +231,5 @@ if __name__ == '__main__':
     sim = BioSim(geogr, ini_herbs, img_base=r'C:\Users\pbmar\Documents\NMBU\INF200\island')
     sim.add_population(ini_carn)
     sim.simulate(10)
-    sim.make_movie()
+    # sim.make_movie()
 

@@ -22,7 +22,6 @@ class Visuals:
     def __init__(
             self,
             island,
-            map_string,
             num_years_sim,
             ymax_animals=None,
             cmax_animals=None,
@@ -270,8 +269,8 @@ class Visuals:
 
     def save_fig(self):
         self.img_num += 1
-        print(f'{self.img_base}{self.img_num:03d}')
-        self.figure.savefig(f'{self.img_base}{self.img_num:03d}')
+        print(f'{self.img_base}{self.img_num:03d}.{self.img_fmt}')
+        self.figure.savefig(f'{self.img_base}{self.img_num:03d}.{self.img_fmt}')
 
 
 if __name__ == '__main__':
