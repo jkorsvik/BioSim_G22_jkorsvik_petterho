@@ -103,6 +103,21 @@ class TestIsland:
         assert test_island.map[(1, 1)].herbivores[-1].age == 6
         assert test_island.map[(1, 1)].carnivores[-1].age == 3
 
-
     def test_simulate_one_year(self):
         assert False
+
+
+class TestIslandInteractions:
+    def test_species_separated(self, test_island):
+        for _ in range(100):
+            test_island.simulate_one_year()
+            for cell in test_island.map.values():
+                for herbivore in cell.herbivores:
+                    assert isinstance(herbivore, Herbivore)
+                for carnivore in cell.carnivores:
+                    assert isinstance(carnivore, Carnivore)
+
+    def test_something(self):
+        assert False
+
+
