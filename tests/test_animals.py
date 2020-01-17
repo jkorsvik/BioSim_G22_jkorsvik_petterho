@@ -90,6 +90,18 @@ class TestAnimal:
         reset_parameters()
         assert animal.eta == 0.125
 
+    def test_set_parameters(self, carnivore_parameters_right,
+                            carnivore_parameters_wrong):
+        carnivore = Carnivore(30, 10)
+        with pytest.raises(TypeError):
+            carnivore.set_parameters(**carnivore_parameters_wrong)
+        carnivore.set_parameters(eta=1, phi_age=200)
+        assert carnivore.eta == 1
+        assert carnivore.phi_age == 200
+        carnivore.set_parameters(**carnivore_parameters_right)
+        assert carnivore.eta == 0.125
+        assert carnivore.phi_age == 0.4
+
     def test_init(self):
         test_animal = BaseAnimal(10, 20)
         assert hasattr(test_animal, 'age')
@@ -185,20 +197,6 @@ class TestAnimal:
         animal_2 = BaseAnimal(50, 0)
         for _ in range(100):
             assert animal_2.death()
-
-
-    def test_set_parameters(self, carnivore_parameters_right,
-                            carnivore_parameters_wrong):
-        carnivore = Carnivore(30, 10)
-        with pytest.raises(TypeError):
-            carnivore.set_parameters(**carnivore_parameters_wrong)
-        carnivore.set_parameters(eta=1, phi_age=200)
-        assert carnivore.eta == 1
-        assert carnivore.phi_age == 200
-        carnivore.set_parameters(**carnivore_parameters_right)
-        assert carnivore.eta == 0.125
-        assert carnivore.phi_age == 0.4
-
 
 
 class TestHerbivore:
