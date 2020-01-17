@@ -212,7 +212,7 @@ class TestHerbivore:
         weights_end = herb.weight
         assert food == 5
         assert weight_start < weights_end
-        assert weights_end - weight_start == herb.beta * herb.F
+        assert pytest.approx(weights_end - weight_start, 1e-06) == herb.beta * herb.F
 
         herb = Herbivore()
         weight_start = herb.weight
@@ -220,7 +220,7 @@ class TestHerbivore:
         weights_end = herb.weight
         assert food == 0
         assert weight_start < weights_end
-        assert weights_end - weight_start == herb.beta * 5
+        assert pytest.approx(weights_end - weight_start, 1e-06) == herb.beta * 5
 
         herb = Herbivore()
         weight_start = herb.weight
@@ -295,3 +295,7 @@ class TestCarnivore:
         assert herbivores_eaten == times_to_eat
         reset_parameters()
 
+
+class TestAnimalInteraction:
+    def test_something(self):
+        assert True
