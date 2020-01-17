@@ -128,12 +128,20 @@ class BaseCell:
         """
         # Takes list of dicts with are the animal
         for animal in animal_list:
-            if animal['species'] == 'Herbivore':
-                self.herbivores.append(Herbivore(
-                    age=animal['age'], weight=animal['weight']))
-            if animal['species'] == 'Carnivore':
-                self.carnivores.append(Carnivore(
-                    age=animal['age'], weight=animal['weight']))
+            species = animal['species']
+            age = animal['age']
+            weight = animal['weight']
+
+            if age < 0 and age is not int:
+                raise ValueError('age can only be a positive integer')
+            if weight < 0:
+                raise ValueError('weight can only be positive')
+
+            if species == 'Herbivore':
+                self.herbivores.append(Herbivore(age, weight))
+
+            if species == 'Carnivore':
+                self.carnivores.append(Carnivore(age, weight))
 
     def add_migrated_herb(self, herbivore):
         """Add herbivore to list of herbivores"""
