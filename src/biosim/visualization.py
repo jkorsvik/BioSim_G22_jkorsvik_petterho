@@ -89,7 +89,7 @@ class Visuals:
 
     def setup_graphics(self):
         if self.figure is None:
-            self.figure = plt.figure(constrained_layout=True)
+            self.figure = plt.figure(constrained_layout=True, figsize=(16, 9))
             self.grid = self.figure.add_gridspec(2, 24)
 
         # The map
@@ -269,9 +269,9 @@ class Visuals:
 
     def save_fig(self):
         self.img_num += 1
-        print(f'{self.img_base}{self.img_num:03d}.{self.img_fmt}')
         self.figure.savefig(
-            f'{self.img_base}{self.img_num:03d}.{self.img_fmt}')
+            f'{self.img_base}{self.img_num:03d}.{self.img_fmt}',
+            orientation='landscape')
 
 
 if __name__ == '__main__':
