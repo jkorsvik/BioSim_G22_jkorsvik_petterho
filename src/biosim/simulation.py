@@ -16,6 +16,7 @@ import textwrap
 import pandas as pd
 import numpy as np
 import subprocess
+import path
 
 
 FFMPEG = r'C:\Users\pbmar\Documents\NMBU\INF200\BioSim_G22_jkorsvik_petterho' \
@@ -229,6 +230,6 @@ if __name__ == '__main__':
 
     sim = BioSim(geogr, ini_herbs, img_base=r'C:\Users\pbmar\Documents\NMBU\INF200\island')
     sim.add_population(ini_carn)
-    sim.simulate(100)
+    sim.simulate(10)
     sim.make_movie()
 

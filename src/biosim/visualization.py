@@ -270,8 +270,8 @@ class Visuals:
 
     def save_fig(self):
         self.img_num += 1
-        self.figure.savefig(f'{self.img_base}{self.img_num:03d}',
-                            format=self.img_fmt)
+        print(f'{self.img_base}{self.img_num:03d}')
+        self.figure.savefig(f'{self.img_base}{self.img_num:03d}')
 
 
 if __name__ == '__main__':
