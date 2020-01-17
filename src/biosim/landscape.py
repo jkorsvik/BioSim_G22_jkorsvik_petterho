@@ -10,6 +10,7 @@ from src.biosim.animals import Herbivore, Carnivore
 import numpy as np
 import itertools
 import math
+import random
 
 
 def choose_new_location(prob_list):
@@ -30,7 +31,7 @@ def choose_new_location(prob_list):
     cumulative_sum = np.cumsum(probabilities)
     locations = [x[0] for x in prob_list]
     index = 0
-    random_number = np.random.random()
+    random_number = random.random()
     while random_number > cumulative_sum[index]:
         index += 1
     return locations[index]

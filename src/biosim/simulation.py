@@ -16,6 +16,7 @@ import textwrap
 import pandas as pd
 import numpy as np
 import subprocess
+import random
 
 
 # Needs to be updated to the filepath in your directory
@@ -67,6 +68,7 @@ class BioSim:
         self.island = Island(island_map, ini_pop)
         if seed is not None:
             np.random.seed(seed)
+            random.seed(seed)
         self.ymax_animals = ymax_animals
         self.cmax_animals = cmax_animals
         self.img_base = img_base

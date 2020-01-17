@@ -6,6 +6,7 @@
 import numpy as np
 import math
 from numba import jit
+import random
 
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
@@ -279,7 +280,7 @@ class BaseAnimal:
         self._fitness = None
         self._has_moved = False
         if weight is None:
-            normal = np.random.normal(self.w_birth, self.sigma_birth)
+            normal = random.gauss(self.w_birth, self.sigma_birth)
             self.weight = normal
             if normal < 0:
                 self.weight = 0  # newborns with <= 0 will die end of year
@@ -339,7 +340,7 @@ class BaseAnimal:
     def will_migrate(self):
         if not self.has_moved:
             prob_to_move = self.fitness * self.mu
-            return bool(np.random.binomial(1, prob_to_move))
+            return bool(random.random() < prob_to_move)
         return False
 
     def birth(self, num_same_species):
@@ -348,7 +349,7 @@ class BaseAnimal:
         if self.weight < self.zeta*(self.w_birth + self.phi_weight):
             return 0
 
-        if np.random.binomial(1, prob_to_birth):
+        if random.random() < prob_to_birth:
             offspring = type(self)()
             weight_loss = self.xi * offspring.weight
 
@@ -360,7 +361,7 @@ class BaseAnimal:
 
     def death(self):
         prob_to_die = self.omega*(1-self.fitness)
-        dies = np.random.binomial(1, prob_to_die)
+        dies = random.random() < prob_to_die
         return bool(dies) or self.fitness <= 0
 
     def feed(self, available_food):  # Will be overwritten by the subclasses
@@ -422,7 +423,7 @@ class Carnivore(BaseAnimal):
     def kill_or_not(self, herbivore):
         probability_to_kill = ((self.fitness - herbivore.fitness) /
                                self.DeltaPhiMax)
-        return bool(np.random.binomial(1, probability_to_kill))
+        return bool(random.random() < probability_to_kill)
 
     def eat(self, meat, eaten):
         if meat + eaten < self.F:
@@ -439,7 +440,7 @@ class Carnivore(BaseAnimal):
 
             if self.fitness <= herbivore.fitness:
                 continue
-                
+
             if self.DeltaPhiMax < self.fitness - herbivore.fitness:
                 self.eat(herbivore.weight, eaten)
                 eaten += herbivore.weight
