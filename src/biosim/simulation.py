@@ -17,14 +17,28 @@ import pandas as pd
 import numpy as np
 import subprocess
 import random
+import pickle
 
 
 # Needs to be updated to the filepath in your directory
 
 FFMPEG = r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt' \
          r'\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho' \
-         r'\FFMPEG\ffmpeg.exe' \
+         r'\FFMPEG\ffmpeg.exe'
 
+# Retrieved from:
+# https://stackoverflow.com/questions/19201290/how-to-save-a-dictionary-to-a-file/32216025
+
+
+def save_sim(simulation, name ):
+    with open('saved_simulation/' + name + '.pkl', 'wb') as f:
+        pickle.dump(simulation, f, pickle.HIGHEST_PROTOCOL)
+
+
+def load_sim(name):
+    with open('saved_simulation/' + name + '.pkl', 'rb') as f:
+        return pickle.load(f)
+#
 
 class BioSim:
     def __init__(
@@ -36,7 +50,8 @@ class BioSim:
         cmax_animals=None,
         img_base=None,
         img_fmt="png",
-        movie_fmt="mp4"
+        movie_fmt="mp4",
+        island_save_name=None
     ):
         """
         :param island_map: Multi-line string specifying island geography
@@ -65,7 +80,10 @@ class BioSim:
         where img_no are consecutive image numbers starting from 0.
         img_base should contain a path and beginning of a file name.
         """
-        self.island = Island(island_map, ini_pop)
+        if island_save_name is None:
+            self.island = Island(island_map, ini_pop)
+        else:
+            self.island = load_sim(island_save_name)
         if seed is not None:
             np.random.seed(seed)
             random.seed(seed)
@@ -132,8 +150,8 @@ class BioSim:
 
         Image files will be numbered consecutively.
         """
-
-        visuals = Visuals(self.island, num_years, self.ymax_animals,
+        num_years_fig = self.island.year + num_years
+        visuals = Visuals(self.island, num_years_fig, self.ymax_animals,
                           self.cmax_animals, self.img_base, self.img_fmt)
         if img_years is None:
             img_years = vis_years
@@ -147,6 +165,8 @@ class BioSim:
             if index % img_years == 0:
                 visuals.save_fig()
             index += 1
+            print(self.num_animals_per_species, '\n',
+                  self.year)
 
     def add_population(self, population):
         """
@@ -210,6 +230,9 @@ class BioSim:
         else:
             raise ValueError('Unknown movie format: ' + self.movie_fmt)
 
+    def save_sim(self, name):
+        save_sim(self.island, name)
+
 
 if __name__ == '__main__':
     geography = """\
@@ -233,8 +256,8 @@ if __name__ == '__main__':
         {
             "loc": (2, 1),
             "pop": [
-                {"species": "Herbivore", "age": 5, "weight": 40}
-                for _ in range(200)
+                {"species": "Herbivore", "age": 5, "weight": 20}
+                for _ in range(2000)
             ],
         }
     ]
@@ -244,7 +267,7 @@ if __name__ == '__main__':
             "loc": (2, 1),
             "pop": [
                 {"species": "Carnivore", "age": 2, "weight": 40}
-                for _ in range(10)
+                for _ in range(6)
             ],
         }
     ]
@@ -252,7 +275,8 @@ if __name__ == '__main__':
 
     sim = BioSim(geography, ini_herbs,
                  img_base=(r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island'))
-    sim.clean_simulation(50)
     sim.add_population(ini_carn)
-    sim.clean_simulation(50)
+    sim.simulate(100)
+    sim.save_sim('Sjokolade')
+    sim.make_movie()
 

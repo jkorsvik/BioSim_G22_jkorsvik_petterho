@@ -60,6 +60,8 @@ class Island:
         self.map = self.make_map(island_map_string)
         self.add_population(ini_pop)
         self._year = 0
+        self.herbivore_tot_data = []
+        self.carnivore_tot_data = []
 
     @property
     def num_animals(self):
@@ -96,6 +98,19 @@ class Island:
         num_animals_per_species['Carnivore'] = num_carnivores
 
         return num_animals_per_species
+
+    def update_data_list(self):
+        """Updates list for use in visualization"""
+        herbivores = self.num_animals_per_species['Herbivore']
+        carnivores = self.num_animals_per_species['Carnivore']
+        if herbivores > 0:
+            self.herbivore_tot_data.append(herbivores)
+        else:
+            self.herbivore_tot_data.append(0)
+        if carnivores > 0:
+            self.carnivore_tot_data.append(carnivores)
+        else:
+            self.carnivore_tot_data.append(0)
 
     @staticmethod
     def clean_multi_line_string(island_map_string):
@@ -330,6 +345,7 @@ class Island:
         -------
 
         """
+        self.update_data_list()
         self.ready_for_new_year()
         self.feed()
         self.procreate()

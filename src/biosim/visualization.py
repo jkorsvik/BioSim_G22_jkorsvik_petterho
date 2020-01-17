@@ -66,7 +66,7 @@ class Visuals:
         self.carnivores_over_time = None
         self.years = None
 
-        self.setup_graphics()
+        self.setup_graphics(island)
         self.pixel_colors = self.make_color_pixels(island)
 
         self.draw_geography()
@@ -93,7 +93,7 @@ class Visuals:
                 empty_nested_list[y].append(None)
         return empty_nested_list
 
-    def setup_graphics(self):
+    def setup_graphics(self, island):
         if self.figure is None:
             self.figure = plt.figure(constrained_layout=True, figsize=(16, 9))
             self.grid = self.figure.add_gridspec(2, 24)
@@ -118,9 +118,11 @@ class Visuals:
                 self.grid[0, 12:]
             )
             self.animals_over_time_ax.set_ylim(self.ymax_animals)
+            self.animals_over_time_ax.invert_yaxis()
+
             self.animals_over_time_ax.set_xlim(self.num_years_sim)
             self.animals_over_time_ax.invert_xaxis()
-            self.animals_over_time_ax.invert_yaxis()
+
 
         # The heat maps
         if self.heat_map_herbivores_ax is None:
@@ -199,13 +201,9 @@ class Visuals:
                 transform=self.island_map_exp_ax.transAxes)
 
     def draw_animals_over_time(self, island):
-        self.herbivores_over_time = [
-            island.num_animals_per_species['Herbivore']
-        ]
-        self.carnivores_over_time = [
-            island.num_animals_per_species['Carnivore']
-        ]
-        self.years = [island.year]
+        self.herbivores_over_time = island.herbivore_tot_data
+        self.carnivores_over_time = island.carnivore_tot_data
+        self.years = [x for x, _ in enumerate(island.herbivore_tot_data)]
         self.animals_over_time_ax.plot(
             self.years, self.carnivores_over_time, color='r', label='Carnivore'
         )
@@ -218,19 +216,24 @@ class Visuals:
         )
         self.animals_over_time_ax.legend(loc='upper left')
 
+
     def update_animals_over_time(self, island):
         # Island has property or attribute year
-        self.herbivores_over_time.append(
+        """self.herbivores_over_time.append(
             island.num_animals_per_species['Herbivore'])
         self.carnivores_over_time.append(
-            island.num_animals_per_species['Carnivore'])
+            island.num_animals_per_species['Carnivore'])"""
         self.years.append(island.year)
+
         self.animals_over_time_ax.plot(
             self.years, self.carnivores_over_time, color='r'
         )
+
         self.animals_over_time_ax.plot(
             self.years, self.herbivores_over_time, color='b'
         )
+
+
 
     def get_data_heat_map(self, island, data_type):
         """
@@ -279,13 +282,13 @@ class Visuals:
     def update_fig(self, island):
         self.update_animals_over_time(island)
         self.update_heat_maps(island)
-        plt.pause(1e-6)
+        plt.pause(1e-10)
 
     def save_fig(self):
-        self.img_num += 1
         self.figure.savefig(
             f'{self.img_base}{self.img_num:03d}.{self.img_fmt}',
             orientation='landscape')
+        self.img_num += 1
 
 
 if __name__ == '__main__':
