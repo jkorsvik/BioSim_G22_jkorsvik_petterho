@@ -49,7 +49,7 @@ class BaseAnimal:
 
     @classmethod
     def set_parameters(cls, w_birth=None, sigma_birth=None, beta=None,
-                       eta= None, a_half=None, phi_age=None, w_half=None,
+                       eta=None, a_half=None, phi_age=None, w_half=None,
                        phi_weight=None, mu=None, lambda_=None, gamma=None,
                        zeta=None, xi=None, omega=None, F=None,
                        DeltaPhiMax=None):

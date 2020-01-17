@@ -6,6 +6,7 @@
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
+# from typing import Iterable
 from src.biosim.landscape import *
 import textwrap
 
@@ -59,8 +60,6 @@ class Island:
         self.map = self.make_map(island_map_string)
         self.add_population(ini_pop)
         self._year = 0
-
-
 
     @property
     def num_animals(self):
@@ -135,6 +134,8 @@ class Island:
         Creates a dictionary data frame that stores instances of cells
         by key: a tuple of (y, x)-coordinates
 
+        Also saves the length and with of the island
+
         Parameters
         ----------
         island_map_string : multilinestring
@@ -149,6 +150,7 @@ class Island:
         island_map = {}
         lines = self.clean_multi_line_string(island_map_string)
 
+        # Possible to fix using type hinting (alt+enter)
         self.len_map_x = len(lines[0])
         self.len_map_y = len(lines)
 

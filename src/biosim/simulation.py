@@ -97,6 +97,24 @@ class BioSim:
 
         map_params[landscape].set_parameters(**params)
 
+    def clean_simulation(self, num_years):
+        """
+        A simulation for running profile, so that it doesnt care about
+        the visuals.
+
+        Parameters
+        ----------
+        num_years : int
+
+        Returns
+        -------
+
+        """
+        index = 1
+        while index <= num_years:
+            self.island.simulate_one_year()
+            index += 1
+
     def simulate(self, num_years, vis_years=1, img_years=None):
         """
         Run simulation while visualizing the result.
@@ -108,16 +126,14 @@ class BioSim:
 
         Image files will be numbered consecutively.
         """
+
         visuals = Visuals(self.island, num_years, self.ymax_animals,
                           self.cmax_animals, self.img_base, self.img_fmt)
-
         if img_years is None:
             img_years = vis_years
-
-        index = 1
-
         visuals.save_fig()
 
+        index = 1
         while index <= num_years:
             self.island.simulate_one_year()
             if index % vis_years == 0:
@@ -125,7 +141,6 @@ class BioSim:
             if index % img_years == 0:
                 visuals.save_fig()
             index += 1
-
 
     def add_population(self, population):
         """
@@ -191,7 +206,7 @@ class BioSim:
 
 
 if __name__ == '__main__':
-    geogr = """\
+    geography = """\
             OOOOOOOOOOOOOOOOOOOOO
             OOOOOOOOSMMMMJJJJJJJO
             OSSSSSJJJJMMJJJJJJJOO
@@ -206,7 +221,7 @@ if __name__ == '__main__':
             OOOSSSSJJJJJJJOOOOOOO
             OOOOOOOOOOOOOOOOOOOOO
             """
-    geogr = textwrap.dedent(geogr)
+    geography = textwrap.dedent(geography)
 
     ini_herbs = [
         {
@@ -228,8 +243,8 @@ if __name__ == '__main__':
         }
     ]
 
-    sim = BioSim(geogr, ini_herbs, img_base=r'C:\Users\pbmar\Documents\NMBU\INF200\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island')
+    sim = BioSim(geography, ini_herbs, img_base=r'C:\Users\pbmar\Documents\NMBU\
+    INF200\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island')
     sim.add_population(ini_carn)
     sim.simulate(10)
     sim.make_movie()
-
