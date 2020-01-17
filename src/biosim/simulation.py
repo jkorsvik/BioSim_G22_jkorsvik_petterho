@@ -116,6 +116,8 @@ class BioSim:
         while index <= num_years:
             self.island.simulate_one_year()
             index += 1
+            print(self.num_animals_per_species, '\n',
+                  self.year)
 
     def simulate(self, num_years, vis_years=1, img_years=None):
         """
@@ -248,6 +250,7 @@ if __name__ == '__main__':
 
     sim = BioSim(geography, ini_herbs,
                  img_base=(r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island'))
+    sim.clean_simulation(50)
     sim.add_population(ini_carn)
-    sim.simulate(50)
-    sim.make_movie()
+    sim.clean_simulation(50)
+

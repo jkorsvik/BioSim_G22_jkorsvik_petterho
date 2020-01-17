@@ -4,6 +4,8 @@
 """
 
 import numpy as np
+import math
+from numba import jit
 
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
@@ -11,7 +13,19 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 def sigmoid(value):
     """Sigmoid calculation"""
-    return 1/(1 + np.exp(value))
+    return 1/(1 + math.exp(value))
+
+
+@jit
+def fitness_calculation(
+        phi_age, age, a_half,
+        phi_weight, weight, w_half
+                        ):
+    pos_q_age = phi_age * (age - a_half)
+    neg_q_weight = - (phi_weight * (weight - w_half))
+
+    return 1/(1 + math.exp(pos_q_age)) * 1/(1 + math.exp(neg_q_weight))
+
 
 
 class BaseAnimal:
@@ -283,14 +297,10 @@ class BaseAnimal:
             if self.weight <= 0:
                 return 0
 
-            pos_q_age = self.phi_age * (self.age - self.a_half)
-            neg_q_weight = - (self.phi_weight * (self.weight - self.w_half))
-
             self._compute_fitness = False
-            self._fitness = (sigmoid(pos_q_age)
-                             * sigmoid(neg_q_weight)
-                             )
-
+            self._fitness = fitness_calculation(
+                self.phi_age, self.age, self.a_half,
+                self.phi_weight, self.weight, self.w_half)
             return self._fitness
 
         return self._fitness
@@ -426,13 +436,15 @@ class Carnivore(BaseAnimal):
         for herbivore in list_herbivores_least_fit:
             if eaten >= self.F:
                 break
+
+            if self.fitness <= herbivore.fitness:
+                continue
+                
             if self.DeltaPhiMax < self.fitness - herbivore.fitness:
                 self.eat(herbivore.weight, eaten)
                 eaten += herbivore.weight
                 deletion_list.append(herbivore)
 
-            if self.fitness <= herbivore.fitness:
-                continue
             else:
                 if self.kill_or_not(herbivore):
                     self.eat(herbivore.weight, eaten)

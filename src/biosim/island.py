@@ -283,7 +283,7 @@ class Island:
             loc = map_location['loc']
             if loc not in self.map.keys():
                 raise ValueError('Provided location does not exist')
-            if self.map[loc].passable:
+            if not self.map[loc].passable:
                 raise ValueError('Provided location is not passable')
 
             pop = map_location['pop']
