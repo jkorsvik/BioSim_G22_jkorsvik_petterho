@@ -249,5 +249,5 @@ if __name__ == '__main__':
     sim = BioSim(geography, ini_herbs,
                  img_base=(r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island'))
     sim.add_population(ini_carn)
-    sim.simulate(2)
+    sim.simulate(50)
     sim.make_movie()
