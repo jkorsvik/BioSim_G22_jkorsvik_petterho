@@ -9,6 +9,7 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 from src.biosim.animals import Herbivore, Carnivore
 import numpy as np
 import itertools
+import math
 
 
 def choose_new_location(prob_list):
@@ -376,7 +377,7 @@ class BaseCell:
             exponent_herb = (lambda_ * (self.fodder
                                         / dividend))
 
-            propensity_herb = np.exp(exponent_herb)
+            propensity_herb = math.exp(exponent_herb)
 
             lambda_ = Carnivore.lambda_
             appetite_ = Carnivore.F
@@ -385,7 +386,7 @@ class BaseCell:
             exponent_carn = (lambda_ * (self.meat_for_carnivores
                                         / dividend))
 
-            propensity_carn = np.exp(exponent_carn)
+            propensity_carn = math.exp(exponent_carn)
 
             self._propensity = {'Carnivore': propensity_carn,
                                 'Herbivore': propensity_herb}
