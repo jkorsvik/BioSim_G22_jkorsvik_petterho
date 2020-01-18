@@ -30,7 +30,7 @@ FFMPEG = r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt' \
 # https://stackoverflow.com/questions/19201290/how-to-save-a-dictionary-to-a-file/32216025
 
 
-def save_sim(simulation, name ):
+def save_sim(simulation, name):
     with open('saved_simulation/' + name + '.pkl', 'wb') as f:
         pickle.dump(simulation, f, pickle.HIGHEST_PROTOCOL)
 
@@ -39,6 +39,7 @@ def load_sim(name):
     with open('saved_simulation/' + name + '.pkl', 'rb') as f:
         return pickle.load(f)
 #
+
 
 class BioSim:
     def __init__(
@@ -272,9 +273,9 @@ if __name__ == '__main__':
         }
     ]
 
-
     sim = BioSim(geography, ini_herbs,
                  img_base=(r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island'))
+    sim.simulate(50)
     sim.add_population(ini_carn)
     sim.simulate(100)
     sim.save_sim('Sjokolade')
