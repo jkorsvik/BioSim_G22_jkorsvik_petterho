@@ -336,6 +336,7 @@ class Island:
 
     @year.setter
     def year(self, new_value):
+        """Sets year to new value"""
         self._year = new_value
 
     def simulate_one_year(self):
