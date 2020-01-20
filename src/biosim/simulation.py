@@ -71,10 +71,35 @@ def load_sim(name):
 
 
 class BioSim:
+    default_map = """\
+                      OOOOOOOOOOOOOOOOOOOOO
+                      OSSSSSJJJJMMJJJJJJJOO
+                      OSSSSSJJJJMMJJJJJJJOO
+                      OSSSSSJJJJMMJJJJJJJOO
+                      OOSSJJJJJJJMMJJJJJJJO
+                      OOSSJJJJJJJMMJJJJJJJO
+                      OOOOOOOOSMMMMJJJJJJJO
+                      OSSSSSJJJJMMJJJJJJJOO
+                      OSSSSSSSSSMMJJJJJJOOO
+                      OSSSSSDDDDDJJJJJJJOOO
+                      OSSSSSDDDDDJJJJJJJOOO
+                      OSSSSSDDDDDJJJJJJJOOO
+                      OSSSSSDDDDDMMJJJJJOOO
+                      OSSSSDDDDDDJJJJOOOOOO
+                      OOSSSSDDDDDDJOOOOOOOO
+                      OOSSSSDDDDDJJJOOOOOOO
+                      OSSSSSDDDDDJJJJJJJOOO
+                      OSSSSDDDDDDJJJJOOOOOO
+                      OOSSSSDDDDDJJJOOOOOOO
+                      OOOSSSSJJJJJJJOOOOOOO
+                      OOOSSSSSSOOOOOOOOOOOO
+                      OOOOOOOOOOOOOOOOOOOOO
+                  """
+
     def __init__(
         self,
-        island_map,
-        ini_pop,
+        island_map=None,
+        ini_pop=None,
         seed=None,
         ymax_animals=None,
         cmax_animals=None,
@@ -110,13 +135,19 @@ class BioSim:
         where img_no are consecutive image numbers starting from 0.
         img_base should contain a path and beginning of a file name.
         """
+
         if island_save_name is None:
-            self.island = Island(island_map, ini_pop)
+            if island_map is None:
+                self.island = Island(self.default_map, ini_pop)
+            else:
+                self.island = Island(island_map, ini_pop)
         else:
             self.island = load_sim(island_save_name)
+
         if seed is not None:
             np.random.seed(seed)
             random.seed(seed)
+
         self.ymax_animals = ymax_animals
         self.cmax_animals = cmax_animals
         self.img_base = img_base
@@ -308,4 +339,3 @@ if __name__ == '__main__':
     sim.simulate(100)
     sim.save_sim('Sjokolade')
     sim.make_movie()
-
