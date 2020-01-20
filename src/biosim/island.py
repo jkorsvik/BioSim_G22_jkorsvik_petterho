@@ -189,6 +189,8 @@ class Island:
         North, West, South and East of the current position.
 
         Then calculates the probability for the type of animal.
+
+        If the animal has nowhere to move, it returns None
         Parameters
         ----------
         pos : tuple
@@ -222,6 +224,8 @@ class Island:
                                    )
 
         prop_sum = np.sum(sum(dict(propensity_list).values()))
+        if prop_sum == 0:
+            return None
         prob_list = []
         for loc, prop in propensity_list:
             prob_list.append((loc, (prop / prop_sum)))
