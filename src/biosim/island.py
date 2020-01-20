@@ -101,8 +101,9 @@ class Island:
 
     def update_data_list(self): # Changed
         """Updates list for use in visualization"""
-        herbivores = self.num_animals_per_species['Herbivore']
-        carnivores = self.num_animals_per_species['Carnivore']
+        animals_per_species = self.num_animals_per_species
+        herbivores = animals_per_species['Herbivore']
+        carnivores = animals_per_species['Carnivore']
         self.herbivore_tot_data.append(herbivores)
         self.carnivore_tot_data.append(carnivores)
 
