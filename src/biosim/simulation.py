@@ -23,7 +23,6 @@ import pickle
 import os
 
 
-# Needs to be updated to the filepath in your directory
 FFMPEG = os.path.join(os.path.dirname(__file__), '../../FFMPEG/ffmpeg.exe')
 
 # Retrieved from:
