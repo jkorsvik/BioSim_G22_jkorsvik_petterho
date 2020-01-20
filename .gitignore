@@ -226,3 +226,7 @@ doc/_build/
 
 
 images_and_movies/
+
+*.pkl
+
+examples/

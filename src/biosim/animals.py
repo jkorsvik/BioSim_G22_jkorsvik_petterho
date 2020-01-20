@@ -6,14 +6,10 @@
 import numpy as np
 import math
 from numba import jit
+import random
 
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
-
-
-def sigmoid(value):
-    """Sigmoid calculation"""
-    return 1/(1 + math.exp(value))
 
 
 @jit
@@ -21,11 +17,28 @@ def fitness_calculation(
         phi_age, age, a_half,
         phi_weight, weight, w_half
                         ):
+    """
+    Calculates fitness by sigmoid multiplication
+
+    Parameters
+    ----------
+    phi_age : float
+    age : int
+    a_half : float
+    phi_weight : float
+    weight : float
+    w_half  : float
+
+    Returns
+    -------
+    float
+        Value between 0 and 1 representing fitness
+
+    """
     pos_q_age = phi_age * (age - a_half)
     neg_q_weight = - (phi_weight * (weight - w_half))
 
     return 1/(1 + math.exp(pos_q_age)) * 1/(1 + math.exp(neg_q_weight))
-
 
 
 class BaseAnimal:
@@ -267,11 +280,22 @@ class BaseAnimal:
 
     def __init__(self, age=0, weight=None):
         """
+        Initialises instance, calculates weight with a gaussian
+        distribution if weight is not specified.
 
         Parameters
         ----------
-        age: float
-        weight: float
+        age : int
+        weight : float
+
+        Attributes
+        --------
+        self._age : int
+        self._weight : float
+        self._compute_fitness : bool
+        self._fitness : float
+            Between 0 and 1
+        self._has_moved : bool
         """
         self._age = age
         self._weight = weight
@@ -279,12 +303,13 @@ class BaseAnimal:
         self._fitness = None
         self._has_moved = False
         if weight is None:
-            normal = np.random.normal(self.w_birth, self.sigma_birth)
+            normal = random.gauss(self.w_birth, self.sigma_birth)
             self.weight = normal
             if normal < 0:
                 self.weight = 0  # newborns with <= 0 will die end of year
 
     def __repr__(self):
+        """How the instance presents itself if called"""
         string = f"Animal Type: {type(self).__name__}\n" \
                  f"Age: {self.age}\n" \
                  f"Weight: {self.weight}\n" \
@@ -293,6 +318,15 @@ class BaseAnimal:
 
     @property
     def fitness(self):
+        """
+        Calculates fitness if weight or age is changed, else return old value
+
+        Returns
+        -------
+        self._fitness : float
+
+
+        """
         if self._compute_fitness is True:
             if self.weight <= 0:
                 return 0
@@ -301,54 +335,92 @@ class BaseAnimal:
             self._fitness = fitness_calculation(
                 self.phi_age, self.age, self.a_half,
                 self.phi_weight, self.weight, self.w_half)
+
             return self._fitness
 
         return self._fitness
 
     def age_one_year(self):
+        """Adds an increment of 1 to age"""
         self.age += 1
 
     @property
     def age(self):
+        """Getter for age"""
         return self._age
 
     @age.setter
     def age(self, new_age):
+        """Sets age to new value and compute fitness to true"""
         self._compute_fitness = True
         self._age = new_age
 
     @property
     def weight(self):
+        """Getter for weight"""
         return self._weight
 
     @weight.setter
     def weight(self, new_weight):
+        """Sets weight to new value and compute fitness to true"""
         self._compute_fitness = True
         self._weight = new_weight
 
     @property
     def has_moved(self):
-        # Farlig kode! Hvis du vil sjekke mer enn en gang så er den alltid True
+        """
+        Gives back bool value and sets the moved statement to True
+
+        Returns
+        -------
+        moved : bool
+
+        """
         moved = self._has_moved
         self._has_moved = True
         return moved
 
     def reset_has_moved(self):
+        """Set has moved to False"""
         self._has_moved = False
 
     def will_migrate(self):
+        """
+        Animals that has not moved yet will calculate if they will move
+
+        Returns
+        -------
+        bool
+            True if the animal wil move
+        """
         if not self.has_moved:
             prob_to_move = self.fitness * self.mu
-            return bool(np.random.binomial(1, prob_to_move))
+            return bool(random.random() < prob_to_move)
         return False
 
     def birth(self, num_same_species):
+        """
+        Whether or not an animal will give birth, weight loss updated, returns
+        offspring
+
+        Parameters
+        ----------
+        num_same_species : int
+            Number of same animals of age >= 1 in the same cell
+
+        Returns
+        -------
+        offspring : object
+            Instance of a new animal of same type as "mother"
+            with default age 0 and default weight None.
+
+        """
         mates = num_same_species - 1
         prob_to_birth = np.minimum(1, (self.gamma * self.fitness * mates))
         if self.weight < self.zeta*(self.w_birth + self.phi_weight):
             return 0
 
-        if np.random.binomial(1, prob_to_birth):
+        if random.random() < prob_to_birth:
             offspring = type(self)()
             weight_loss = self.xi * offspring.weight
 
@@ -359,11 +431,33 @@ class BaseAnimal:
         return 0
 
     def death(self):
+        """
+        Calculates if animal dies by probability.
+        If fitness = 0, the animal will die regardless
+
+        Returns
+        -------
+        bool
+            True if animal dies
+
+        """
         prob_to_die = self.omega*(1-self.fitness)
-        dies = np.random.binomial(1, prob_to_die)
+        dies = random.random() < prob_to_die
         return bool(dies) or self.fitness <= 0
 
-    def feed(self, available_food):  # Will be overwritten by the subclasses
+    def feed(self, available_food):  # Overwritten by carnivores
+        """
+
+        Parameters
+        ----------
+        available_food : float
+
+        Returns
+        -------
+        float
+            Remaining fodder in the cell
+
+        """
         if self.F <= available_food:
             self.weight += self.beta * self.F
             return available_food - self.F
@@ -374,6 +468,7 @@ class BaseAnimal:
         return 0
 
     def lose_weight(self):
+        """Yearly passive weight loss"""
         self.weight -= self.eta*self.weight
 
 
@@ -395,6 +490,15 @@ class Herbivore(BaseAnimal):
     F = 10.0
 
     def __init__(self, age=0, weight=None):
+        """
+        Subclass of BaseAnimal, has it's own set of class parameters.
+
+        Parameters
+        ----------
+        age : int
+        weight : float
+
+        """
         super().__init__(age, weight)
 
 
@@ -417,20 +521,58 @@ class Carnivore(BaseAnimal):
     DeltaPhiMax = 10.0
 
     def __init__(self, age=0, weight=None):
+        """
+        Subclass of BaseAnimal, has it's own set of class parameters.
+        Overwrites feed (eats other animals)
+
+        Parameters
+        ----------
+        age: int
+        weight: float
+
+        Methods
+        -------
+        kill_or_not
+        eat
+        feed
+
+        """
         super().__init__(age, weight)
 
     def kill_or_not(self, herbivore):
+        """Calculates if carnivore will kill herbivore"""
         probability_to_kill = ((self.fitness - herbivore.fitness) /
                                self.DeltaPhiMax)
-        return bool(np.random.binomial(1, probability_to_kill))
+        return bool(random.random() < probability_to_kill)
 
     def eat(self, meat, eaten):
+        """Consumes herbivore, updates weight, will not eat more than F"""
         if meat + eaten < self.F:
             self.weight += self.beta * meat
         else:
             self.weight += self.beta*(self.F - eaten)
 
     def feed(self, list_herbivores_least_fit):
+        """
+        Iterates list of herbivores then tries to kill them.
+
+        Cannot eat animals with greater fitness than themselves.
+        Stops feeding when F(appetite) is met.
+
+        Creates deletion list with Herbivores, then removes them
+        and returns updated list of herbivores.
+
+        Parameters
+        ----------
+        list_herbivores_least_fit : list
+            Herbivores in ascending order by fitness
+
+        Returns
+        -------
+        list_herbivores_least_fit : list
+            The same list as input, killed herbivores removed
+
+        """
         eaten = 0
         deletion_list = []
         for herbivore in list_herbivores_least_fit:
@@ -439,7 +581,7 @@ class Carnivore(BaseAnimal):
 
             if self.fitness <= herbivore.fitness:
                 continue
-                
+
             if self.DeltaPhiMax < self.fitness - herbivore.fitness:
                 self.eat(herbivore.weight, eaten)
                 eaten += herbivore.weight
@@ -457,9 +599,4 @@ class Carnivore(BaseAnimal):
 
 
 if __name__ == '__main__':
-    
-    test_animal = BaseAnimal()
-    test_herb = Herbivore()
-    test_carn = Carnivore()
-
-    print(test_animal, test_herb, test_carn)
+    pass
