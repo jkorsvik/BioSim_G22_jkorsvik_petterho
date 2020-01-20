@@ -68,7 +68,7 @@ def load_sim(name):
 
 
 class BioSim:
-    default_map = """\
+    default_map = """
                       OOOOOOOOOOOOOOOOOOOOO
                       OSSSSSJJJJMMJJJJJJJOO
                       OSSSSSJJJJMMJJJJJJJOO
@@ -92,6 +92,24 @@ class BioSim:
                       OOOSSSSSSOOOOOOOOOOOO
                       OOOOOOOOOOOOOOOOOOOOO
                   """
+    default_map = textwrap.dedent(default_map)
+
+    default_population = [
+        {
+            "loc": (10, 10),
+            "pop": [
+                {"species": "Herbivore", "age": 5, "weight": 20}
+                for _ in range(150)
+            ],
+        },
+        {
+            "loc": (10, 10),
+            "pop": [
+                {"species": "Carnivore", "age": 5, "weight": 20}
+                for _ in range(40)
+            ],
+        }
+    ]
 
     def __init__(
         self,
@@ -132,7 +150,8 @@ class BioSim:
         where img_no are consecutive image numbers starting from 0.
         img_base should contain a path and beginning of a file name.
         """
-
+        if ini_pop is None:
+            ini_pop = self.default_population
         if island_save_name is None:
             if island_map is None:
                 self.island = Island(self.default_map, ini_pop)
@@ -198,8 +217,7 @@ class BioSim:
         while index <= num_years:
             self.island.simulate_one_year()
             index += 1
-            print(self.num_animals_per_species, '\n',
-                  self.year)
+            print(self.year, '\n', self.num_animals_per_species)
 
     def simulate(self, num_years, vis_years=1, img_years=None):
         """
@@ -334,5 +352,8 @@ if __name__ == '__main__':
     ]
 
     sim = BioSim(geography, ini_herbs,
-                 img_base=(r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island'))
-    sim.make_movie()
+                 img_base=(r'C:\Users\pbmar\Documents\NMBU\INF200\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_img'))
+    sim.add_population(ini_carn)
+    sim.clean_simulation(30)
+    sim.set_animal_parameters()
+    sim.save_sim('Daim')
