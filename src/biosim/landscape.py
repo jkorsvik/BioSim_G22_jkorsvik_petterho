@@ -160,6 +160,7 @@ class BaseCell:
         """Remove carnivore from list of carnivores"""
         self.carnivores.remove(carnivore)
 
+    # Remove if not used
     def chain_lists(self):
         """Chains list of cell.herbivores with cell.carnivores lists"""
         return itertools.chain(self.herbivores, self.carnivores)
@@ -410,17 +411,17 @@ class BaseCell:
         return len(self.herbivores)
 
     @property
-    def meat_for_carnivores(self):
+    def num_animals(self):
+        """Property: sum of all num_carnivores and num_herbivores"""
+        return self.num_carnivores + self.num_herbivores
+
+    @property
+    def meat_for_carnivores(self): # Possible to optimize to not calculate it every time
         """Property: Sum the weight of all herbivores in cell"""
         meat = 0
         for herbivore in self.herbivores:
             meat += herbivore.weight
         return meat
-
-    @property
-    def num_animals(self):
-        """Property: sum of all num_carnivores and num_herbivores"""
-        return self.num_carnivores + self.num_herbivores
 
 
 class Ocean(BaseCell):

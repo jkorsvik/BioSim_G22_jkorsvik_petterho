@@ -98,7 +98,7 @@ class Island:
         return num_animals_per_species
 
     @staticmethod
-    def clean_multi_line_string(island_map_string):
+    def clean_multi_line_string(island_map_string): # Change name to clean and check
         """
         Strips and splits a multilinestring and checks for equal length
         of lines and specific letters at the edges: in this case 'O'.
@@ -122,10 +122,12 @@ class Island:
 
         for index in range(len(lines[0])):
             if lines[0][index] is not 'O' or lines[-1][index] is not 'O':
-                raise ValueError('')
+                raise ValueError('This is not an island. Islands are '
+                                 'surrounded by water')
         for index in range(len(lines)):
             if lines[index][0] is not 'O' or lines[index][-1] is not 'O':
-                raise ValueError('')
+                raise ValueError('This is not an island. Islands are '
+                                 'surrounded by water')
 
         return lines
 
