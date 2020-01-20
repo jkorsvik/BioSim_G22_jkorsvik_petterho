@@ -20,13 +20,11 @@ import numpy as np
 import subprocess
 import random
 import pickle
+import os
 
 
 # Needs to be updated to the filepath in your directory
-
-FFMPEG = r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt' \
-         r'\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho' \
-         r'\FFMPEG\ffmpeg.exe'
+FFMPEG = os.path.join(os.path.dirname(__file__), '../../FFMPEG/ffmpeg.exe')
 
 # Retrieved from:
 # https://stackoverflow.com/questions/19201290/how-to-save-a-dictionary-to-a-file/32216025
@@ -162,7 +160,11 @@ class BioSim:
         :param species: String, name of animal species
         :param params: Dict with valid parameter specification for species
         """
-        globals()[species].set_parameters(**params)
+
+        animal_species = {'Herbivore': Herbivore,
+                          'Carnivore': Carnivore}
+
+        animal_species[species].set_parameters(**params)
 
     @staticmethod
     def set_landscape_parameters(landscape, params):
@@ -334,8 +336,4 @@ if __name__ == '__main__':
 
     sim = BioSim(geography, ini_herbs,
                  img_base=(r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island'))
-    sim.simulate(10)
-    sim.add_population(ini_carn)
-    sim.simulate(100)
-    sim.save_sim('Sjokolade')
     sim.make_movie()
