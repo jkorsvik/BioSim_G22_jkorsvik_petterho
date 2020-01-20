@@ -13,10 +13,18 @@ from src.biosim.animals import BaseAnimal, Herbivore, Carnivore
 from tests.test_island import test_island
 import pytest
 import warnings
+import math
 
 
 @pytest.fixture
 def prob_herb():
+    """
+    It
+
+    Returns
+    -------
+
+    """
     island = test_island()
     prob_herb = island.probability_calc((1, 1), Herbivore())
 
@@ -158,15 +166,52 @@ class TestBaseCell:
         assert len(cell.carnivores) == 0
 
     def test_migrate(self, jungle_many_animals, prob_herb, prob_carn):
+
         moved_herb, moved_carn = jungle_many_animals.migrate(prob_herb,
                                                              prob_carn)
         for loc, herb in moved_herb:
             assert herb not in jungle_many_animals.herbivores
             assert loc != (1, 1)
+            assert loc == (1, 2) or loc == (2, 1)
         for loc, carn in moved_carn:
             assert carn not in jungle_many_animals.carnivores
             assert loc != (1, 1)
-        assert False
+            assert loc == (1, 2) or loc == (2, 1)
+
+    def test_procreate(self, jungle_with_animals, animal_list):
+        # Works only with two or more herbivores and one or zero carnivores
+        num_herbivores_start = jungle_with_animals.num_herbivores
+        num_carnivores_start = jungle_with_animals.num_carnivores
+        for _ in range(100):
+            jungle_with_animals.procreate()
+        assert jungle_with_animals.num_herbivores > num_herbivores_start
+        assert jungle_with_animals.num_carnivores == num_carnivores_start
+        jungle_with_animals.add_animals(animal_list)
+        for _ in range(100):
+            jungle_with_animals.procreate()
+        assert jungle_with_animals.num_herbivores > num_herbivores_start
+        assert jungle_with_animals.num_carnivores > num_carnivores_start
+
+    def test_lose_weight(self, jungle_with_animals):
+        herbivore0_weight = jungle_with_animals.herbivores[0].weight
+        herbivore1_weight = jungle_with_animals.herbivores[1].weight
+        carnivore0_weight = jungle_with_animals.carnivores[0].weight
+        jungle_with_animals.lose_weight()
+        assert herbivore0_weight > jungle_with_animals.herbivores[0].weight
+        assert herbivore1_weight > jungle_with_animals.herbivores[1].weight
+        assert carnivore0_weight > jungle_with_animals.carnivores[0].weight
+
+    def test_sort_by_fitness(self, jungle_many_animals):
+        jungle = jungle_many_animals
+        jungle.herbivores = jungle.sort_by_fitness(jungle.herbivores)
+        x = 0
+        for herbivore in jungle.herbivores:
+            assert x < herbivore.fitness
+            x = herbivore.fitness
+
+    def test_feed_all(self, jungle_many_animals, carnivore_list):
+        self.test_feed_herbivores()
+        self.test_feed_carnivores(jungle_many_animals, carnivore_list)
 
     def test_feed_herbivores(self):
         jungle = Jungle()
@@ -181,10 +226,6 @@ class TestBaseCell:
         for _ in range(10):
             jungle_many_animals.feed_carnivores()
         assert jungle_many_animals.num_herbivores < num_herbivores
-
-    def test_feed_all(self, jungle_many_animals, carnivore_list):
-        self.test_feed_herbivores()
-        self.test_feed_carnivores(jungle_many_animals, carnivore_list)
 
     def test_age_pop(self, jungle_with_animals):
         age_herbivore0 = jungle_with_animals.herbivores[0].age
@@ -206,10 +247,31 @@ class TestBaseCell:
         carnivore0._compute_fitness = False
         carnivore1 = jungle.carnivores[1]
         carnivore1._fitness = 1
-        carnivore0._compute_fitness = False
+        carnivore1._compute_fitness = False
         jungle.die()
         assert carnivore0 not in jungle.carnivores
         assert carnivore1 in jungle.carnivores
+
+    def test_propensity(self):
+        jungle = Jungle()
+        jungle.add_migrated_herb(Herbivore())
+        jungle.add_migrated_carn(Carnivore())
+        lambda_herb = Herbivore.lambda_
+        epsilon_herb = jungle.fodder / (2 * Herbivore.F)
+        propensity_herbivore = math.exp(lambda_herb * epsilon_herb)
+        lambda_carn = Carnivore.lambda_
+        epsilon_carn = jungle.meat_for_carnivores / (2 * Carnivore.F)
+        propensity_carnivore = math.exp(lambda_carn * epsilon_carn)
+        propensity = jungle.propensity
+        assert propensity['Herbivore'] == propensity_herbivore
+        assert propensity['Carnivore'] == propensity_carnivore
+
+    def test_reset_calculate_propensity(self):
+        jungle = Jungle()
+        jungle.propensity
+        assert jungle._calculate_propensity is False
+        jungle.reset_calculate_propensity()
+        assert jungle._calculate_propensity is True
 
     def test_num_carnivore(self):
         cell = BaseCell()
@@ -235,44 +297,13 @@ class TestBaseCell:
 
 
 
-    def test_lose_weight(self, jungle_with_animals):
-        herbivore0_weight = jungle_with_animals.herbivores[0].weight
-        herbivore1_weight = jungle_with_animals.herbivores[1].weight
-        carnivore0_weight = jungle_with_animals.carnivores[0].weight
-        jungle_with_animals.lose_weight()
-        assert herbivore0_weight > jungle_with_animals.herbivores[0].weight
-        assert herbivore1_weight > jungle_with_animals.herbivores[1].weight
-        assert carnivore0_weight > jungle_with_animals.carnivores[0].weight
-
-    def test_procreate(self, jungle_with_animals, animal_list):
-        # Works only with two or more herbivores and one or zero carnivores
-        num_herbivores_start = jungle_with_animals.num_herbivores
-        num_carnivores_start = jungle_with_animals.num_carnivores
-        for _ in range(100):
-            jungle_with_animals.procreate()
-        assert jungle_with_animals.num_herbivores > num_herbivores_start
-        assert jungle_with_animals.num_carnivores == num_carnivores_start
-        jungle_with_animals.add_animals(animal_list)
-        for _ in range(100):
-            jungle_with_animals.procreate()
-        assert jungle_with_animals.num_herbivores > num_herbivores_start
-        assert jungle_with_animals.num_carnivores > num_carnivores_start
-
-    def test_sort_by_fitness(self, jungle_many_animals):
-        jungle = jungle_many_animals
-        jungle.herbivores = jungle.sort_by_fitness(jungle.herbivores)
-        x = 0
-        for herbivore in jungle.herbivores:
-            assert x < herbivore.fitness
-            x = herbivore.fitness
-
-
 class TestOcean:
     def test_init(self):
         ocean = Ocean()
         assert type(ocean.herbivores) is list
         assert type(ocean.carnivores) is list
         assert ocean.fodder == 0
+        assert ocean.passable is False
 
 
 class TestMountain:
@@ -281,6 +312,7 @@ class TestMountain:
         assert type(mountain.herbivores) is list
         assert type(mountain.carnivores) is list
         assert mountain.fodder == 0
+        assert mountain.passable == False
 
 
 class TestDesert:
@@ -289,6 +321,7 @@ class TestDesert:
         assert type(desert.herbivores) is list
         assert type(desert.carnivores) is list
         assert desert.fodder == 0
+        assert desert.passable is True
 
 
 class TestSavanna:
