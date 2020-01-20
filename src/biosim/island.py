@@ -99,18 +99,12 @@ class Island:
 
         return num_animals_per_species
 
-    def update_data_list(self):
+    def update_data_list(self): # Changed
         """Updates list for use in visualization"""
         herbivores = self.num_animals_per_species['Herbivore']
         carnivores = self.num_animals_per_species['Carnivore']
-        if herbivores > 0:
-            self.herbivore_tot_data.append(herbivores)
-        else:
-            self.herbivore_tot_data.append(0)
-        if carnivores > 0:
-            self.carnivore_tot_data.append(carnivores)
-        else:
-            self.carnivore_tot_data.append(0)
+        self.herbivore_tot_data.append(herbivores)
+        self.carnivore_tot_data.append(carnivores)
 
     @staticmethod
     def clean_multi_line_string(island_map_string): # Change name to clean and check
