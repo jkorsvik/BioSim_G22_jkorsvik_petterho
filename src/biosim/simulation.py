@@ -12,6 +12,8 @@ from src.biosim.visualization import Visuals
 from src.biosim.landscape import (
     Jungle, Ocean, Savanna, Mountain, Desert
 )
+# Is used for changing animal parameters
+from src.biosim.animals import Herbivore, Carnivore
 import textwrap
 import pandas as pd
 import numpy as np
@@ -31,11 +33,38 @@ FFMPEG = r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt' \
 
 
 def save_sim(simulation, name):
+    """
+    Save a state of Simulation
+
+    Parameters
+    ----------
+    simulation : object
+        Instance of Simulation
+    name : str
+        Save name
+
+    Returns
+    -------
+
+    """
     with open('saved_simulation/' + name + '.pkl', 'wb') as f:
         pickle.dump(simulation, f, pickle.HIGHEST_PROTOCOL)
 
 
 def load_sim(name):
+    """
+    Loads state of Simulation
+
+    Parameters
+    ----------
+    name : file
+        Name of file
+
+    Returns
+    -------
+    Loaded file of Simulation
+
+    """
     with open('saved_simulation/' + name + '.pkl', 'rb') as f:
         return pickle.load(f)
 #
@@ -166,8 +195,6 @@ class BioSim:
             if index % img_years == 0:
                 visuals.save_fig()
             index += 1
-            print(self.num_animals_per_species, '\n',
-                  self.year)
 
     def add_population(self, population):
         """
@@ -232,6 +259,7 @@ class BioSim:
             raise ValueError('Unknown movie format: ' + self.movie_fmt)
 
     def save_sim(self, name):
+        """Calls function: save_sim outside Simulation"""
         save_sim(self.island, name)
 
 
@@ -275,7 +303,7 @@ if __name__ == '__main__':
 
     sim = BioSim(geography, ini_herbs,
                  img_base=(r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island'))
-    sim.simulate(50)
+    sim.simulate(10)
     sim.add_population(ini_carn)
     sim.simulate(100)
     sim.save_sim('Sjokolade')
