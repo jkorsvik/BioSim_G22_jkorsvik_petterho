@@ -6,11 +6,20 @@
 Welcome to BioSim_G22's documentation!
 ======================================
 
+This is a simulation of
+ * an island
+ * with different landscape
+ * with a herbivorous and carnivorous population
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-
+   Simulation
+   Island
+   Landscape
+   Animals
+   Visuals
 
 Indices and tables
 ==================

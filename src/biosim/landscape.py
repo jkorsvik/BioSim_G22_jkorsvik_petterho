@@ -11,8 +11,10 @@ import numpy as np
 import itertools
 import math
 import random
+from numba import jit
 
 
+@jit
 def choose_new_location(prob_list):
     """
     Draws one out of a list with weights.
