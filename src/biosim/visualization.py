@@ -103,6 +103,7 @@ class Visuals:
             self.island_map_ax = self.figure.add_subplot(
                 self.grid[0, :10]
             )
+            self.island_map_ax.set_title(f' Year: {island.year}')
             self.island_map_img_ax = None
 
         # The color explanation
@@ -177,7 +178,6 @@ class Visuals:
 
     def draw_geography(self):
         self.island_map_ax.axis('off')
-        self.island_map_ax.set_title('Map')
         self.island_map_img_ax = self.island_map_ax.imshow(
             self.pixel_colors)
         """
@@ -198,7 +198,11 @@ class Visuals:
                               facecolor=self.cell_colors[name]))
             self.island_map_exp_ax.text(
                 0.35, 0.05 + ix * 0.2, name,
-                transform=self.island_map_exp_ax.transAxes)
+                transform=self.island_map_exp_ax.transAxes
+            )
+
+    def update_year(self, island):
+        self.island_map_ax.set_title(f' Year: {island.year}')
 
     def draw_animals_over_time(self, island):
         self.herbivores_over_time = island.herbivore_tot_data
@@ -216,13 +220,8 @@ class Visuals:
         )
         self.animals_over_time_ax.legend(loc='upper left')
 
-
     def update_animals_over_time(self, island):
         # Island has property or attribute year
-        """self.herbivores_over_time.append(
-            island.num_animals_per_species['Herbivore'])
-        self.carnivores_over_time.append(
-            island.num_animals_per_species['Carnivore'])"""
         self.years.append(island.year)
 
         self.animals_over_time_ax.plot(
@@ -256,7 +255,7 @@ class Visuals:
 
     def draw_heat_map_herbivore(self, heat_map):
         self.heat_map_herbivores_ax.axis('off')
-        self.heat_map_herbivores_ax.set_title('Heat Map of Herbivores')
+        self.heat_map_herbivores_ax.set_title('Distribution of Herbivores')
         self.heat_map_herb_img_ax = self.heat_map_herbivores_ax.imshow(
             heat_map, cmap='inferno', vmax=self.cmax_animals['Herbivore'])
         plt.colorbar(
@@ -265,7 +264,7 @@ class Visuals:
 
     def draw_heat_map_carnivore(self, heat_map):
         self.heat_map_carnivores_ax.axis('off')
-        self.heat_map_carnivores_ax.set_title('Heat Map of Carnivores')
+        self.heat_map_carnivores_ax.set_title('Distribution of Carnivores')
         self.heat_map_carn_img_ax = self.heat_map_carnivores_ax.imshow(
             heat_map, cmap='inferno', vmax=self.cmax_animals['Carnivore'])
         plt.colorbar(
@@ -282,13 +281,14 @@ class Visuals:
     def update_fig(self, island):
         self.update_animals_over_time(island)
         self.update_heat_maps(island)
+        self.update_year(island)
         plt.pause(1e-10)
 
     def save_fig(self):
+        self.img_num += 1
         self.figure.savefig(
             f'{self.img_base}{self.img_num:03d}.{self.img_fmt}',
             orientation='landscape')
-        self.img_num += 1
 
 
 if __name__ == '__main__':
