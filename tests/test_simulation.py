@@ -55,7 +55,7 @@ class TestSimulation:
                                          {'alpha': 42, 'f_max': -5})
         with pytest.raises(TypeError):
             BioSim.set_landscape_parameters('S',
-                                         {'alpha': 42, 'maximus':42})
+                                         {'alpha': 42, 'maximus': 42})
         assert Savanna.alpha == 3.9
         BioSim.set_landscape_parameters('S',
                                         {'alpha': 0.3, 'f_max': 300})
@@ -127,8 +127,6 @@ class TestSimulation:
             sim.make_movie()
 
 
-
-
 class TestSimulationSpecialCases:
     def test_sim_with_seed(self):
         sim1 = BioSim(seed=1)
@@ -140,4 +138,3 @@ class TestSimulationSpecialCases:
         num_sim2 = sim2.num_animals_per_species
 
         assert num_sim1 == num_sim2
-
