@@ -14,17 +14,20 @@
 #
 import os
 import sys
+import sphinx_rtd_theme
+
 
 sys.path.insert(0, os.path.abspath("."))
 sys.path.insert(0, os.path.abspath(".."))
 sys.path.insert(0, os.path.abspath("../.."))
+autoclass_content = 'both'
 
 
 # -- Project information -----------------------------------------------------
 
-project = "Coursework INF200"
-copyright = "2019, Yngve Mardal Moe"
-author = "Yngve Mardal Moe"
+project = "BioSim_G22"
+copyright = "2020, Jon-Mikkel & Petter"
+author = "Jon-Mikkel Korsvik & Petter Hørtvedt"
 
 # The short X.Y version
 version = ""
@@ -44,7 +47,11 @@ release = "1.0.0"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.mathjax",
+    "sphinx.ext.coverage",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.napoleon",
     "numpydoc",
+    "sphinx_rtd_theme",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -72,7 +79,7 @@ language = None
 exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+pygments_style = 'sphinx'
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -89,9 +96,9 @@ html_theme = "alabaster"
 #
 # html_theme_options = {}
 html_theme_options = {
-    # Disable showing the sidebar. Defaults to 'false'
-    'nosidebar': True,
 }
+
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -105,13 +112,21 @@ html_static_path = ["_static"]
 # default: ``['localtoc.html', 'relations.html', 'sourcelink.html',
 # 'searchbox.html']``.
 #
-# html_sidebars = {}
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',  # needs 'show_related': True theme option to display
+        'searchbox.html',
+        'donate.html',
+    ]
+}
 
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'INF200Courseworkdoc'
+htmlhelp_basename = 'BioSim_G22doc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -119,7 +134,7 @@ htmlhelp_basename = 'INF200Courseworkdoc'
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
-    # 'papersize': 'letterpaper',
+    'papersize': 'letterpaper',
 
     # The font size ('10pt', '11pt' or '12pt').
     #
@@ -148,7 +163,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'inf200coursework', 'INF200 Coursework Documentation',
+    (master_doc, 'BioSim_G22.tex', 'BioSim Group 22 Documentation',
      [author], 1)
 ]
 
@@ -159,8 +174,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'INF200Coursework', 'INF200 Coursework Documentation',
-     author, 'INF200Coursework', 'One line description of project.',
+    (master_doc, 'Biosim', 'BioSim Group 22 Documentation',
+     author, 'BioSim', 'One line description of project.',
      'Miscellaneous'),
 ]
 
@@ -169,6 +184,9 @@ texinfo_documents = [
 
 # Bibliographic Dublin Core info.
 epub_title = project
+epub_author = author
+epub_publisher = author
+epub_copyright = copyright
 
 # The unique identifier of the text. This can be a ISBN number
 # or the project homepage.

@@ -7,13 +7,12 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-from src.biosim.island import Island
-from src.biosim.visualization import Visuals
-from src.biosim.landscape import (
+from .island import Island
+from .visualization import Visuals
+from .landscape import (
     Jungle, Ocean, Savanna, Mountain, Desert
 )
-# Is used for changing animal parameters
-from src.biosim.animals import Herbivore, Carnivore
+from .animals import Herbivore, Carnivore
 import textwrap
 import pandas as pd
 import numpy as np
@@ -315,46 +314,4 @@ class BioSim:
 
 
 if __name__ == '__main__':
-    geography = """\
-            OOOOOOOOOOOOOOOOOOOOO
-            OOOOOOOOSMMMMJJJJJJJO
-            OSSSSSJJJJMMJJJJJJJOO
-            OSSSSSSSSSMMJJJJJJOOO
-            OSSSSSJJJJJJJJJJJJOOO
-            OSSSSSJJJDDJJJSJJJOOO
-            OSSJJJJJDDDJJJSSSSOOO
-            OOSSSSJJJDDJJJSOOOOOO
-            OSSSJJJJJDDJJJJJJJOOO
-            OSSSSJJJJDDJJJJOOOOOO
-            OOSSSSJJJJJJJJOOOOOOO
-            OOOSSSSJJJJJJJOOOOOOO
-            OOOOOOOOOOOOOOOOOOOOO
-            """
-    geography = textwrap.dedent(geography)
-
-    ini_herbs = [
-        {
-            "loc": (2, 1),
-            "pop": [
-                {"species": "Herbivore", "age": 5, "weight": 20}
-                for _ in range(2000)
-            ],
-        }
-    ]
-
-    ini_carn = [
-        {
-            "loc": (2, 1),
-            "pop": [
-                {"species": "Carnivore", "age": 2, "weight": 40}
-                for _ in range(6)
-            ],
-        }
-    ]
-
-    sim = BioSim(geography, ini_herbs,
-                 img_base=(r'C:\Users\pbmar\Documents\NMBU\INF200\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_img'))
-    sim.add_population(ini_carn)
-    sim.clean_simulation(30)
-    sim.set_animal_parameters()
-    sim.save_sim('Daim')
+  pass

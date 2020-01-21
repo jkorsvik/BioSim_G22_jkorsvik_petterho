@@ -17,8 +17,17 @@ def fitness_calculation(
         phi_age, age, a_half,
         phi_weight, weight, w_half
                         ):
-    """
+    r"""
     Calculates fitness by sigmoid multiplication
+
+    .. math::
+        \Phi =\left\{\begin{matrix}0
+         &  , w\leq 0 & \\
+         q^-_{weight}*q^+_{age}&, else  &
+        \end{matrix}\right.
+
+    .. math::
+        q^\pm(x, x_{\frac{1}{2}},\phi)=\frac{1}{1+e^{\pm\phi(x-x_\frac{1}{2})}}
 
     Parameters
     ----------
@@ -447,10 +456,13 @@ class BaseAnimal:
 
     def feed(self, available_food):  # Overwritten by carnivores
         """
+        Eats food in cell, updates weight and returns new amount of fodder
+        left
 
         Parameters
         ----------
         available_food : float
+            Food in current cell
 
         Returns
         -------
