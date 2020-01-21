@@ -200,7 +200,7 @@ class BioSim:
 
         map_params[landscape].set_parameters(**params)
 
-    def clean_simulation(self, num_years):
+    def clean_simulation(self, num_years): # Change name and docstring
         """
         A simulation for running profile, so that it doesnt care about
         the visuals.
@@ -276,6 +276,7 @@ class BioSim:
 
     @property
     def animal_distribution(self):
+        # Add save the data frame if the user gives a save path
         """Pandas DataFrame with animal count per species for each cell
         on island."""
         dict_for_df = {"Row": [], "Col": [], "Herbivore": [], "Carnivore": []}
