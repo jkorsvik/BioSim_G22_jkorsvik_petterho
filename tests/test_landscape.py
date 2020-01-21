@@ -25,13 +25,13 @@ def prob_herb():
     -------
 
     """
-    island = test_island()
+    island = test_island
     prob_herb = island.probability_calc((1, 1), Herbivore())
 
 
 @pytest.fixture
 def prob_herb():
-    island = test_island()
+    island = test_island
     prob_carn = island.probability_calc((1, 1), Carnivore())
 
 
