@@ -12,61 +12,6 @@ from src.biosim.island import *
 from src.biosim.landscape import *
 
 
-@pytest.fixture
-def plain_map_string():
-    return "OOOO\nOJSO\nOOOO"
-
-
-@pytest.fixture
-def test_island(ini_herbs, ini_carns):
-    """
-    Important that all animals are inserted to one cell.
-    And only uses Jungle as passable cell
-
-    Returns
-    -------
-    test_island: Island
-        instance of Island class
-    """
-    geogr = """\
-            OOOO
-            OJJO
-            OJJO
-            OOOO"""
-    geogr = textwrap.dedent(geogr)
-    test_island = Island(geogr, ini_herbs)
-    test_island.add_population(ini_carns)
-
-    return test_island
-
-
-@pytest.fixture
-def ini_herbs():
-    ini_herbs = [
-        {
-            "loc": (1, 1),
-            "pop": [
-                {"species": "Herbivore", "age": 5, "weight": 40}
-                for _ in range(100)
-            ],
-        }
-    ]
-    return ini_herbs
-
-
-@pytest.fixture
-def ini_carns():
-    ini_carns = [
-        {
-            "loc": (1, 1),
-            "pop": [
-                {"species": "Carnivore", "age": 2, "weight": 20}
-                for _ in range(10)
-            ],
-        }
-    ]
-    return ini_carns
-
 def test_check_line_length():
     lines = ['abc', 'def']
     assert check_length(lines) is True
@@ -256,7 +201,7 @@ class TestIslandInteractions:
                 for carnivore in cell.carnivores:
                     assert isinstance(carnivore, Carnivore)
 
-    def test_something(self):
-        assert False
+    def test_something(self, just_five):
+        assert just_five == 5
 
 
