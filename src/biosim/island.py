@@ -7,7 +7,6 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 from .landscape import *
-import textwrap
 
 
 def check_length(lines):
@@ -30,37 +29,55 @@ def check_length(lines):
     return True
 
 
+def is_list_longer_than(list_, number):
+    return len(list_) > number
+
+
 class Island:
+    """
+    Initiates the Island class: holds method for updating the map
+    Class attribute map_params holds information of which letter relates
+    to which class of landscape.py
+
+    Parameters
+    ----------
+    island_map_string
+    ini_pop
+
+
+    Attributes
+    ----------
+    map : dict
+        calls method make_map, map creation from a multilinestring
+    herbivore_tot_data : list
+        Total number of herbivores indexed by year
+    carnivore_tot_data : list
+        Total number of carnivore indexed by year
+    stats : dict
+        multiple nested dicts, stores all data on dead/ born animals.
+    """
     map_params = {'O': Ocean,
                   'M': Mountain,
                   'D': Desert,
                   'S': Savanna,
                   'J': Jungle}
 
-    def __init__(self, island_map_string, ini_pop):
-        """
-        Initiates the Island class: holds method for updating the map
-        Class attribute map_params holds information of which letter relates
-        to which class of landscape.py
-
-        Parameters
-        ----------
-        island_map_string
-        ini_pop
-
-        Attributes
-        --------
-        self.map : dict
-            calls method make_map, map creation from a multilinestring
-        """
+    def __init__(self, island_map_string, ini_pop, store_stats=False):
         self.len_map_x = None
         self.len_map_y = None
 
         self.map = self.make_map(island_map_string)
         self.add_population(ini_pop)
         self._year = 0
+
         self.herbivore_tot_data = []
         self.carnivore_tot_data = []
+        self.update_data_list()
+
+        self._store_stats = store_stats
+        if store_stats:
+            self.stats = {}
+            self.create_and_update_stats_structure()
 
     @property
     def num_animals(self):
@@ -98,7 +115,21 @@ class Island:
 
         return num_animals_per_species
 
-    def update_data_list(self): # Changed
+    def create_and_update_stats_structure(self):
+        """Creates data structure for stats"""
+        all_herbs = self.num_animals_per_species['Herbivore']
+        all_carns = self.num_animals_per_species['Carnivore']
+
+        for pos in self.map.keys():
+            self.stats[self.year] = {'Herbivore': {'death': {pos: []},
+                                                   'birth': {pos: []},
+                                                   'alive': all_herbs},
+                                     'Carnivore': {'death': {pos: []},
+                                                   'birth': {pos: []},
+                                                   'alive': all_carns}
+                                     }
+
+    def update_data_list(self):
         """Updates list for use in visualization"""
         animals_per_species = self.num_animals_per_species
         herbivores = animals_per_species['Herbivore']
@@ -107,7 +138,7 @@ class Island:
         self.carnivore_tot_data.append(carnivores)
 
     @staticmethod
-    def clean_multi_line_string(island_map_string): # Change name to clean and check
+    def clean_multi_line_string(island_map_string):
         """
         Strips and splits a multilinestring and checks for equal length
         of lines and specific letters at the edges: in this case 'O'.
@@ -197,7 +228,7 @@ class Island:
         prob_list : list of tuples
             (Coordinate(y, x), and probabilities)
         """
-        species = animal.__name__ # Look at migrate
+        species = animal.__name__  # Look at migrate
         y_cord, x_cord = pos
         loc_1 = (y_cord - 1, x_cord)
         loc_2 = (y_cord + 1, x_cord)
@@ -310,9 +341,12 @@ class Island:
             cell.feed_all()
 
     def procreate(self):
-        """Calls procreate in all cells of Island.map"""
-        for cell in self.map.values():
-            cell.procreate()
+        """Calls procreate in all cells of Island.map, adds born to stats"""
+        for pos, cell in self.map.items():
+            herb_birth, carn_birth = cell.procreate()
+            if self._store_stats:
+                self.stats[self.year]['Herbivore']['birth'][pos] = herb_birth
+                self.stats[self.year]['Carnivore']['birth'][pos] = carn_birth
 
     def age_animals(self):
         """Calls age_pop in all cells of Island.map"""
@@ -325,9 +359,12 @@ class Island:
             cell.lose_weight()
 
     def die(self):
-        """Calls die in all cells of Island.map"""
-        for cell in self.map.values():
-            cell.die()
+        """Calls die in all cells of Island.map, adds dead to stats"""
+        for pos, cell in self.map.items():
+            herb_death, carn_death = cell.die()
+            if self._store_stats:
+                self.stats[self.year]['Herbivore']['death'][pos] = herb_death
+                self.stats[self.year]['Carnivore']['death'][pos] = carn_death
 
     @property
     def year(self):
@@ -346,7 +383,7 @@ class Island:
         -------
 
         """
-        self.update_data_list()
+
         self.ready_for_new_year()
         self.feed()
         self.procreate()
@@ -355,59 +392,10 @@ class Island:
         self.lose_weight()
         self.die()
         self.year += 1
+        self.update_data_list()
+        if self._store_stats:
+            self.create_and_update_stats_structure()
 
 
 if __name__ == '__main__':
-    geogr = """\
-            OOOOOOOOOOOOOOOOOOOOO
-            OOOOOOOOSMMMMJJJJJJJO
-            OSSSSSJJJJMMJJJJJJJOO
-            OSSSSSSSSSMMJJJJJJOOO
-            OSSSSSJJJJJJJJJJJJOOO
-            OSSSSSJJJDDJJJSJJJOOO
-            OSSJJJJJDDDJJJSSSSOOO
-            OOSSSSJJJDDJJJSOOOOOO
-            OSSSJJJJJDDJJJJJJJOOO
-            OSSSSJJJJDDJJJJOOOOOO
-            OOSSSSJJJJJJJJOOOOOOO
-            OOOSSSSJJJJJJJOOOOOOO
-            OOOOOOOOOOOOOOOOOOOOO
-            """
-    geogr = textwrap.dedent(geogr)
-
-    ini_herbs = [
-        {
-            "loc": (2, 1),
-            "pop": [
-                {"species": "Herbivore", "age": 5, "weight": 40}
-                for _ in range(200)
-            ],
-        }
-    ]
-
-    ini_carn = [
-        {
-            "loc": (4, 6),
-            "pop": [
-                {"species": "Carnivore", "age": 2, "weight": 40}
-                for _ in range(4)
-            ],
-        }
-    ]
-
-    sim = Island(geogr, ini_herbs)
-    for x in range(200):
-        sim.simulate_one_year()
-        if x == 50:
-            sim.add_population(ini_carn)
-        print(x)
-        print(sim.num_animals)
-        print(sim.num_animals_per_species)
-        """
-        for position in sim.island_map:
-            try:
-                print(sim.island_map[position].herbivores[-1], position)
-                print(sim.island_map[position].carnivores[-1], position)
-                print(position)
-            except IndexError:
-                pass"""
+    pass

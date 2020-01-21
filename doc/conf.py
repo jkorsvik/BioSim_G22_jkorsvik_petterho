@@ -95,7 +95,7 @@ html_theme = "alabaster"
 # documentation.
 #
 # html_theme_options = {}
-html_theme_options = {
+html_theme_options = {'logo': 'doc/rose_.png'
 }
 
 

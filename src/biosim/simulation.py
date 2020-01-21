@@ -120,7 +120,8 @@ class BioSim:
         img_base=None,
         img_fmt="png",
         movie_fmt="mp4",
-        island_save_name=None
+        island_save_name=None,
+        store_stats=False
     ):
         """
         :param island_map: Multi-line string specifying island geography
@@ -133,6 +134,10 @@ class BioSim:
         :param img_base: String with beginning of file name for figures,
             including path
         :param img_fmt: String with file type for figures, e.g. 'png'
+        :param island_save_name: Name of previously saved game, directory is
+            already defined within the project.
+        :param store_stats: boolean statement, wether to store all dead and
+            born animals overtime for analysis
 
         If ymax_animals is None, the y-axis limit should be adjusted
         automatically.
@@ -153,9 +158,9 @@ class BioSim:
             ini_pop = self.default_population
         if island_save_name is None:
             if island_map is None:
-                self.island = Island(self.default_map, ini_pop)
+                self.island = Island(self.default_map, ini_pop, store_stats)
             else:
-                self.island = Island(island_map, ini_pop)
+                self.island = Island(island_map, ini_pop, store_stats)
         else:
             self.island = load_sim(island_save_name)
 
@@ -199,7 +204,7 @@ class BioSim:
 
         map_params[landscape].set_parameters(**params)
 
-    def clean_simulation(self, num_years): # Change name and docstring
+    def clean_simulation(self, num_years):  # Change name and docstring
         """
         A simulation for running profile, so that it doesnt care about
         the visuals.
@@ -258,9 +263,6 @@ class BioSim:
 
         :param population: List of dictionaries specifying population
 
-        Parameters
-        ----------
-        self
         """
         self.island.add_population(population)
 
@@ -295,6 +297,63 @@ class BioSim:
         df_sim = pd.DataFrame.from_dict(dict_for_df)
         df_sim.to_csv(r'C:\Users\pbmar\Documents\NMBU\INF200\data.csv')
         return df_sim
+
+    def island_stats(self):
+        """
+        Creates dictionary for birth and death rate. Can be used as an example
+        for extracting data from stats.
+
+        Returns
+        -------
+        death_rate_per_year_herb : dict
+            key : year, value : float
+        death_rate_per_year_carn : dict
+            key : year,  value : float
+        birth_rate_per_year_herb : dict
+            key : year, value : float
+        birth_rate_per_year_carn : dict
+            key : year, value : float
+
+        """
+        death_rate_per_year_herb = {}
+        death_rate_per_year_carn = {}
+        birth_rate_per_year_herb = {}
+        birth_rate_per_year_carn = {}
+
+        for year, value in self.island.stats.items():
+            deaths_herb = 0
+            deaths_carn = 0
+            born_herb = 0
+            born_carn = 0
+            death_per_pos_herb = value['Herbivore']['death']
+            death_per_pos_carn = value['Carnivore']['death']
+            birth_per_pos_herb = value['Herbivore']['birth']
+            birth_per_pos_carn = value['Carnivore']['birth']
+
+            N_herbivores = value['Herbivore']['alive']
+            for dead in death_per_pos_herb.values():
+                deaths_herb += len(dead)
+            death_rate_per_year_herb[year] = deaths_herb / N_herbivores
+
+            for born in birth_per_pos_herb.values():
+                born_herb += len(born)
+            birth_rate_per_year_herb[year] = born_herb / N_herbivores
+
+            N_carnivores = value['Carnivore']['alive']
+            if N_carnivores <= 0:
+                continue
+            for dead in death_per_pos_carn.values():
+                deaths_carn += len(dead)
+            death_rate_per_year_carn[year] = deaths_carn / N_carnivores
+
+            for born in birth_per_pos_carn.values():
+                born_carn += len(born)
+            birth_rate_per_year_carn[year] = born_carn / N_carnivores
+
+        return (
+            death_rate_per_year_herb, death_rate_per_year_carn,
+            birth_rate_per_year_herb, birth_rate_per_year_carn
+        )
 
     def make_movie(self):
         """Create MPEG4 movie from visualization images saved."""

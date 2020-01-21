@@ -11,6 +11,31 @@ import matplotlib.colors as mcolors
 
 
 class Visuals:
+    """
+    Class handling the visual presentation, as well as storing of images
+
+    Parameters
+    ----------
+    island : object
+       Instance of Island
+    num_years_sim : int
+       Number of years to simulate, used for line graph
+    ymax_animals : int or float
+       Y-limit for line graph
+    cmax_animals : dict
+       Density for heat maps with 'Herbivore' or 'Carnivore' as key
+    img_base : path
+       Where to store pictures and make movie from
+    img_fmt : filetype
+       Default: 'png'
+
+    Attributes
+    ----------
+    cell_colors : dict
+        cell type to color name
+    density_heatmap : dict
+        animal type to int value
+    """
     cell_colors = {
         "Ocean": 'cyan',
         "Savanna": 'yellowgreen',
@@ -39,7 +64,7 @@ class Visuals:
         self.img_base = img_base
         self.img_fmt = img_fmt
         if ymax_animals is None:
-            self.ymax_animals = 17000
+            self.ymax_animals = 20000
         if cmax_animals is None:
             self.cmax_animals = self.density_heatmap
 
@@ -86,6 +111,14 @@ class Visuals:
         """
 
     def empty_nested_list(self):
+        """
+        Creates an empty list indexed by y and x (row, columns)
+        Returns
+        -------
+        empty_nested_list : list
+            Nested list
+
+        """
         empty_nested_list = []
         for y in range(self.y_len):
             empty_nested_list.append([])
@@ -94,6 +127,18 @@ class Visuals:
         return empty_nested_list
 
     def setup_graphics(self, island):
+        """
+        Sets up graphics and places figures in the right place.
+
+        Parameters
+        ----------
+        island : object
+            Instance of Island
+
+        Returns
+        -------
+
+        """
         if self.figure is None:
             self.figure = plt.figure(constrained_layout=True, figsize=(16, 9))
             self.grid = self.figure.add_gridspec(2, 24)
@@ -158,12 +203,12 @@ class Visuals:
 
         Parameters
         ----------
-        island_map - instance of a map
-        map_string - cleaned lines of string
+        island : instance of a map
 
         Returns
         -------
-        pixel_colors - nested list with quadruplets of rgba-values
+        pixel_colors : list
+            Nested with triplets of rgb-values
 
         """
         pixel_colors = self.empty_nested_list()
@@ -177,6 +222,12 @@ class Visuals:
         return pixel_colors
 
     def draw_geography(self):
+        """
+        Draws pixels for geography with right colors
+        Returns
+        -------
+
+        """
         self.island_map_ax.axis('off')
         self.island_map_img_ax = self.island_map_ax.imshow(
             self.pixel_colors)
@@ -190,6 +241,13 @@ class Visuals:
         """
 
     def draw_geography_exp(self):
+        """
+        Creates legend for geography map
+
+        Returns
+        -------
+
+        """
         self.island_map_exp_ax.axis('off')
         for ix, name in enumerate(self.cell_colors.keys()):
             self.island_map_exp_ax.add_patch(
@@ -202,9 +260,22 @@ class Visuals:
             )
 
     def update_year(self, island):
+        """Updates title of map to current year"""
         self.island_map_ax.set_title(f' Year: {island.year}')
 
     def draw_animals_over_time(self, island):
+        """
+        Draw line graph for herbivores and carnivores over time.
+
+        Parameters
+        ----------
+        island : object
+            Instance of Island
+
+        Returns
+        -------
+
+        """
         self.herbivores_over_time = island.herbivore_tot_data
         self.carnivores_over_time = island.carnivore_tot_data
         self.years = [x for x, _ in enumerate(island.herbivore_tot_data)]
@@ -221,6 +292,18 @@ class Visuals:
         self.animals_over_time_ax.legend(loc='upper left')
 
     def update_animals_over_time(self, island):
+        """
+        Collect data from island instance to plot graph
+
+        Parameters
+        ----------
+        island : object
+            Instance of Island
+
+        Returns
+        -------
+
+        """
         # Island has property or attribute year
         self.years.append(island.year)
 
@@ -236,6 +319,7 @@ class Visuals:
 
     def get_data_heat_map(self, island, data_type):
         """
+        Could have also used pandas DF to get data.
 
         Parameters
         ----------
@@ -254,6 +338,18 @@ class Visuals:
         return heat_map
 
     def draw_heat_map_herbivore(self, heat_map):
+        """
+        Draws heat map
+
+        Parameters
+        ----------
+        heat_map : list
+            Nested list with int
+
+        Returns
+        -------
+
+        """
         self.heat_map_herbivores_ax.axis('off')
         self.heat_map_herbivores_ax.set_title('Distribution of Herbivores')
         self.heat_map_herb_img_ax = self.heat_map_herbivores_ax.imshow(
@@ -263,6 +359,18 @@ class Visuals:
         )
 
     def draw_heat_map_carnivore(self, heat_map):
+        """
+        Draws heat map
+
+        Parameters
+        ----------
+        heat_map : list
+           Nested list with int
+
+        Returns
+        -------
+
+        """
         self.heat_map_carnivores_ax.axis('off')
         self.heat_map_carnivores_ax.set_title('Distribution of Carnivores')
         self.heat_map_carn_img_ax = self.heat_map_carnivores_ax.imshow(
@@ -272,6 +380,18 @@ class Visuals:
         )
 
     def update_heat_maps(self, island):
+        """
+        Gets new data for heat map from island
+
+        Parameters
+        ----------
+        island : object
+            Instance of Island
+
+        Returns
+        -------
+
+        """
         heat_map_herb = self.get_data_heat_map(island, 'num_herbivores')
         self.heat_map_herb_img_ax.set_data(heat_map_herb)
 
@@ -279,12 +399,14 @@ class Visuals:
         self.heat_map_carn_img_ax.set_data(heat_map_carn)
 
     def update_fig(self, island):
+        """Updates the figure"""
         self.update_animals_over_time(island)
         self.update_heat_maps(island)
         self.update_year(island)
         plt.pause(1e-10)
 
     def save_fig(self):
+        """Saves the figure at desired destination"""
         self.img_num += 1
         self.figure.savefig(
             f'{self.img_base}{self.img_num:03d}.{self.img_fmt}',

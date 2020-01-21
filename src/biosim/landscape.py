@@ -14,7 +14,6 @@ import random
 from numba import jit
 
 
-
 def choose_new_location(prob_list):
     """
     Draws one out of a list with weights.
@@ -46,6 +45,10 @@ class BaseCell:
     herbivores : list
     carnivores : list
     fodder : float
+    death_list : list
+        list for stats
+    birth_list : list
+        list for stats
     """
     passable = True
     f_max = 0
@@ -226,8 +229,13 @@ class BaseCell:
 
         Returns
         -------
+        birth_list_herb : list
+            list of offspring
+        birth_list_carn : list
+            list of offspring
 
         """
+        birth_list_herb = []
         number_of_adult_herbivores = self.num_herbivores
         if number_of_adult_herbivores > 1:
             for herbivore in self.herbivores:
@@ -235,7 +243,9 @@ class BaseCell:
                 if not offspring:
                     continue
                 self.herbivores.append(offspring)
+                birth_list_herb.append(offspring)
 
+        birth_list_carn = []
         number_of_adult_carnivores = self.num_carnivores
         if number_of_adult_carnivores > 1:
             for carnivore in self.carnivores:
@@ -243,6 +253,10 @@ class BaseCell:
                 if not offspring:
                     continue
                 self.carnivores.append(offspring)
+                birth_list_carn.append(offspring)
+
+        return birth_list_herb, birth_list_carn
+
 
     def lose_weight(self):
         """Makes animals in cell lose_weight"""
@@ -322,24 +336,30 @@ class BaseCell:
 
         Returns
         -------
+        death_list_herb : list
+            Herbivore instances that died
+        death_list_carn : list
+            Carnivore instances that died
 
         """
 
-        death_list = []
+        death_list_herb = []
         for herbivore in self.herbivores:
             if herbivore.death():
-                death_list.append(herbivore)
+                death_list_herb.append(herbivore)
 
-        for dead in death_list:
+        for dead in death_list_herb:
             self.herbivores.remove(dead)
 
-        death_list = []
+        death_list_carn = []
         for carnivore in self.carnivores:
             if carnivore.death():
-                death_list.append(carnivore)
+                death_list_carn.append(carnivore)
 
-        for dead in death_list:
+        for dead in death_list_carn:
             self.carnivores.remove(dead)
+
+        return death_list_herb, death_list_carn
 
     @property
     def propensity(self):
