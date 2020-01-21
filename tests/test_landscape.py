@@ -10,89 +10,9 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 from src.biosim.landscape import BaseCell, Ocean, Mountain, Desert, \
     Savanna, Jungle, choose_new_location
 from src.biosim.animals import BaseAnimal, Herbivore, Carnivore
-from tests.test_island import test_island
 import pytest
 import warnings
 import math
-
-
-@pytest.fixture
-def prob_herb():
-    """
-    It
-
-    Returns
-    -------
-
-    """
-    island = test_island()
-    prob_herb = island.probability_calc((1, 1), Herbivore())
-
-
-@pytest.fixture
-def prob_herb():
-    island = test_island()
-    prob_carn = island.probability_calc((1, 1), Carnivore())
-
-
-@pytest.fixture
-def parameters_savanna():
-    return {'passable': False,
-            'f_max': 100,
-            'alpha': 1
-            }
-
-
-@pytest.fixture
-def default_parameters_savanna():
-    return {'f_max': 300,
-            'alpha': 0.3
-            }
-
-
-@pytest.fixture
-def animal_list():
-    """
-    Must be to herbivores and one carnivore. (At least that maybe)
-
-    Returns
-    -------
-
-    """
-    return [
-        {'species': 'Herbivore', 'age': 10, 'weight': 100},
-        {'species': 'Herbivore', 'age': 9, 'weight': 10.3},
-        {'species': 'Carnivore', 'age': 5, 'weight': 50},
-            ]
-
-
-@pytest.fixture
-def carnivore_list():
-    return [
-        {'species': 'Carnivore', 'age': 10, 'weight': 100},
-        {'species': 'Carnivore', 'age': 9, 'weight': 10.3},
-        {'species': 'Carnivore', 'age': 5, 'weight': 50},
-            ]
-
-
-@pytest.fixture
-def jungle_many_animals(animal_list):
-    list_tuple = []
-    for x in range(10):
-        for y in range(5, 20):
-            list_tuple.append((x, y))
-    jungle = Jungle()
-    for x, y in list_tuple:
-        jungle.herbivores.append(Herbivore(x, y))
-    jungle.add_animals(animal_list)
-    return jungle
-
-
-@pytest.fixture
-def jungle_with_animals(animal_list):
-    jungle = Jungle()
-    jungle.add_animals(animal_list)
-    return jungle
 
 
 class TestBaseCell:

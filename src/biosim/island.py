@@ -98,18 +98,13 @@ class Island:
 
         return num_animals_per_species
 
-    def update_data_list(self):
+    def update_data_list(self): # Changed
         """Updates list for use in visualization"""
-        herbivores = self.num_animals_per_species['Herbivore']
-        carnivores = self.num_animals_per_species['Carnivore']
-        if herbivores > 0:
-            self.herbivore_tot_data.append(herbivores)
-        else:
-            self.herbivore_tot_data.append(0)
-        if carnivores > 0:
-            self.carnivore_tot_data.append(carnivores)
-        else:
-            self.carnivore_tot_data.append(0)
+        animals_per_species = self.num_animals_per_species
+        herbivores = animals_per_species['Herbivore']
+        carnivores = animals_per_species['Carnivore']
+        self.herbivore_tot_data.append(herbivores)
+        self.carnivore_tot_data.append(carnivores)
 
     @staticmethod
     def clean_multi_line_string(island_map_string): # Change name to clean and check
@@ -188,6 +183,8 @@ class Island:
         North, West, South and East of the current position.
 
         Then calculates the probability for the type of animal.
+
+        If the animal has nowhere to move, it returns None
         Parameters
         ----------
         pos : tuple
@@ -200,7 +197,7 @@ class Island:
         prob_list : list of tuples
             (Coordinate(y, x), and probabilities)
         """
-        species = animal.__name__
+        species = animal.__name__ # Look at migrate
         y_cord, x_cord = pos
         loc_1 = (y_cord - 1, x_cord)
         loc_2 = (y_cord + 1, x_cord)
@@ -221,6 +218,8 @@ class Island:
                                    )
 
         prop_sum = np.sum(sum(dict(propensity_list).values()))
+        if prop_sum == 0:
+            return None
         prob_list = []
         for loc, prop in propensity_list:
             prob_list.append((loc, (prop / prop_sum)))
@@ -254,8 +253,8 @@ class Island:
         """
         for pos, cell in self.map.items():
             if cell.passable and cell.num_animals > 0:
-                prob_herb = self.probability_calc(pos, Herbivore)
-                prob_carn = self.probability_calc(pos, Carnivore)
+                prob_herb = self.probability_calc(pos, Herbivore) # Change to 'Herbivore'
+                prob_carn = self.probability_calc(pos, Carnivore) # Change to 'Carnivore'
                 moved_herb, moved_carn = cell.migrate(prob_herb, prob_carn)
                 for loc, herb in moved_herb:
                     self.add_herb_to_new_cell(loc, herb)

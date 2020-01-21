@@ -11,29 +11,6 @@ from src.biosim.animals import BaseAnimal, Carnivore, Herbivore
 import pytest
 
 
-@pytest.fixture
-def carnivore_parameters_right():
-    return {'eta': 0.125, 'phi_age': 0.4, 'DeltaPhiMax': 10.0}
-
-
-@pytest.fixture
-def carnivore_parameters_wrong():
-    return {'zettet': 7}
-
-
-@pytest.fixture
-def herbivore_list():
-    list_ = []
-    for x in range(10):
-        for y in range(5, 20):
-            list_.append((x, y))
-    herb_list = []
-    for x, y in list_:
-        herb_list.append(Herbivore(x, y))
-
-    return herb_list
-
-
 def reset_parameters():
     herbivore_parameters_right = {'w_birth': 8.0,
                                   'sigma_birth': 1.5,

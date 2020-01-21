@@ -67,7 +67,7 @@ def load_sim(name):
 
 
 class BioSim:
-    default_map = """\
+    default_map = """
                       OOOOOOOOOOOOOOOOOOOOO
                       OSSSSSJJJJMMJJJJJJJOO
                       OSSSSSJJJJMMJJJJJJJOO
@@ -91,6 +91,24 @@ class BioSim:
                       OOOSSSSSSOOOOOOOOOOOO
                       OOOOOOOOOOOOOOOOOOOOO
                   """
+    default_map = textwrap.dedent(default_map)
+
+    default_population = [
+        {
+            "loc": (10, 10),
+            "pop": [
+                {"species": "Herbivore", "age": 5, "weight": 20}
+                for _ in range(150)
+            ],
+        },
+        {
+            "loc": (10, 10),
+            "pop": [
+                {"species": "Carnivore", "age": 5, "weight": 20}
+                for _ in range(40)
+            ],
+        }
+    ]
 
     def __init__(
         self,
@@ -131,7 +149,8 @@ class BioSim:
         where img_no are consecutive image numbers starting from 0.
         img_base should contain a path and beginning of a file name.
         """
-
+        if ini_pop is None:
+            ini_pop = self.default_population
         if island_save_name is None:
             if island_map is None:
                 self.island = Island(self.default_map, ini_pop)
@@ -180,7 +199,7 @@ class BioSim:
 
         map_params[landscape].set_parameters(**params)
 
-    def clean_simulation(self, num_years):
+    def clean_simulation(self, num_years): # Change name and docstring
         """
         A simulation for running profile, so that it doesnt care about
         the visuals.
@@ -197,8 +216,7 @@ class BioSim:
         while index <= num_years:
             self.island.simulate_one_year()
             index += 1
-            print(self.num_animals_per_species, '\n',
-                  self.year)
+            print(self.year, '\n', self.num_animals_per_species)
 
     def simulate(self, num_years, vis_years=1, img_years=None):
         """
@@ -257,6 +275,7 @@ class BioSim:
 
     @property
     def animal_distribution(self):
+        # Add save the data frame if the user gives a save path
         """Pandas DataFrame with animal count per species for each cell
         on island."""
         dict_for_df = {"Row": [], "Col": [], "Herbivore": [], "Carnivore": []}
@@ -295,44 +314,4 @@ class BioSim:
 
 
 if __name__ == '__main__':
-    geography = """\
-            OOOOOOOOOOOOOOOOOOOOO
-            OOOOOOOOSMMMMJJJJJJJO
-            OSSSSSJJJJMMJJJJJJJOO
-            OSSSSSSSSSMMJJJJJJOOO
-            OSSSSSJJJJJJJJJJJJOOO
-            OSSSSSJJJDDJJJSJJJOOO
-            OSSJJJJJDDDJJJSSSSOOO
-            OOSSSSJJJDDJJJSOOOOOO
-            OSSSJJJJJDDJJJJJJJOOO
-            OSSSSJJJJDDJJJJOOOOOO
-            OOSSSSJJJJJJJJOOOOOOO
-            OOOSSSSJJJJJJJOOOOOOO
-            OOOOOOOOOOOOOOOOOOOOO
-            """
-    geography = textwrap.dedent(geography)
-
-    ini_herbs = [
-        {
-            "loc": (2, 1),
-            "pop": [
-                {"species": "Herbivore", "age": 5, "weight": 20}
-                for _ in range(2000)
-            ],
-        }
-    ]
-
-    ini_carn = [
-        {
-            "loc": (2, 1),
-            "pop": [
-                {"species": "Carnivore", "age": 2, "weight": 40}
-                for _ in range(6)
-            ],
-        }
-    ]
-
-    sim = BioSim(geography, ini_herbs,
-                 img_base=(r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island'))
-    sim.simulate(50)
-    sim.make_movie()
+  pass
