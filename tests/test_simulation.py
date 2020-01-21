@@ -20,7 +20,7 @@ def test_save_sim():
     sim = BioSim()
     sim.clean_simulation(10)
     sim.save_sim(save_load_name)
-    assert os.path.isfile(r'saved_simulation/' + save_load_name + '.pkl')
+    assert os.path.isfile(save_load_name + '.pkl')
 
 
 def test_load_sim():
@@ -74,15 +74,15 @@ class TestSimulation:
 
     def test_simulate(self):
         sim = BioSim(
-            img_base=r'..\images_and_movies\test_sim_every_second_img')
+            img_base=r'test_sim_every_second_img')
         sim.simulate(10, img_years=2)
         assert os.path.isfile(
-            r'..\images_and_movies\test_sim_every_second_img' + '006' + '.png')
+            r'test_sim_every_second_img' + '00006' + '.png')
         assert not os.path.isfile(
-            r'..\images_and_movies\test_sim_every_second_img' + '007' + '.png')
+            r'test_sim_every_second_img' + '00007' + '.png')
 
         with pytest.raises(ValueError):
-            sim = BioSim(img_base=r'..\images_and_movies\test_sim')
+            sim = BioSim(img_base=r'test_sim')
             sim.simulate(10, 5, 4)
 
     def test_add_population(self):
@@ -122,10 +122,10 @@ class TestSimulation:
         assert True
 
     def test_make_movie(self):
-        sim = BioSim(img_base=r'..\images_and_movies\test_sim')
+        sim = BioSim(img_base=r'test_sim')
         sim.simulate(10)
         sim.make_movie()
-        assert os.path.isfile(r'..\images_and_movies\test_sim.mp4')
+        assert os.path.isfile(r'test_sim.mp4')
 
         with pytest.raises(RuntimeError):
             sim = BioSim()
@@ -133,7 +133,7 @@ class TestSimulation:
             sim.make_movie()
 
         with pytest.raises(ValueError):
-            sim = BioSim(img_base=r'..\images_and_movies\test_sim',
+            sim = BioSim(img_base=r'test_sim',
                          movie_fmt='gif')
             sim.simulate(10)
             sim.make_movie()
