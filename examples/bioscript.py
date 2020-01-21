@@ -2,6 +2,7 @@ import textwrap
 import matplotlib.pyplot as plt
 
 from src.biosim.simulation import BioSim
+from pprint import pprint
 
 """
 Compatibility check for BioSim simulations.
@@ -50,10 +51,11 @@ if __name__ == "__main__":
     )
     sim.set_landscape_parameters("J", {"f_max": 700})
 
-    sim.clean_simulation(100)
+    sim.clean_simulation(50)
     #simulate(num_years=100, vis_years=1, img_years=2000)
 
     sim.add_population(population=ini_carns)
     #sim.simulate(num_years=100, vis_years=1, img_years=2000)
-    sim.clean_simulation(100)
-    plt.savefig("check_sim.pdf")
+    sim.clean_simulation(50)
+    sim.simulate(50)
+

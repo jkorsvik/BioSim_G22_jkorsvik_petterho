@@ -110,7 +110,6 @@ class BaseCell:
         self._propensity = None
         self.fodder = 0
 
-
     def grow(self):
         """Grows fodder in cell"""
         pass
@@ -337,6 +336,10 @@ class BaseCell:
 
         Returns
         -------
+        death_list_herb : list
+            Herbivore instances that died
+        death_list_carn : list
+            Carnivore instances that died
 
         """
 
