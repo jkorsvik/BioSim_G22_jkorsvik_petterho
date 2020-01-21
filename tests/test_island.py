@@ -218,7 +218,7 @@ class TestIsland:
         assert False
 
 
-class TestIslandInteractions:
+class TestIslandSpecialCases:
     def test_species_separated(self, test_island):
         for _ in range(100):
             test_island.simulate_one_year()
