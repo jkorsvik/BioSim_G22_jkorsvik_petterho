@@ -34,6 +34,7 @@ class TestBaseCell:
         assert type(cell.carnivores) is list
         assert cell.fodder == 0
 
+
     def test_grow(self):
         cell = BaseCell()
         cell.grow()
@@ -45,15 +46,28 @@ class TestBaseCell:
         assert jungle.num_herbivores == 2
         assert jungle.num_carnivores == 1
         assert jungle.num_animals == len(animal_list)
+
         herbivore0 = jungle.herbivores[0]
         herbivore1 = jungle.herbivores[1]
         carnivore0 = jungle.carnivores[0]
+
         assert herbivore0.age == animal_list[0]['age']
         assert herbivore0.weight == animal_list[0]['weight']
         assert herbivore1.age == animal_list[1]['age']
         assert herbivore1.weight == animal_list[1]['weight']
         assert carnivore0.age == animal_list[2]['age']
         assert carnivore0.weight == animal_list[2]['weight']
+
+        animal_list_with_wrong_parameter = [
+        {'species': 'Carnivore', 'age': 0.5, 'weight': 100}]
+        with pytest.raises(ValueError):
+            jungle.add_animals(animal_list_with_wrong_parameter)
+
+        animal_list_with_wrong_parameter = [
+            {'species': 'Carnivore', 'age': 3, 'weight': -10}]
+        with pytest.raises(ValueError):
+            jungle.add_animals(animal_list_with_wrong_parameter)
+
 
     def test_add_migrated_herb(self):
         cell = BaseCell()
@@ -97,6 +111,16 @@ class TestBaseCell:
             assert carn not in jungle_many_animals.carnivores
             assert loc != (1, 1)
             assert loc == (1, 2) or loc == (2, 1)
+
+        moved_herb, moved_carn = jungle_many_animals.migrate(prob_herb,
+                                                             prob_carn)
+        assert len(moved_herb) == 0 and len(moved_carn) == 0
+
+        moved_herb, moved_carn = jungle_many_animals.migrate(prob_herb=None,
+                                                             prob_carn=None)
+        assert len(moved_herb) == 0 and len(moved_carn) == 0
+
+
 
     def test_procreate(self, jungle_with_animals, animal_list):
         # Works only with two or more herbivores and one or zero carnivores
@@ -293,7 +317,7 @@ class TestJungle:
         assert a.weight == a_weight + 5 * 0.9
 
 
-class TestMoreThanOneCell:
+class TestCellsSpecialCases:
     def test_set_parameters_only_changes_one_class(self, parameters_savanna,
                                                    default_parameters_savanna):
         jungle = Jungle()
@@ -304,6 +328,3 @@ class TestMoreThanOneCell:
         assert savanna.alpha == parameters_savanna['alpha']
         assert jungle.f_max == 800
         savanna.set_parameters(**default_parameters_savanna)
-
-    def test_something(self):
-        assert True
