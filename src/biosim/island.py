@@ -198,7 +198,7 @@ class Island:
         prob_list : list of tuples
             (Coordinate(y, x), and probabilities)
         """
-        species = animal.__name__
+        species = animal.__name__ # Look at migrate
         y_cord, x_cord = pos
         loc_1 = (y_cord - 1, x_cord)
         loc_2 = (y_cord + 1, x_cord)
@@ -254,8 +254,8 @@ class Island:
         """
         for pos, cell in self.map.items():
             if cell.passable and cell.num_animals > 0:
-                prob_herb = self.probability_calc(pos, Herbivore)
-                prob_carn = self.probability_calc(pos, Carnivore)
+                prob_herb = self.probability_calc(pos, Herbivore) # Change to 'Herbivore'
+                prob_carn = self.probability_calc(pos, Carnivore) # Change to 'Carnivore'
                 moved_herb, moved_carn = cell.migrate(prob_herb, prob_carn)
                 for loc, herb in moved_herb:
                     self.add_herb_to_new_cell(loc, herb)
