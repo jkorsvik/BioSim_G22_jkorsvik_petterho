@@ -490,11 +490,11 @@ class Jungle(BaseCell):
     Subclass of cell
 
     Attributes
-    ------
-    self.f_max : max amount of fodder(food) in the cell
+    ---------
+    f_max : max amount of fodder(food) in the cell
 
     Methods
-    ------
+    -------
     grow : updates amount of fodder in cell
     """
     passable = True
