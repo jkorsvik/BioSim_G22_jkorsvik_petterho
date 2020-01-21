@@ -14,6 +14,12 @@ This is a simulation of
 The main interface is within the simulation module.
 Beneath the visualization and island modules are called.
 
+In simulation you can changed the parameters for the animals and environment,
+you can simulate how ever long you want to, and save both figure and the island
+for another time.
+
+Have Fun!
+
 
 .. toctree::
    :maxdepth: 2
