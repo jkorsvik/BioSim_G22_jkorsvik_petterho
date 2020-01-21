@@ -204,7 +204,7 @@ class BioSim:
 
         map_params[landscape].set_parameters(**params)
 
-    def clean_simulation(self, num_years):  # Change name and docstring
+    def clean_simulation(self, num_years): # Change name and docstring
         """
         A simulation for running profile, so that it doesnt care about
         the visuals.
@@ -364,7 +364,7 @@ class BioSim:
         if self.movie_fmt == 'mp4':
             try:
                 subprocess.check_call(f'{FFMPEG} -y -r 24 -i '
-                                      f'{self.img_base}%03d.{self.img_fmt}'
+                                      f'{self.img_base}%05d.{self.img_fmt}'
                                       f' -c:v libx264 -vf fps=25 -pix_fmt '
                                       f'yuv420p '
                                       f'{self.img_base}.{self.movie_fmt}')
