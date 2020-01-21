@@ -30,6 +30,10 @@ def check_length(lines):
     return True
 
 
+def is_list_longer_than(list_, number):
+    return len(list_) > number
+
+
 class Island:
     map_params = {'O': Ocean,
                   'M': Mountain,
@@ -59,8 +63,13 @@ class Island:
         self.map = self.make_map(island_map_string)
         self.add_population(ini_pop)
         self._year = 0
+
         self.herbivore_tot_data = []
+
         self.carnivore_tot_data = []
+
+        self.stats = {}
+
 
     @property
     def num_animals(self):
@@ -98,13 +107,14 @@ class Island:
 
         return num_animals_per_species
 
-    def update_data_list(self): # Changed
+    def update_data_list(self):
         """Updates list for use in visualization"""
         animals_per_species = self.num_animals_per_species
         herbivores = animals_per_species['Herbivore']
         carnivores = animals_per_species['Carnivore']
         self.herbivore_tot_data.append(herbivores)
         self.carnivore_tot_data.append(carnivores)
+
 
     @staticmethod
     def clean_multi_line_string(island_map_string): # Change name to clean and check
@@ -326,8 +336,10 @@ class Island:
 
     def die(self):
         """Calls die in all cells of Island.map"""
-        for cell in self.map.values():
-            cell.die()
+        for pos, cell in self.map.items():
+            herb_birth, carn_birth = cell.die()
+            self.stats[self.year]['Herbivore']['death'][pos] = herb_birth
+            self.stats[self.year]['Carnivore']['death'][pos] = carn_birth
 
     @property
     def year(self):
