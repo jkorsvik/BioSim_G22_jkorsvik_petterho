@@ -224,9 +224,11 @@ dmypy.json
 
 doc/_build/
 
+*.mp4
 
-images_and_movies/
+*.png
 
 *.pkl
 
-examples/
+*.pdf
+
