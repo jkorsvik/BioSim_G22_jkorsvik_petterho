@@ -66,6 +66,11 @@ class TestIsland:
         assert isinstance(island.map[(1, 2)], Savanna)
         assert isinstance(island.map[(2, 3)], Ocean)
 
+        with pytest.raises(ValueError):
+            island = Island(island_map_string='OOO\nOHO\nOOO',
+                            ini_pop=ini_herbs)
+            island.simulate_one_year()
+
     def test_probability_calc(self, ini_herbs, ini_carns):
         island = Island('OOOO\nOJJO\nOOOO', ini_carns)
         prob_list = island.probability_calc((1, 1), Herbivore)
@@ -150,6 +155,28 @@ class TestIsland:
         for carnivore in test_island.map[(1, 2)].carnivores:
             assert carnivore.age == 10
             assert carnivore.weight == 14.5
+        with pytest.raises(ValueError):
+            test_island.add_population([{'loc': (5, 5),
+                                         'pop': [{"species": "Herbivore",
+                                                  "age": 5,
+                                                  "weight": 40},
+                                                 {"species": "Carnivore",
+                                                  "age": 10,
+                                                  "weight": 14.5}
+                                                 ]
+                                         }])
+
+        with pytest.raises(ValueError):
+            test_island.add_population([{'loc': (0, '0'),
+                                         'pop': [{"species": "Herbivore",
+                                                  "age": 5,
+                                                  "weight": 40},
+                                                 {"species": "Carnivore",
+                                                  "age": 10,
+                                                  "weight": 14.5}
+                                                 ]
+                                         }])
+
 
     def test_feed(self, test_island):
         test_island.feed()
