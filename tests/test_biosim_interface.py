@@ -108,20 +108,21 @@ def test_set_param_landscape(lscape, params):
 
 
 def test_initial_population():
+    # Changed to zeroth index
     """Test that population can be placed on construction"""
 
     BioSim(
         island_map="OOOO\nOJSO\nOOOO",
         ini_pop=[
             {
-                "loc": (2, 2),
+                "loc": (1, 1),
                 "pop": [
                     {"species": "Herbivore", "age": 1, "weight": 10.0},
                     {"species": "Carnivore", "age": 1, "weight": 10.0},
                 ],
             },
             {
-                "loc": (2, 3),
+                "loc": (1, 2),
                 "pop": [
                     {"species": "Herbivore", "age": 1, "weight": 10.0},
                     {"species": "Carnivore", "age": 1, "weight": 10.0},
@@ -139,19 +140,20 @@ def plain_sim():
 
 
 def test_add_population(plain_sim):
+    # Changed to zeroth index
     """Test that population can be added to simulation"""
 
     plain_sim.add_population(
         [
             {
-                "loc": (2, 2),
+                "loc": (1, 1),
                 "pop": [
                     {"species": "Herbivore", "age": 1, "weight": 10.0},
                     {"species": "Carnivore", "age": 1, "weight": 10.0},
                 ],
             },
             {
-                "loc": (2, 3),
+                "loc": (1, 2),
                 "pop": [
                     {"species": "Herbivore", "age": 1, "weight": 10.0},
                     {"species": "Carnivore", "age": 1, "weight": 10.0},
