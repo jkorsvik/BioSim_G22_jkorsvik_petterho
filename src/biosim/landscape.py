@@ -190,16 +190,19 @@ class BaseCell:
         """
         moved_herb = []
         moved_carn = []
+
+        if prob_herb is None and prob_carn is None:
+            return moved_herb, moved_carn
+
         for herb in self.herbivores:
             if herb.will_migrate():
-                if prob_herb is not None:
-                    loc = choose_new_location(prob_herb)
-                    moved_herb.append((loc, herb))
+                loc = choose_new_location(prob_herb)
+                moved_herb.append((loc, herb))
+
         for carn in self.carnivores:
             if carn.will_migrate():
-                if prob_carn is not None:
-                    loc = choose_new_location(prob_carn)
-                    moved_carn.append((loc, carn))
+                loc = choose_new_location(prob_carn)
+                moved_carn.append((loc, carn))
 
         for loc, herb in moved_herb:
             self.remove_migrated_herb(herb)
