@@ -70,7 +70,7 @@ def ini_carns():
 
 
 @pytest.fixture
-def prob_herb():
+def prob_herb(test_island):
     """
     It
 
@@ -79,14 +79,14 @@ def prob_herb():
 
     """
     island = test_island
-    prob_herb = island.probability_calc((1, 1), Herbivore())
+    prob_herb = island.probability_calc((1, 1), Herbivore)
     return prob_herb
 
 
 @pytest.fixture
-def prob_herb():
+def prob_carn(test_island):
     island = test_island
-    prob_carn = island.probability_calc((1, 1), Carnivore())
+    prob_carn = island.probability_calc((1, 1), Carnivore)
     return prob_carn
 
 
