@@ -13,20 +13,26 @@ from src.biosim.simulation import BioSim, load_sim, save_sim
 from src.biosim.landscape import Ocean, Mountain, Jungle, Desert, Savanna
 from src.biosim.animals import Herbivore, Carnivore
 
+save_load_name = 'test_save_file'
+
 
 def test_save_sim():
-    # Cant be checked from here with the current setup
-    assert False
+    sim = BioSim()
+    sim.clean_simulation(10)
+    sim.save_sim(save_load_name)
+    assert os.path.isfile(r'saved_simulation/' + save_load_name + '.pkl')
 
 
 def test_load_sim():
-    # Didnt bother
-    assert False
+    # test_save_sim has to run before this
+    sim = BioSim(island_save_name=save_load_name)
+    assert sim.year == 10
 
 
 class TestSimulation:
     def test_init(self):
-        assert False
+        BioSim()
+        assert True
 
     def test_set_animal_parameters(self):
         BioSim.set_animal_parameters('Herbivore', {'mu': 3.9})
@@ -49,23 +55,35 @@ class TestSimulation:
         assert Savanna.alpha == 3.9
         with pytest.raises(KeyError):
             BioSim.set_landscape_parameters('B',
-                                         {'alpha': 42, 'f_max': 42})
+                                            {'alpha': 42, 'f_max': 42})
         with pytest.raises(ValueError):
             BioSim.set_landscape_parameters('S',
-                                         {'alpha': 42, 'f_max': -5})
+                                            {'alpha': 42, 'f_max': -5})
         with pytest.raises(TypeError):
             BioSim.set_landscape_parameters('S',
-                                         {'alpha': 42, 'maximus': 42})
+                                            {'alpha': 42, 'maximus': 42})
         assert Savanna.alpha == 3.9
         BioSim.set_landscape_parameters('S',
-                                        {'alpha': 0.3, 'f_max': 300})
+                                            {'alpha': 0.3, 'f_max': 300})
         assert Savanna.alpha == 0.3
 
     def test_clean_simulation(self):
-        assert False
+        sim = BioSim()
+        sim.clean_simulation(10)
+        assert sim.year == 10
 
     def test_simulate(self):
-        assert False
+        sim = BioSim(
+            img_base=r'..\images_and_movies\test_sim_every_second_img')
+        sim.simulate(10, img_years=2)
+        assert os.path.isfile(
+            r'..\images_and_movies\test_sim_every_second_img' + '006' + '.png')
+        assert not os.path.isfile(
+            r'..\images_and_movies\test_sim_every_second_img' + '007' + '.png')
+
+        with pytest.raises(ValueError):
+            sim = BioSim(img_base=r'..\images_and_movies\test_sim')
+            sim.simulate(10, 5, 4)
 
     def test_add_population(self):
         sim = BioSim()
