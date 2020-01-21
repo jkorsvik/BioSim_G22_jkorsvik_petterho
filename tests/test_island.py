@@ -14,7 +14,7 @@ from src.biosim.landscape import *
 
 @pytest.fixture
 def plain_map_string():
-    return Island.clean_multi_line_string("OOOO\nOJSO\nOOOO")
+    return "OOOO\nOJSO\nOOOO"
 
 
 @pytest.fixture
@@ -35,7 +35,7 @@ def test_island(ini_herbs, ini_carns):
             OOOO"""
     geogr = textwrap.dedent(geogr)
     test_island = Island(geogr, ini_herbs)
-    test_island.add_population(ini_carn)
+    test_island.add_population(ini_carns)
 
     return test_island
 
@@ -86,17 +86,17 @@ class TestIsland:
         assert test_island.num_animals == 210
 
     def test_num_animals_per_species(self, test_island, ini_herbs, ini_carns):
-        assert test_island.num_animals_per_species['Carnivores'] == 10
-        assert test_island.num_animals_per_species['Herbivores'] == 100
+        assert test_island.num_animals_per_species['Carnivore'] == 10
+        assert test_island.num_animals_per_species['Herbivore'] == 100
         test_island.add_population(ini_herbs)
         test_island.add_population(ini_carns)
-        assert test_island.num_animals_per_species['Carnivores'] == 20
-        assert test_island.num_animals_per_species['Herbivores'] == 200
+        assert test_island.num_animals_per_species['Carnivore'] == 20
+        assert test_island.num_animals_per_species['Herbivore'] == 200
 
     def test_update_data_list(self, test_island):
         test_island.simulate_one_year()
-        assert test_island.herbivore_tot_data == 100
-        assert test_island.carnivore_tot_data == 10
+        assert test_island.herbivore_tot_data[0] == 100
+        assert test_island.carnivore_tot_data[0] == 10
 
     def test_clean_multiline_string(self):
         string = ' OOO\nOJO\nOOO    '
@@ -119,7 +119,7 @@ class TestIsland:
         island = Island(plain_map_string, ini_herbs)
         assert isinstance(island.map[(1, 1)], Jungle)
         assert isinstance(island.map[(1, 2)], Savanna)
-        assert isinstance(island.map[(3, 3)], Ocean)
+        assert isinstance(island.map[(2, 3)], Ocean)
 
     def test_probability_calc(self, ini_herbs, ini_carns):
         island = Island('OOOO\nOJJO\nOOOO', ini_carns)
@@ -142,13 +142,13 @@ class TestIsland:
     def test_add_herb_to_new_cell(self, test_island):
         loc = (1, 2)
         assert test_island.map[loc].num_herbivores == 0
-        test_island.add_herb_to_new_cell(Herbivore())
+        test_island.add_herb_to_new_cell(loc, Herbivore())
         assert test_island.map[loc].num_herbivores == 1
 
-    def test_add_carn_to_new_cell(self):
+    def test_add_carn_to_new_cell(self, test_island):
         loc = (1, 2)
         assert test_island.map[loc].num_carnivores == 0
-        test_island.add_carn_to_new_cell(Carnivore())
+        test_island.add_carn_to_new_cell(loc, Carnivore())
         assert test_island.map[loc].num_carnivores == 1
 
     def test_migrate(self, test_island):
@@ -208,8 +208,9 @@ class TestIsland:
 
     def test_feed(self, test_island):
         test_island.feed()
+        test_island.map[(1, 1)].carnivores[0].weight = 170
         assert test_island.map[(1, 1)].herbivores[-1].weight > 40
-        assert test_island.map[(1, 1)].carnivores[-1].weight > 20
+        assert test_island.map[(1, 1)].carnivores[0].weight > 20
 
     def test_procreation(self, test_island):
         test_island.procreate()
@@ -231,8 +232,8 @@ class TestIsland:
 
     def test_lose_weight(self, test_island):
         test_island.lose_weight()
-        assert test_island.map[(1, 1)].herbivores[-1].weight > 40
-        assert test_island.map[(1, 1)].carnivores[-1].weight > 20
+        assert test_island.map[(1, 1)].herbivores[-1].weight < 40
+        assert test_island.map[(1, 1)].carnivores[-1].weight < 20
 
     def test_year(self, test_island):
         assert test_island.year == 0
