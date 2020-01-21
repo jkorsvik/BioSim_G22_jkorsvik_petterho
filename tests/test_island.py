@@ -22,8 +22,11 @@ def test_check_line_length():
 
 
 class TestIsland:
-    def test_init(self):
-        assert False
+    def test_init(self, plain_map_string, ini_herbs):
+        island = Island(plain_map_string, ini_herbs)
+        assert hasattr(island, 'map')
+        assert island.len_map_x == 4
+        assert island.len_map_y == 3
 
     def test_num_animals(self, test_island, ini_herbs):
         assert test_island.num_animals == 110
@@ -65,6 +68,11 @@ class TestIsland:
         assert isinstance(island.map[(1, 1)], Jungle)
         assert isinstance(island.map[(1, 2)], Savanna)
         assert isinstance(island.map[(2, 3)], Ocean)
+
+        with pytest.raises(ValueError):
+            island = Island(island_map_string='OOO\nOHO\nOOO',
+                            ini_pop=ini_herbs)
+            island.simulate_one_year()
 
     def test_probability_calc(self, ini_herbs, ini_carns):
         island = Island('OOOO\nOJJO\nOOOO', ini_carns)
@@ -150,6 +158,27 @@ class TestIsland:
         for carnivore in test_island.map[(1, 2)].carnivores:
             assert carnivore.age == 10
             assert carnivore.weight == 14.5
+        with pytest.raises(ValueError):
+            test_island.add_population([{'loc': (5, 5),
+                                         'pop': [{"species": "Herbivore",
+                                                  "age": 5,
+                                                  "weight": 40},
+                                                 {"species": "Carnivore",
+                                                  "age": 10,
+                                                  "weight": 14.5}
+                                                 ]
+                                         }])
+
+        with pytest.raises(ValueError):
+            test_island.add_population([{'loc': (0, '0'),
+                                         'pop': [{"species": "Herbivore",
+                                                  "age": 5,
+                                                  "weight": 40},
+                                                 {"species": "Carnivore",
+                                                  "age": 10,
+                                                  "weight": 14.5}
+                                                 ]
+                                         }])
 
     def test_feed(self, test_island):
         test_island.feed()
@@ -157,7 +186,7 @@ class TestIsland:
         assert test_island.map[(1, 1)].herbivores[-1].weight > 40
         assert test_island.map[(1, 1)].carnivores[0].weight > 20
 
-    def test_procreation(self, test_island):
+    def test_procreate(self, test_island):
         test_island.procreate()
         assert test_island.num_animals > 110
 
@@ -180,6 +209,16 @@ class TestIsland:
         assert test_island.map[(1, 1)].herbivores[-1].weight < 40
         assert test_island.map[(1, 1)].carnivores[-1].weight < 20
 
+    def test_die(self, test_island):
+        Herbivore.set_parameters(omega=1)
+        num_before = test_island.num_animals
+        for _ in range(10):
+            test_island.die()
+        num_after = test_island.num_animals
+        print(num_before, num_after)
+        assert num_before > num_after
+        Herbivore.set_parameters(omega=0.4)
+
     def test_year(self, test_island):
         assert test_island.year == 0
         test_island.simulate_one_year()
@@ -187,11 +226,12 @@ class TestIsland:
         test_island.year = 5
         assert test_island.year == 5
 
-    def test_simulate_one_year(self):
-        assert False
+    def test_simulate_one_year(self, test_island):
+        test_island.simulate_one_year()
+        assert True
 
 
-class TestIslandInteractions:
+class TestIslandSpecialCases:
     def test_species_separated(self, test_island):
         for _ in range(100):
             test_island.simulate_one_year()
@@ -200,8 +240,3 @@ class TestIslandInteractions:
                     assert isinstance(herbivore, Herbivore)
                 for carnivore in cell.carnivores:
                     assert isinstance(carnivore, Carnivore)
-
-    def test_something(self, just_five):
-        assert just_five == 5
-
-

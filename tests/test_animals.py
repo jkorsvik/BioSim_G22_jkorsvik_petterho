@@ -9,7 +9,7 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 from src.biosim.animals import BaseAnimal, Carnivore, Herbivore
 import pytest
-
+import unittest.mock as mock
 
 def reset_parameters():
     herbivore_parameters_right = {'w_birth': 8.0,
@@ -46,6 +46,12 @@ def reset_parameters():
     Carnivore.set_parameters(**carnivore_parameters_right)
     Herbivore.set_parameters(**herbivore_parameters_right)
 
+
+def return_0():
+    return 0
+
+def return_negative(arg1, arg2):
+    return -1
 
 class TestAnimal:
     def test_set_parameters(self, carnivore_parameters_right,
@@ -151,6 +157,10 @@ class TestAnimal:
             except AttributeError:
                 pass
         reset_parameters()
+
+        with mock.patch('random.random', return_0()):
+            animal = BaseAnimal()
+            assert animal.birth(10) == 0
 
     def test_death(self):
         animal = BaseAnimal(50, 1.4)
@@ -273,6 +283,9 @@ class TestCarnivore:
         reset_parameters()
 
 
-class TestAnimalInteraction:
-    def test_something(self):
-        assert True
+class TestAnimalSpecialCases:
+    def test_birth_weight_0(self):
+        with mock.patch('random.gauss', return_negative):
+            animal = BaseAnimal()
+            assert animal.weight == 0
+

@@ -216,7 +216,7 @@ class BioSim:
         while index <= num_years:
             self.island.simulate_one_year()
             index += 1
-            print(self.year, '\n', self.num_animals_per_species)
+            # print(self.year, '\n', self.num_animals_per_species)
 
     def simulate(self, num_years, vis_years=1, img_years=None):
         """
@@ -229,20 +229,26 @@ class BioSim:
 
         Image files will be numbered consecutively.
         """
+
         num_years_fig = self.island.year + num_years
         visuals = Visuals(self.island, num_years_fig, self.ymax_animals,
                           self.cmax_animals, self.img_base, self.img_fmt)
+
         if img_years is None:
             img_years = vis_years
-        visuals.save_fig()
+        if img_years % vis_years != 0:
+            raise ValueError('img_years must be a multiple of vis_years')
+        if self.img_base is not None:
+            visuals.save_fig()
 
         index = 1
         while index <= num_years:
             self.island.simulate_one_year()
             if index % vis_years == 0:
                 visuals.update_fig(self.island)
-            if index % img_years == 0:
-                visuals.save_fig()
+            if self.img_base is not None:
+                if index % img_years == 0:
+                    visuals.save_fig()
             index += 1
 
     def add_population(self, population):
@@ -275,7 +281,7 @@ class BioSim:
 
     @property
     def animal_distribution(self):
-        # Add save the data frame if the user gives a save path
+        #Add save the data frame if the user gives a save path
         """Pandas DataFrame with animal count per species for each cell
         on island."""
         dict_for_df = {"Row": [], "Col": [], "Herbivore": [], "Carnivore": []}
@@ -314,4 +320,4 @@ class BioSim:
 
 
 if __name__ == '__main__':
-  pass
+    pass

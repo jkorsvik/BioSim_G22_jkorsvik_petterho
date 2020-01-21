@@ -132,7 +132,7 @@ class BaseCell:
             age = animal['age']
             weight = animal['weight']
 
-            if age < 0 and age is not int:
+            if age < 0 and age is not int: # Should be or I guess
                 raise ValueError('age can only be a positive integer')
             if weight < 0:
                 raise ValueError('weight can only be positive')
