@@ -22,8 +22,11 @@ def test_check_line_length():
 
 
 class TestIsland:
-    def test_init(self):
-        assert False
+    def test_init(self, plain_map_string, ini_herbs):
+        island = Island(plain_map_string, ini_herbs)
+        assert hasattr(island, 'map')
+        assert island.len_map_x == 4
+        assert island.len_map_y == 3
 
     def test_num_animals(self, test_island, ini_herbs):
         assert test_island.num_animals == 110
@@ -177,14 +180,13 @@ class TestIsland:
                                                  ]
                                          }])
 
-
     def test_feed(self, test_island):
         test_island.feed()
         test_island.map[(1, 1)].carnivores[0].weight = 170
         assert test_island.map[(1, 1)].herbivores[-1].weight > 40
         assert test_island.map[(1, 1)].carnivores[0].weight > 20
 
-    def test_procreation(self, test_island):
+    def test_procreate(self, test_island):
         test_island.procreate()
         assert test_island.num_animals > 110
 
@@ -207,6 +209,16 @@ class TestIsland:
         assert test_island.map[(1, 1)].herbivores[-1].weight < 40
         assert test_island.map[(1, 1)].carnivores[-1].weight < 20
 
+    def test_die(self, test_island):
+        Herbivore.set_parameters(omega=1)
+        num_before = test_island.num_animals
+        for _ in range(10):
+            test_island.die()
+        num_after = test_island.num_animals
+        print(num_before, num_after)
+        assert num_before > num_after
+        Herbivore.set_parameters(omega=0.4)
+
     def test_year(self, test_island):
         assert test_island.year == 0
         test_island.simulate_one_year()
@@ -214,8 +226,9 @@ class TestIsland:
         test_island.year = 5
         assert test_island.year == 5
 
-    def test_simulate_one_year(self):
-        assert False
+    def test_simulate_one_year(self, test_island):
+        test_island.simulate_one_year()
+        assert True
 
 
 class TestIslandSpecialCases:
@@ -227,8 +240,3 @@ class TestIslandSpecialCases:
                     assert isinstance(herbivore, Herbivore)
                 for carnivore in cell.carnivores:
                     assert isinstance(carnivore, Carnivore)
-
-    def test_something(self, just_five):
-        assert just_five == 5
-
-
