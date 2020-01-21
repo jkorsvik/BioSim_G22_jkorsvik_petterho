@@ -68,19 +68,43 @@ class TestSimulation:
         assert False
 
     def test_add_population(self):
-        assert False
+        sim = BioSim()
+        assert sim.island.map[(1, 2)].num_animals == 0
+        sim.add_population([{'loc': (1, 2),
+                             'pop': [{"species": "Herbivore",
+                                      "age": 5,
+                                      "weight": 40},
+                                     {"species": "Carnivore",
+                                      "age": 10,
+                                      "weight": 14.5}
+                                     ]
+                             }])
+        assert sim.island.map[(1, 2)].num_animals == 2
 
     def test_year(self):
-        assert False
+        sim = BioSim()
+        assert sim.year == 0
+        sim.clean_simulation(1)
+        assert sim.year == 1
 
     def test_num_animals(self):
-        assert False
+        sim = BioSim()
+        assert sim.num_animals == 190
 
     def test_num_animals_per_species(self):
-        assert False
+        sim = BioSim()
+        num_animals = sim.num_animals_per_species
+        assert num_animals['Herbivore'] == 150
+        assert num_animals['Carnivore'] == 40
 
     def test_animal_distribution(self):
+        sim = BioSim()
+        sim.clean_simulation(30)
+        animal_distribution = sim.animal_distribution
         assert False
 
     def test_make_movie(self):
-        assert False
+        sim = BioSim(img_base=r'..\images_and_movies\test_sim')
+        sim.simulate(50)
+        sim.make_movie()
+        assert os.path.isfile(r'..\images_and_movies\test_sim.mp4')
