@@ -6,7 +6,7 @@
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
-from src.biosim.animals import Herbivore, Carnivore
+from .animals import Herbivore, Carnivore
 import numpy as np
 import itertools
 import math
@@ -14,7 +14,7 @@ import random
 from numba import jit
 
 
-@jit
+
 def choose_new_location(prob_list):
     """
     Draws one out of a list with weights.
@@ -40,6 +40,13 @@ def choose_new_location(prob_list):
 
 
 class BaseCell:
+    """
+    Attributes
+    ------
+    herbivores : list
+    carnivores : list
+    fodder : float
+    """
     passable = True
     f_max = 0
     alpha = 0
@@ -94,17 +101,6 @@ class BaseCell:
             cls.alpha = alpha
 
     def __init__(self):
-        """
-        Initialize Cell
-
-        Attributes
-        ------
-        self.herbivores : list
-        self.carnivores : list
-        self._calculate_propensity : bool
-        self._propensity : None(filler)
-        self.fodder : float
-        """
         self.herbivores = []
         self.carnivores = []
         self._calculate_propensity = True
@@ -112,7 +108,7 @@ class BaseCell:
         self.fodder = 0
 
     def grow(self):
-        """IS OVERWRITTEN BY SUBCLASSES"""
+        """Grows fodder in cell"""
         pass
 
     def add_animals(self, animal_list):
@@ -342,7 +338,7 @@ class BaseCell:
 
     @property
     def propensity(self):
-        """
+        r"""
         Property of each cell, calculates each year once because of
         self._calculate_propensity
 
@@ -350,11 +346,17 @@ class BaseCell:
 
         Propensity is calculated by:
 
-        .. math::   \epsilon_k = \frac{f_k}{(n_k + 1)F'}
+        .. math::
 
-        .. math::   \pi_k = e^{\gamma\epsilon_j}
+            \epsilon_k = \frac{f_k}{(n_k + 1)F'}
 
-        .. math::   \pi_j = \frac{\pi_j}{\sum\epsilon_C(i)}
+        .. math::
+
+            \pi_k = e^{\gamma\epsilon_j}
+
+        .. math::
+
+            \pi_j = \frac{\pi_j}{\sum\epsilon_C(i)}
 
 
 
@@ -363,8 +365,7 @@ class BaseCell:
         Returns
         -------
         self._propensity: dict
-            key: str containing class.__name__
-            value: propensity
+            key - str containing class.__name__ and value - propensity
 
         """
         if not self._calculate_propensity:
@@ -419,7 +420,7 @@ class BaseCell:
         return self.num_carnivores + self.num_herbivores
 
     @property
-    def meat_for_carnivores(self): # Possible to optimize to not calculate it every time
+    def meat_for_carnivores(self):
         """Property: Sum the weight of all herbivores in cell"""
         meat = 0
         for herbivore in self.herbivores:
@@ -460,12 +461,15 @@ class Savanna(BaseCell):
 
     Attributes
     ------
-    self.f_max:  max amount of fodder(food) in the cell
-    self.alpha: value used for grow method
+    f_max : float
+        max amount of fodder(food) in the cell
+    alpha : float
+        value used for grow method
+    passable : bool
 
     Methods
-    ------
-    grow: updates amount of fodder in cell
+    --------
+    grow : updates amount of fodder in cell
     """
     passable = True
     f_max = 300.0
@@ -489,7 +493,7 @@ class Jungle(BaseCell):
 
     Methods
     ------
-    grow: updates amount of fodder in cell
+    grow : updates amount of fodder in cell
     """
     passable = True
     f_max = 800.0

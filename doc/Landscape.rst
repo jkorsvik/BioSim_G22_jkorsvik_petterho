@@ -1,24 +1,40 @@
 Landscape Module
 ===================
-.. autoclass:: src.biosim.landscape.Savanna
-   :members:
-   :inherited-members:
 
+The BaseCell Class
+---------------
+.. autoclass:: src.biosim.landscape.BaseCell
+   :members:
+
+The Jungle Class
+---------------
 .. autoclass:: src.biosim.landscape.Jungle
    :members:
-   :inherited-members:
 
-.. autoclass:: src.biosim.landscape.Ocean
+
+The Savanna Class
+---------------
+
+.. autoclass:: src.biosim.landscape.Savanna
    :members:
-   :inherited-members:
 
+The Desert Class
+---------------
 .. autoclass:: src.biosim.landscape.Desert
    :members:
-   :inherited-members:
 
+The Ocean Class
+---------------
+.. autoclass:: src.biosim.landscape.Ocean
+   :members:
+
+The Mountain Class
+---------------
 .. autoclass:: src.biosim.landscape.Mountain
    :members:
-   :inherited-members:
 
+
+Functions outside classes
+---------------
 .. automodule:: src.biosim.landscape
    :members: choose_new_location

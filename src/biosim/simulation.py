@@ -7,13 +7,12 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-from src.biosim.island import Island
-from src.biosim.visualization import Visuals
-from src.biosim.landscape import (
+from .island import Island
+from .visualization import Visuals
+from .landscape import (
     Jungle, Ocean, Savanna, Mountain, Desert
 )
-# Is used for changing animal parameters
-from src.biosim.animals import Herbivore, Carnivore
+from .animals import Herbivore, Carnivore
 import textwrap
 import pandas as pd
 import numpy as np
@@ -335,4 +334,5 @@ if __name__ == '__main__':
 
     sim = BioSim(geography, ini_herbs,
                  img_base=(r'C:\Users\Jkors\OneDrive\Dokumenter\INF200\Prosjekt\BioSim_G22_jkorsvik_petterho\BioSim_G22_jkorsvik_petterho\images_and_movies\sim_island'))
+    sim.simulate(50)
     sim.make_movie()

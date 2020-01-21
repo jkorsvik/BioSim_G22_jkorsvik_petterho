@@ -8,8 +8,12 @@ Welcome to BioSim_G22's documentation!
 
 This is a simulation of
  * an island
- * with different landscape
+ * with varying environments
  * with a herbivorous and carnivorous population
+
+The main interface is within the simulation module.
+Beneath the visualization and island modules are called.
+
 
 .. toctree::
    :maxdepth: 2
@@ -19,6 +23,7 @@ This is a simulation of
    Island
    Landscape
    Animals
+
    Visuals
 
 Indices and tables

@@ -6,8 +6,7 @@
 __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
-# from typing import Iterable
-from src.biosim.landscape import *
+from .landscape import *
 import textwrap
 
 
@@ -122,7 +121,7 @@ class Island:
         Parameters
         ----------
         island_map_string : multilinestring
-
+            Lines is row, letter is column
         Returns
         -------
         lines : list
@@ -155,13 +154,13 @@ class Island:
 
         Parameters
         ----------
-        island_map_string : multilinestring
+        island_map_string : str
+            string of multiple lines
 
         Returns
         -------
-        map : dictionary
-            key : tuple
-                value : instance of subclass of BaseCell
+        map : dict
+            key : tuple, value : instance of subclass of BaseCell
 
         """
         island_map = {}
