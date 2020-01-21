@@ -424,6 +424,8 @@ class BaseAnimal:
             with default age 0 and default weight None.
 
         """
+        if self.age <= 0:
+            return 0
         mates = num_same_species - 1
         prob_to_birth = np.minimum(1, (self.gamma * self.fitness * mates))
         if self.weight < self.zeta*(self.w_birth + self.phi_weight):
