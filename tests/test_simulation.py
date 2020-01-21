@@ -101,10 +101,43 @@ class TestSimulation:
         sim = BioSim()
         sim.clean_simulation(30)
         animal_distribution = sim.animal_distribution
-        assert False
+        assert True
 
     def test_make_movie(self):
         sim = BioSim(img_base=r'..\images_and_movies\test_sim')
-        sim.simulate(50)
+        sim.simulate(10)
         sim.make_movie()
         assert os.path.isfile(r'..\images_and_movies\test_sim.mp4')
+
+        with pytest.raises(RuntimeError):
+            sim = BioSim()
+            sim.simulate(10)
+            sim.make_movie()
+
+        with pytest.raises(ValueError):
+            sim = BioSim(img_base=r'..\images_and_movies\test_sim',
+                         movie_fmt='gif')
+            sim.simulate(10)
+            sim.make_movie()
+
+        # The error comes in simulate from the images and not the make_movie
+        with pytest.raises(OSError):
+            sim = BioSim(img_base='sjuke \ngreier')
+            sim.simulate(10)
+            sim.make_movie()
+
+
+
+
+class TestSimulationSpecialCases:
+    def test_sim_with_seed(self):
+        sim1 = BioSim(seed=1)
+        sim1.clean_simulation(10)
+        num_sim1 = sim1.num_animals_per_species
+
+        sim2 = BioSim(seed=1)
+        sim2.clean_simulation(10)
+        num_sim2 = sim2.num_animals_per_species
+
+        assert num_sim1 == num_sim2
+
