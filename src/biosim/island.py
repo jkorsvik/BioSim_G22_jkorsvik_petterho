@@ -29,10 +29,6 @@ def check_length(lines):
     return True
 
 
-def is_list_longer_than(list_, number):
-    return len(list_) > number
-
-
 class Island:
     """
     Initiates the Island class: holds method for updating the map
@@ -41,8 +37,10 @@ class Island:
 
     Parameters
     ----------
-    island_map_string
-    ini_pop
+    island_map_string : multilinestring
+        Multiple lines of string with characters representing cell type
+    ini_pop : dict
+        Key: location - Value: list of dict of species, age, and weight
 
 
     Attributes
@@ -63,6 +61,17 @@ class Island:
                   'J': Jungle}
 
     def __init__(self, island_map_string, ini_pop, store_stats=False):
+        """
+        Initializes instance of Island
+
+        Parameters
+        ----------
+        island_map_string : str
+            Multilinestring of map
+        ini_pop : dict
+            key : location - Value : list of dict
+        store_stats : bool
+        """
         self.len_map_x = None
         self.len_map_y = None
 

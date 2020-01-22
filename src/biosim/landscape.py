@@ -49,6 +49,26 @@ class BaseCell:
         list for stats
     birth_list : list
         list for stats
+
+    Methods
+    --------
+    grow
+    add_animals
+    add_migrated_herb
+    add_migrated_carn
+    remove_migrated_herb
+    remove_migrated_carn
+    chain_lists
+    migrate
+    procreate
+    lose_weight
+    sort_by_fitness
+    feed_all
+    feed_herbivores
+    feed_carnivores
+    age_pop
+    die
+    reset_calculate_propensity
     """
     passable = True
     f_max = 0
@@ -104,6 +124,11 @@ class BaseCell:
             cls.alpha = alpha
 
     def __init__(self):
+        """
+        Initializes the cell and creates empty lists for herbivores and
+        carnivores.
+        Creates attribute for fodder
+        """
         self.herbivores = []
         self.carnivores = []
         self._calculate_propensity = True
@@ -513,7 +538,11 @@ class Jungle(BaseCell):
 
     Attributes
     ---------
-    f_max : max amount of fodder(food) in the cell
+    f_max : float
+        max amount of fodder(food) in the cell
+    alpha : float
+        value used for grow method
+    passable : bool
 
     Methods
     -------

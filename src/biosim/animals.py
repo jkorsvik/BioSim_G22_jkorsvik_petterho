@@ -554,7 +554,17 @@ class Carnivore(BaseAnimal):
         super().__init__(age, weight)
 
     def kill_or_not(self, herbivore):
-        """Calculates if carnivore will kill herbivore"""
+        """
+        Calculates if carnivore will kill herbivore
+        Parameters
+        ----------
+        herbivore : object
+
+        Returns
+        -------
+        bool
+            whether or not the herbivore was killed
+        """
         probability_to_kill = ((self.fitness - herbivore.fitness) /
                                self.DeltaPhiMax)
         return bool(random.random() < probability_to_kill)
