@@ -50,7 +50,6 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
-    "numpydoc",
     "sphinx_rtd_theme",
 ]
 
