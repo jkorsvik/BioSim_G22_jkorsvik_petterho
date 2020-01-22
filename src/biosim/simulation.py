@@ -232,8 +232,7 @@ class BioSim:
         Image files will be numbered consecutively.
         """
 
-        num_years_fig = self.island.year + num_years
-        visuals = Visuals(self.island, num_years_fig, self.ymax_animals,
+        visuals = Visuals(self.island, num_years, self.ymax_animals,
                           self.cmax_animals, self.img_base, self.img_fmt)
 
         if img_years is None:
