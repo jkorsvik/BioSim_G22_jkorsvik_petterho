@@ -314,8 +314,6 @@ class Visuals:
             self.years, self.herbivores_over_time, color='b'
         )
 
-
-
     def get_data_heat_map(self, island, data_type):
         """
         Could have also used pandas DF to get data.

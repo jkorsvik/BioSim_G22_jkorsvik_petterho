@@ -257,7 +257,6 @@ class BaseCell:
 
         return birth_list_herb, birth_list_carn
 
-
     def lose_weight(self):
         """Makes animals in cell lose_weight"""
         for herbivore in self.herbivores:
