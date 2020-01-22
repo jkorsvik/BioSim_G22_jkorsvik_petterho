@@ -57,6 +57,6 @@ class TestVisualization:
 
     def test_update_fig(self):
         assert False
-        
+
     def test_save_fig(self):
         assert False

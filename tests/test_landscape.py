@@ -34,7 +34,6 @@ class TestBaseCell:
         assert type(cell.carnivores) is list
         assert cell.fodder == 0
 
-
     def test_grow(self):
         cell = BaseCell()
         cell.grow()
@@ -59,7 +58,7 @@ class TestBaseCell:
         assert carnivore0.weight == animal_list[2]['weight']
 
         animal_list_with_wrong_parameter = [
-        {'species': 'Carnivore', 'age': 0.5, 'weight': 100}]
+            {'species': 'Carnivore', 'age': 0.5, 'weight': 100}]
         with pytest.raises(ValueError):
             jungle.add_animals(animal_list_with_wrong_parameter)
 
@@ -67,7 +66,6 @@ class TestBaseCell:
             {'species': 'Carnivore', 'age': 3, 'weight': -10}]
         with pytest.raises(ValueError):
             jungle.add_animals(animal_list_with_wrong_parameter)
-
 
     def test_add_migrated_herb(self):
         cell = BaseCell()
@@ -119,8 +117,6 @@ class TestBaseCell:
         moved_herb, moved_carn = jungle_many_animals.migrate(prob_herb=None,
                                                              prob_carn=None)
         assert len(moved_herb) == 0 and len(moved_carn) == 0
-
-
 
     def test_procreate(self, jungle_with_animals, animal_list):
         # Works only with two or more herbivores and one or zero carnivores
@@ -240,7 +236,6 @@ class TestBaseCell:
         assert jungle.meat_for_carnivores == 100
 
 
-
 class TestOcean:
     def test_init(self):
         ocean = Ocean()
@@ -256,7 +251,7 @@ class TestMountain:
         assert type(mountain.herbivores) is list
         assert type(mountain.carnivores) is list
         assert mountain.fodder == 0
-        assert mountain.passable == False
+        assert mountain.passable is False
 
 
 class TestDesert:
@@ -324,6 +319,7 @@ class TestCellsSpecialCases:
         savanna = Savanna()
 
         savanna.set_parameters(**parameters_savanna)
+        jungle.set_parameters(f_max=800)
         assert savanna.f_max == parameters_savanna['f_max']
         assert savanna.alpha == parameters_savanna['alpha']
         assert jungle.f_max == 800
