@@ -8,6 +8,8 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+import numpy as np
+from src.biosim.island import Island
 
 
 class Visuals:
@@ -59,6 +61,9 @@ class Visuals:
         self.x_len = island.len_map_x  # Double code
         self.y_len = island.len_map_y  # Double code
         self.num_years_sim = num_years_sim
+
+        self.num_years_fig = island.year + num_years_sim
+
         self.ymax_animals = ymax_animals
         self.cmax_animals = cmax_animals
         self.img_base = img_base
@@ -87,9 +92,12 @@ class Visuals:
         self.colorbar_carn_ax = None
 
         self.animals_over_time_ax = None
-        self.herbivores_over_time = None
-        self.carnivores_over_time = None
+        self.herbivores_over_time_data = None
+        self.carnivores_over_time_data = None
         self.years = None
+
+        self.line_carnivore = None
+        self.line_herbivore = None
 
         self.setup_graphics(island)
         self.pixel_colors = self.make_color_pixels(island)
@@ -166,7 +174,7 @@ class Visuals:
             self.animals_over_time_ax.set_ylim(self.ymax_animals)
             self.animals_over_time_ax.invert_yaxis()
 
-            self.animals_over_time_ax.set_xlim(self.num_years_sim)
+            self.animals_over_time_ax.set_xlim(self.num_years_fig)
             self.animals_over_time_ax.invert_xaxis()
 
         # The heat maps
@@ -275,15 +283,26 @@ class Visuals:
         -------
 
         """
-        self.herbivores_over_time = island.herbivore_tot_data
-        self.carnivores_over_time = island.carnivore_tot_data
-        self.years = [x for x, _ in enumerate(island.herbivore_tot_data)]
-        self.animals_over_time_ax.plot(
-            self.years, self.carnivores_over_time, color='r', label='Carnivore'
+        self.herbivores_over_time_data = island.herbivore_tot_data.copy()
+        self.carnivores_over_time_data = island.carnivore_tot_data.copy()
+        self.years = [year for year in range(island.year + 1)]
+        for n in range(self.num_years_sim):
+            self.herbivores_over_time_data.append(None)
+            self.carnivores_over_time_data.append(None)
+            self.years.append(island.year + n + 1)
+
+        self.herbivores_over_time_data = np.array(
+            self.herbivores_over_time_data)
+        self.carnivores_over_time_data = np.array(
+            self.carnivores_over_time_data)
+        self.years = np.array(self.years)
+        self.line_carnivore, = self.animals_over_time_ax.plot(
+            self.years, self.carnivores_over_time_data,
+            color='r', label='Carnivore'
         )
 
-        self.animals_over_time_ax.plot(
-            self.years, self.herbivores_over_time, color='b', label='Herbivore'
+        self.line_herbivore, = self.animals_over_time_ax.plot(
+            self.years, self.herbivores_over_time_data, color='b', label='Herbivore'
         )
         self.animals_over_time_ax.set(
             xlabel='Years', ylabel='Number of Animals'
@@ -304,15 +323,14 @@ class Visuals:
 
         """
         # Island has property or attribute year
-        self.years.append(island.year)
+        self.herbivores_over_time_data[island.year] = island.herbivore_tot_data[-1]
+        self.carnivores_over_time_data[island.year] = island.carnivore_tot_data[-1]
 
-        self.animals_over_time_ax.plot(
-            self.years, self.carnivores_over_time, color='r'
-        )
+        self.line_herbivore.set_ydata(self.herbivores_over_time_data)
 
-        self.animals_over_time_ax.plot(
-            self.years, self.herbivores_over_time, color='b'
-        )
+        self.line_carnivore.set_ydata(self.carnivores_over_time_data)
+
+
 
     def get_data_heat_map(self, island, data_type):
         """
@@ -412,4 +430,19 @@ class Visuals:
 
 
 if __name__ == '__main__':
-    pass
+    ini_herbs = [
+        {
+            "loc": (1, 1),
+            "pop": [
+                {"species": "Herbivore", "age": 5, "weight": 20}
+                for _ in range(150)
+            ],
+        }
+    ]
+
+    island = Island(island_map_string='OOO\nOJO\nOOO', ini_pop=ini_herbs)
+    visuals = Visuals(island, 50)
+    for _ in range(50):
+        island.simulate_one_year()
+        visuals.update_animals_over_time(island)
+    plt.show()
