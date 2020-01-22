@@ -11,6 +11,7 @@ from src.biosim.animals import BaseAnimal, Carnivore, Herbivore
 import pytest
 import unittest.mock as mock
 
+
 def reset_parameters():
     herbivore_parameters_right = {'w_birth': 8.0,
                                   'sigma_birth': 1.5,
@@ -50,8 +51,10 @@ def reset_parameters():
 def return_0():
     return 0
 
+
 def return_negative(arg1, arg2):
     return -1
+
 
 class TestAnimal:
     def test_set_parameters(self, carnivore_parameters_right,

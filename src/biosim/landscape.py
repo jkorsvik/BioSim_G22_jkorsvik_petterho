@@ -134,8 +134,8 @@ class BaseCell:
             species = animal['species']
             age = animal['age']
             weight = animal['weight']
-
-            if age < 0 and age is not int: # Should be or I guess
+            
+            if age < 0 or (age is not int and age != int(age)):
                 raise ValueError('age can only be a positive integer')
             if weight < 0:
                 raise ValueError('weight can only be positive')
@@ -256,7 +256,6 @@ class BaseCell:
                 birth_list_carn.append(offspring)
 
         return birth_list_herb, birth_list_carn
-
 
     def lose_weight(self):
         """Makes animals in cell lose_weight"""

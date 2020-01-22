@@ -13,22 +13,50 @@ from src.biosim.simulation import BioSim
 from src.biosim.island import Island
 
 
-@pytest.fixture
-def plain_map_string():
-    return Island.clean_multi_line_string("OOOO\nOJSO\nOOOO")
+class TestVisualization:
+    def test_init(self):
+        assert False
 
+    def test_empty_nested_list(self):
+        assert False
 
-@pytest.fixture
-def plain_sim():
-    """Return a simple island for used in various tests below"""
-    return BioSim(island_map="OOOO\nOJSO\nOOOO", ini_pop=[], seed=1)
+    def test_setup_graphics(self):
+        assert False
 
+    def test_make_color_pixels(self, test_island):
+        class_ = Visuals(test_island, 10)
+        assert class_.pixel_colors[0][0] == (0.0, 1.0, 1.0)
 
-def test_pixel_color(plain_sim, plain_map_string):
-    class_ = Visuals(plain_sim.island, plain_map_string)
-    assert class_.pixel_colors[0][0] == (0.0, 1.0, 1.0)
+    def test_draw_geography(self, test_island):
+        class_ = Visuals(test_island, 10)
+        assert False
 
+    def test_draw_geography_exp(self):
+        assert False
 
-def test_draw_map(plain_sim, plain_map_string):
-    class_ = Visuals(plain_sim.island, plain_map_string)
-    assert True
+    def test_update_year(self):
+        assert False
+
+    def test_draw_animals_over_time(self):
+        assert False
+
+    def test_update_animals_over_time(self):
+        assert False
+
+    def test_get_data_heat_map(self):
+        assert False
+
+    def test_draw_heat_map_herbivore(self):
+        assert False
+
+    def test_draw_heat_map_carnivore(self):
+        assert False
+
+    def test_update_heat_maps(self):
+        assert False
+
+    def test_update_fig(self):
+        assert False
+
+    def test_save_fig(self):
+        assert False

@@ -44,7 +44,10 @@ class TestIsland:
     def test_update_data_list(self, test_island):
         test_island.simulate_one_year()
         assert test_island.herbivore_tot_data[0] == 100
-        assert test_island.carnivore_tot_data[0] == 10
+        # Since test_island adds the carnivores after the init and the data
+        # for the zeroth year is saved in the init, it actually counts as
+        # zero carnivores. It is added afterwards
+        assert test_island.carnivore_tot_data[0] == 0
 
     def test_clean_multiline_string(self):
         string = ' OOO\nOJO\nOOO    '
@@ -76,18 +79,18 @@ class TestIsland:
 
     def test_probability_calc(self, ini_herbs, ini_carns):
         island = Island('OOOO\nOJJO\nOOOO', ini_carns)
-        prob_list = island.probability_calc((1, 1), Herbivore)
+        prob_list = island.probability_calc((1, 1), 'Herbivore')
         assert prob_list[3][1] == 1
         island = Island('OOOOO\nOJJJO\nOJJJO\nOJJJO\nOOOOO', ini_carns)
-        prob_list = island.probability_calc((2, 2), Herbivore)
+        prob_list = island.probability_calc((2, 2), 'Herbivore')
         for destination, prob in prob_list:
             assert prob == 0.25
         island = Island('OOOOO\nOJJJO\nOJJJO\nOJJJO\nOOOOO', ini_carns)
-        prob_list = island.probability_calc((2, 2), Herbivore)
+        prob_list = island.probability_calc((2, 2), 'Herbivore')
         for destination, prob in prob_list:
             assert prob == 0.25
         island = Island('OOO\nOJO\nOOO', ini_carns)
-        prob_list = island.probability_calc((1, 1), Herbivore)
+        prob_list = island.probability_calc((1, 1), 'Herbivore')
         assert prob_list is None
 
         # Could test that the sum always is 1
@@ -109,16 +112,11 @@ class TestIsland:
         assert test_island.map[(2, 1)].num_animals == 0
         assert test_island.map[(2, 2)].num_animals == 0
         test_island.simulate_one_year()
-        for loc, cell in test_island.map.items():
-            print(loc, cell.num_animals)
-        assert test_island.map[(1, 2)].num_animals > 10
-        assert test_island.map[(2, 1)].num_animals > 10
+        assert test_island.map[(1, 2)].num_animals > 5
+        assert test_island.map[(2, 1)].num_animals > 5
 
         for year in range(20):
             test_island.simulate_one_year()
-
-        for loc, cell in test_island.map.items():
-            print(loc, cell.num_animals)
         for cell in test_island.map.values():
             if isinstance(cell, (Jungle, Savanna,
                                  Desert)):

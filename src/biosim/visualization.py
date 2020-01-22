@@ -169,7 +169,6 @@ class Visuals:
             self.animals_over_time_ax.set_xlim(self.num_years_sim)
             self.animals_over_time_ax.invert_xaxis()
 
-
         # The heat maps
         if self.heat_map_herbivores_ax is None:
             self.heat_map_herbivores_ax = self.figure.add_subplot(
@@ -315,8 +314,6 @@ class Visuals:
             self.years, self.herbivores_over_time, color='b'
         )
 
-
-
     def get_data_heat_map(self, island, data_type):
         """
         Could have also used pandas DF to get data.
@@ -407,10 +404,11 @@ class Visuals:
 
     def save_fig(self):
         """Saves the figure at desired destination"""
-        self.img_num += 1
+
         self.figure.savefig(
-            f'{self.img_base}{self.img_num:03d}.{self.img_fmt}',
+            f'{self.img_base}_{self.img_num:05d}.{self.img_fmt}',
             orientation='landscape')
+        self.img_num += 1
 
 
 if __name__ == '__main__':

@@ -43,7 +43,7 @@ def save_sim(simulation, name):
     -------
 
     """
-    with open('saved_simulation/' + name + '.pkl', 'wb') as f:
+    with open(name + '.pkl', 'wb') as f:
         pickle.dump(simulation, f, pickle.HIGHEST_PROTOCOL)
 
 
@@ -61,9 +61,8 @@ def load_sim(name):
     Loaded file of Simulation
 
     """
-    with open('saved_simulation/' + name + '.pkl', 'rb') as f:
+    with open(name + '.pkl', 'rb') as f:
         return pickle.load(f)
-#
 
 
 class BioSim:
@@ -204,10 +203,9 @@ class BioSim:
 
         map_params[landscape].set_parameters(**params)
 
-    def clean_simulation(self, num_years):  # Change name and docstring
+    def clean_simulation(self, num_years):
         """
-        A simulation for running profile, so that it doesnt care about
-        the visuals.
+        A simulation without any visualization.
 
         Parameters
         ----------
@@ -221,7 +219,6 @@ class BioSim:
         while index <= num_years:
             self.island.simulate_one_year()
             index += 1
-            # print(self.year, '\n', self.num_animals_per_species)
 
     def simulate(self, num_years, vis_years=1, img_years=None):
         """
@@ -282,8 +279,7 @@ class BioSim:
         return self.island.num_animals_per_species
 
     @property
-    def animal_distribution(self):
-        #Add save the data frame if the user gives a save path
+    def animal_distribution(self, save_name=None):
         """Pandas DataFrame with animal count per species for each cell
         on island."""
         dict_for_df = {"Row": [], "Col": [], "Herbivore": [], "Carnivore": []}
@@ -295,7 +291,8 @@ class BioSim:
             dict_for_df["Carnivore"].append(cell.num_carnivores)
 
         df_sim = pd.DataFrame.from_dict(dict_for_df)
-        df_sim.to_csv(r'C:\Users\pbmar\Documents\NMBU\INF200\data.csv')
+        if save_name is not None:
+            df_sim.to_csv(save_name + '.csv')
         return df_sim
 
     def island_stats(self):
@@ -363,10 +360,11 @@ class BioSim:
 
         if self.movie_fmt == 'mp4':
             try:
-                subprocess.check_call(f'{FFMPEG} -y -r 24 -i '
-                                      f'{self.img_base}%03d.{self.img_fmt}'
+                subprocess.check_call(f'{FFMPEG} -y -r 8 -i '
+                                      f'{self.img_base}_%05d.{self.img_fmt}'
                                       f' -c:v libx264 -vf fps=25 -pix_fmt '
                                       f'yuv420p '
+                                      f'-start_number 0 '
                                       f'{self.img_base}.{self.movie_fmt}')
             except subprocess.CalledProcessError as err:
                 raise RuntimeError(f'ERROR: ffmpeg failed with: {err}')
