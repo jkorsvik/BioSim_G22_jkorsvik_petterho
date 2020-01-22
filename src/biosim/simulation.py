@@ -43,7 +43,7 @@ def save_sim(simulation, name):
     -------
 
     """
-    with open('saved_simulation/' + name + '.pkl', 'wb') as f:
+    with open(name + '.pkl', 'wb') as f:
         pickle.dump(simulation, f, pickle.HIGHEST_PROTOCOL)
 
 
@@ -61,9 +61,8 @@ def load_sim(name):
     Loaded file of Simulation
 
     """
-    with open('saved_simulation/' + name + '.pkl', 'rb') as f:
+    with open(name + '.pkl', 'rb') as f:
         return pickle.load(f)
-#
 
 
 class BioSim:
@@ -364,7 +363,7 @@ class BioSim:
         if self.movie_fmt == 'mp4':
             try:
                 subprocess.check_call(f'{FFMPEG} -y -r 24 -i '
-                                      f'{self.img_base}%05d.{self.img_fmt}'
+                                      f'{self.img_base}_%05d.{self.img_fmt}'
                                       f' -c:v libx264 -vf fps=25 -pix_fmt '
                                       f'yuv420p '
                                       f'{self.img_base}.{self.movie_fmt}')

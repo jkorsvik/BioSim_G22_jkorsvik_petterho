@@ -408,7 +408,7 @@ class Visuals:
         """Saves the figure at desired destination"""
         self.img_num += 1
         self.figure.savefig(
-            f'{self.img_base}{self.img_num:05d}.{self.img_fmt}',
+            f'{self.img_base}_{self.img_num:05d}.{self.img_fmt}',
             orientation='landscape')
 
 
