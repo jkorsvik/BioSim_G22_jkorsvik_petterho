@@ -8,9 +8,9 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 import pytest
 import textwrap
-from src.biosim.animals import Herbivore, Carnivore
-from src.biosim.landscape import Jungle, Savanna, Ocean, Mountain, Desert
-from src.biosim.island import Island
+from biosim.animals import Herbivore
+from biosim.landscape import Jungle
+from biosim.island import Island
 
 
 @pytest.fixture

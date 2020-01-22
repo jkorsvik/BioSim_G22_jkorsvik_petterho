@@ -7,11 +7,10 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 import pytest
-import textwrap
 import os
-from src.biosim.simulation import BioSim, load_sim, save_sim
-from src.biosim.landscape import Ocean, Mountain, Jungle, Desert, Savanna
-from src.biosim.animals import Herbivore, Carnivore
+from biosim.simulation import BioSim
+from biosim.landscape import Savanna
+from biosim.animals import Herbivore
 
 save_load_name = 'test_save_file'
 

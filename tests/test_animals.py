@@ -7,7 +7,7 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-from src.biosim.animals import BaseAnimal, Carnivore, Herbivore
+from biosim.animals import BaseAnimal, Carnivore, Herbivore
 import pytest
 import unittest.mock as mock
 
@@ -202,7 +202,8 @@ class TestHerbivore:
         weights_end = herb.weight
         assert food == 5
         assert weight_start < weights_end
-        assert pytest.approx(weights_end - weight_start, 1e-06) == herb.beta * herb.F
+        assert pytest.approx(weights_end - weight_start, 1e-06) == \
+            herb.beta * herb.F
 
         herb = Herbivore()
         weight_start = herb.weight
@@ -210,7 +211,8 @@ class TestHerbivore:
         weights_end = herb.weight
         assert food == 0
         assert weight_start < weights_end
-        assert pytest.approx(weights_end - weight_start, 1e-06) == herb.beta * 5
+        assert pytest.approx(weights_end - weight_start, 1e-06) == \
+            herb.beta * 5
 
         herb = Herbivore()
         weight_start = herb.weight
@@ -291,4 +293,3 @@ class TestAnimalSpecialCases:
         with mock.patch('random.gauss', return_negative):
             animal = BaseAnimal()
             assert animal.weight == 0
-

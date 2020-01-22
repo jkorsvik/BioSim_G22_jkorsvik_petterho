@@ -7,11 +7,10 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 
-from src.biosim.landscape import BaseCell, Ocean, Mountain, Desert, \
-    Savanna, Jungle, choose_new_location
-from src.biosim.animals import BaseAnimal, Herbivore, Carnivore
+from biosim.landscape import BaseCell, Ocean, Mountain, Desert, \
+    Savanna, Jungle
+from biosim.animals import Herbivore, Carnivore
 import pytest
-import warnings
 import math
 
 

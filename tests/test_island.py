@@ -7,9 +7,8 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 import pytest
-import textwrap
-from src.biosim.island import *
-from src.biosim.landscape import *
+from biosim.island import *
+from biosim.landscape import *
 
 
 def test_check_line_length():

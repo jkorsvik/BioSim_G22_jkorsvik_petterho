@@ -7,13 +7,14 @@ __author__ = "Jon-Mikkel Korsvik & Petter Bøe Hørtvedt"
 __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 
 import pytest
-import textwrap
-from src.biosim.visualization import Visuals
-from src.biosim.simulation import BioSim
-from src.biosim.island import Island
+from biosim.visualization import Visuals
 
 
 class TestVisualization:
+    """
+    This was made test the visualization, but we didnt find the time to test
+    it more than visually.
+    """
     def test_init(self):
         assert False
 
