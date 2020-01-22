@@ -21,11 +21,11 @@ for another time.
 
 The Environment:
 ---------------
-* Jungle - 'J'
-* Savanna - 'S'
-* Desert - 'D'
-* Ocean - 'O'
-* Mountain - 'M'
+ * Jungle - 'J'
+ * Savanna - 'S'
+ * Desert - 'D'
+ * Ocean - 'O'
+ * Mountain - 'M'
 
 The Population:
 --------------
