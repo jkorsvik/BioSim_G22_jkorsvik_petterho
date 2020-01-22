@@ -79,18 +79,18 @@ class TestIsland:
 
     def test_probability_calc(self, ini_herbs, ini_carns):
         island = Island('OOOO\nOJJO\nOOOO', ini_carns)
-        prob_list = island.probability_calc((1, 1), Herbivore)
+        prob_list = island.probability_calc((1, 1), 'Herbivore')
         assert prob_list[3][1] == 1
         island = Island('OOOOO\nOJJJO\nOJJJO\nOJJJO\nOOOOO', ini_carns)
-        prob_list = island.probability_calc((2, 2), Herbivore)
+        prob_list = island.probability_calc((2, 2), 'Herbivore')
         for destination, prob in prob_list:
             assert prob == 0.25
         island = Island('OOOOO\nOJJJO\nOJJJO\nOJJJO\nOOOOO', ini_carns)
-        prob_list = island.probability_calc((2, 2), Herbivore)
+        prob_list = island.probability_calc((2, 2), 'Herbivore')
         for destination, prob in prob_list:
             assert prob == 0.25
         island = Island('OOO\nOJO\nOOO', ini_carns)
-        prob_list = island.probability_calc((1, 1), Herbivore)
+        prob_list = island.probability_calc((1, 1), 'Herbivore')
         assert prob_list is None
 
         # Could test that the sum always is 1
