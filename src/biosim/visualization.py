@@ -406,10 +406,11 @@ class Visuals:
 
     def save_fig(self):
         """Saves the figure at desired destination"""
-        self.img_num += 1
+
         self.figure.savefig(
             f'{self.img_base}_{self.img_num:05d}.{self.img_fmt}',
             orientation='landscape')
+        self.img_num += 1
 
 
 if __name__ == '__main__':

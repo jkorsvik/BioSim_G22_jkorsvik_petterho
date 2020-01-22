@@ -366,6 +366,7 @@ class BioSim:
                                       f'{self.img_base}_%05d.{self.img_fmt}'
                                       f' -c:v libx264 -vf fps=25 -pix_fmt '
                                       f'yuv420p '
+                                      f'-start_number 0 '
                                       f'{self.img_base}.{self.movie_fmt}')
             except subprocess.CalledProcessError as err:
                 raise RuntimeError(f'ERROR: ffmpeg failed with: {err}')

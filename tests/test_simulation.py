@@ -79,9 +79,9 @@ class TestSimulation:
             img_base=r'test_sim_every_second_img')
         sim.simulate(10, img_years=2)
         assert os.path.isfile(
-            r'test_sim_every_second_img' + '_00006' + '.png')
+            r'test_sim_every_second_img' + '_00005' + '.png')
         assert not os.path.isfile(
-            r'test_sim_every_second_img' + '_00007' + '.png')
+            r'test_sim_every_second_img' + '_00006' + '.png')
 
         with pytest.raises(ValueError):
             sim = BioSim(img_base=r'test_sim')
