@@ -53,7 +53,9 @@ checker_map2 = """
                  """
 checker_map2 = textwrap.dedent(checker_map2)
 
-sim = BioSim(island_map=checker_map2, ini_pop=default_population,
-             img_base='checker_map', ymax_animals=1000)
+sim = BioSim(island_map=checker_map, ini_pop=default_population,
+             img_base='checker_map_ocean', ymax_animals=500, cmax_animals={
+        'Herbivore': 100, 'Carnivore':80
+    })
 sim.simulate(100)
 sim.make_movie()

@@ -24,7 +24,7 @@ default_population = [
         ],
     }
 ]
-sim = BioSim(island_map='OOOO\nOJJO\nOJJO\nOOOO', ini_pop=default_population,
-             img_base='square_island', ymax_animals=1000)
+sim = BioSim(island_map='OOOOOO\nOJJJJO\nOJJJJO\nOJJJJO\nOJJJJO\nOOOOOO', ini_pop=default_population,
+             img_base='even_island', ymax_animals=3000)
 sim.simulate(100)
 sim.make_movie()
