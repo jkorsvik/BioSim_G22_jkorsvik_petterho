@@ -604,7 +604,7 @@ class Carnivore(BaseAnimal):
                 break
 
             if self.fitness <= herbivore.fitness:
-                continue
+                continue  # kunne breaka
 
             if self.DeltaPhiMax < self.fitness - herbivore.fitness:
                 self.eat(herbivore.weight, eaten)
