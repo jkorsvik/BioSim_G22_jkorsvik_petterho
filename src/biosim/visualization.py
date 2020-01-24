@@ -9,7 +9,7 @@ __email__ = "jonkors@nmbu.no & petterho@nmbu.no"
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
-from src.biosim.island import Island
+from .island import Island
 
 
 class Visuals:
