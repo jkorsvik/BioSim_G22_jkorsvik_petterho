@@ -58,7 +58,7 @@ desert_landscape = """
 desert_landscape = textwrap.dedent(desert_landscape)
 
 sim = BioSim(island_map=desert_landscape, ini_pop=default_population,
-             img_base='desert_landscape', ymax_animals=800,
+             ymax_animals=800,
              cmax_animals={'Herbivore':40,
                            'Carnivore':30})
 sim.set_animal_parameters('Herbivore', {'mu': 0.5,

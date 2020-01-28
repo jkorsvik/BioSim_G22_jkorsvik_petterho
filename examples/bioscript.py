@@ -36,7 +36,7 @@ if __name__ == "__main__":
         }
     ]
 
-    sim = BioSim(ini_pop=ini_herbs, seed=123456, img_base='img_to_pres')
+    sim = BioSim(ini_pop=ini_herbs, seed=123456)
 
     """
     sim.set_animal_parameters("Herbivore", {"zeta": 3.2, "xi": 1.8})
@@ -57,6 +57,5 @@ if __name__ == "__main__":
 
     sim.add_population(population=ini_carns)
     #sim.simulate(num_years=100, vis_years=1, img_years=2000)
-    sim.simulate(250)
-    sim.make_movie()
+    sim.simulate(150)
 

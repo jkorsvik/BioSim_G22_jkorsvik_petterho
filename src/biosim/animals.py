@@ -138,7 +138,7 @@ class BaseAnimal:
         # By checking all parameters first, set parameters does not change
         # any parameters before it is sure that all parameters are valid
 
-        # If I can, I should make this smaler.
+        # If I can, I should make this smaller.
 
         bool_w_birth = False
         bool_sigma_birth = False
@@ -604,7 +604,7 @@ class Carnivore(BaseAnimal):
                 break
 
             if self.fitness <= herbivore.fitness:
-                continue  # kunne breaka
+                break  # kunne breaka
 
             if self.DeltaPhiMax < self.fitness - herbivore.fitness:
                 self.eat(herbivore.weight, eaten)
